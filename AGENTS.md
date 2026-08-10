@@ -1,32 +1,120 @@
-# Repository Guidelines
+# AGENTS.md — Hợp đồng chung cho mọi AI agent
 
-## Project Structure & Module Organization
+> Mọi agent (Claude Code, codex, opencode, hay bất kỳ agent nào khác) **phải đọc file này trước khi làm việc** trong repo.
+> Claude Code có chỉ dẫn riêng bổ sung ở `CLAUDE.md`.
 
-This is a NestJS TypeScript application managed with PNPM. Application code lives in `src/`: `main.ts` bootstraps the server, `app.module.ts` wires the root module, and feature classes follow Nest naming such as `app.controller.ts`, `app.service.ts`, and `*.module.ts`. Unit tests sit beside the code they cover as `*.spec.ts`, for example `src/app.controller.spec.ts`. End-to-end tests live in `test/` and use `test/jest-e2e.json`. Build output is generated in `dist/`; do not edit it directly.
+## Bối cảnh dự án
 
-## Build, Test, and Development Commands
+Đây là **dự án học NestJS**, không phải sản phẩm thương mại. Người dùng là backend dev mới bắt đầu (đã biết Node.js / Express / Prisma / hexagonal cơ bản), đang học NestJS 11 theo `docs.nestjs.com`. Sản phẩm cuối khóa: một **Task Management API** (User / Project / Task / Comment).
 
-- `pnpm install`: install dependencies from `pnpm-lock.yaml`.
-- `pnpm run start`: run the Nest application once.
-- `pnpm run start:dev`: run in watch mode for local development.
-- `pnpm run build`: compile TypeScript through the Nest CLI into `dist/`.
-- `pnpm run start:prod`: run the compiled app from `dist/main`.
-- `pnpm run lint`: run ESLint with automatic fixes over `src`, `apps`, `libs`, and `test`.
-- `pnpm run format`: format TypeScript files in `src/` and `test/`.
-- `pnpm run test`, `pnpm run test:e2e`, `pnpm run test:cov`: run unit tests, e2e tests, or coverage.
+Điều này thay đổi cách agent nên hành xử: **mục tiêu là người học tiến bộ, không phải task xong nhanh.**
 
-## Coding Style & Naming Conventions
+## Hai quy tắc tuyệt đối
 
-Use TypeScript and NestJS decorators, dependency injection, and module boundaries consistently. Prettier enforces single quotes and trailing commas; ESLint also reports Prettier violations. Follow Nest file suffixes and class names: `ExampleController`, `ExampleService`, `ExampleModule`, with files named `example.controller.ts`, `example.service.ts`, and `example.module.ts`. Keep providers focused and inject dependencies through constructors.
+1. **Không viết code hands-on thay người học** trừ khi được giao rõ ràng (issue có nhãn `agent:codex` hoặc user yêu cầu trực tiếp). Mặc định: gợi ý, chỉ chỗ sai, đặt câu hỏi — không đưa code hoàn chỉnh.
+2. **Không agent nào tự review code của chính nó.** Code do agent sinh ra phải qua PR để một agent khác (hoặc user) review. Lý do trong `docs/workflow/AGENT-MODEL.md`.
 
-## Testing Guidelines
+## Phân vai
 
-Jest is the test runner, with `ts-jest` transforming TypeScript. Name unit tests `*.spec.ts` and keep them near the source under `src/`. E2E tests belong in `test/` and should end with `.e2e-spec.ts`. Add or update tests whenever behavior changes, and run `pnpm run test` before submitting. Use `pnpm run test:cov` when changing shared services or controllers.
+| Agent           | Vai                                      | Ranh giới                                       |
+| --------------- | ---------------------------------------- | ----------------------------------------------- |
+| **Claude Code** | Mentor · PM · Reviewer                   | Không code hands-on; không merge PR             |
+| **codex**       | Coder — nhận issue có nhãn `agent:codex` | Làm trên branch `codex/...`; output luôn qua PR |
+| **opencode**    | Agent đối chứng (từ Phase 7)             | Chỉ chạy khi được giao để so sánh cách tiếp cận |
 
-## Commit & Pull Request Guidelines
+## Cấu trúc project
 
-The repository history uses Conventional Commit style, such as `feat: initialize NestJS application with basic structure and tests`. Keep commits concise and imperative, with prefixes like `feat:`, `fix:`, `test:`, `docs:`, or `chore:`. Pull requests should include a short summary, test results, linked issues when applicable, and screenshots or request examples for user-visible API changes.
+```
+src/                    # code ứng dụng
+  main.ts               # bootstrap
+  app.module.ts         # root module
+  <feature>/            # mỗi feature: .module.ts + .controller.ts + .service.ts + .spec.ts
+test/                   # e2e test (*.e2e-spec.ts), config riêng test/jest-e2e.json
+docs/
+  ROADMAP.md            # 8 phase, ~26 lesson
+  workflow/             # WORKFLOW.md, AGENT-MODEL.md
+  adr/                  # architecture decision records
+  lessons/XX-*/         # lesson note tiếng Việt
+  templates/            # template lesson note, retro
+dist/                   # output build — KHÔNG sửa tay
+```
 
-## Security & Configuration Tips
+## Lệnh
 
-Keep secrets out of the repository and prefer environment variables for runtime configuration. Do not commit generated artifacts such as coverage output or local environment files. Validate inputs at controller boundaries before passing data into services.
+```bash
+pnpm install            # cài dependency theo pnpm-lock.yaml
+pnpm start:dev          # dev, watch mode
+pnpm build              # nest build → dist/
+pnpm lint               # eslint --fix
+pnpm format             # prettier --write
+pnpm test               # unit test
+pnpm test:e2e           # e2e test
+pnpm test:cov           # coverage
+pnpm verify                 # đúng những gì CI chạy — dùng trước khi mở PR
+pnpm db:up / db:down    # postgres + redis qua docker compose
+```
+
+**Package manager là pnpm.** Dùng npm hay yarn sẽ tạo lockfile thứ hai và làm CI đỏ.
+
+## Coding style
+
+- TypeScript + decorator + DI của NestJS. Dependency đi qua **constructor injection**, không `new` thủ công, không import singleton toàn cục.
+- Phân lớp: `*.controller.ts` chỉ xử lý HTTP · `*.service.ts` giữ business logic · `*.module.ts` gắn kết. **Business logic không nằm trong controller.**
+- Đặt tên theo chuẩn Nest: `TasksController` trong `tasks.controller.ts`, `TasksService` trong `tasks.service.ts`, `TasksModule` trong `tasks.module.ts`.
+- Prettier: single quote, trailing comma. Prettier quản lý format cho `.ts`, `.json`, `.md`, `.yml` — **đừng format tay**, chạy `pnpm format`.
+- `tsconfig.json`: `strictNullChecks: true`, `noImplicitAny: false`. `no-explicit-any` bị tắt trong ESLint, nhưng vẫn **tránh `any`** — reviewer sẽ bắt.
+- **CI chạy `eslint --max-warnings=0`** → warning cũng làm CI đỏ, kể cả `no-floating-promises`.
+
+## Testing
+
+- Unit test `*.spec.ts` đặt **cạnh** file nguồn trong `src/`. E2E test ở `test/`, đuôi `.e2e-spec.ts`.
+- Dùng `Test.createTestingModule()` của `@nestjs/testing`.
+- Test kiểm tra **hành vi**, không chỉ kiểm tra mock có được gọi. Luôn có case lỗi, không chỉ happy path.
+- Đổi hành vi thì phải cập nhật test. Chạy `pnpm test` trước khi mở PR.
+
+## Commit & PR
+
+**Conventional Commits** — `commitlint` chặn tại git hook `commit-msg`:
+
+```
+<type>(<scope>): <mô tả>
+
+feat(tasks): add CRUD endpoints for tasks
+docs(lesson-02): note về controllers và routing
+chore: bump @nestjs/core to 11.1.28
+```
+
+Type cho phép: `feat` `fix` `docs` `test` `refactor` `chore` `style` `perf` `revert`.
+
+- Branch: lấy **đúng** tên Linear sinh ra (`hien/nes-XX-...`). Agent dùng prefix riêng: `codex/...`, `opencode/...`.
+- PR description phải có `Fixes NES-XX` (PR của agent thì tham chiếu issue được giao).
+- Squash and merge. Không push thẳng vào `main` — đã bật branch protection.
+- **Không bao giờ dùng `git commit --no-verify`.** Hook là hàng rào chất lượng, không phải chướng ngại vật.
+
+## Ranh giới file
+
+| Đường dẫn                                                   | Ai được sửa                                     |
+| ----------------------------------------------------------- | ----------------------------------------------- |
+| `src/**`, `test/**`                                         | User (hands-on) · codex (khi được giao rõ ràng) |
+| `docs/lessons/**`                                           | Claude (soạn) + user (ghi chú cá nhân)          |
+| `docs/adr/**`, `docs/workflow/**`                           | Claude, user duyệt qua PR                       |
+| `.github/**`, `.husky/**`, `docker-compose.yml`, config gốc | Claude                                          |
+| `dist/`, `node_modules/`, `pnpm-lock.yaml`                  | Không sửa tay                                   |
+
+## Bảo mật & cấu hình
+
+- **Không bao giờ commit secret.** File `.env` đã nằm trong `.gitignore`; chỉ commit `.env.example` với giá trị giả.
+- Thêm biến môi trường mới thì phải bổ sung vào `.env.example` kèm comment giải thích.
+- Validate dữ liệu ở biên vào (DTO + `ValidationPipe`) trước khi đưa vào service.
+- Không log secret, token, mật khẩu. Không trả `password`/`refreshToken` trong response.
+
+## Tra tài liệu NestJS
+
+`docs.nestjs.com` là Angular SPA — fetch HTML sẽ **không** ra nội dung. Lấy markdown gốc:
+
+```bash
+gh api "repos/nestjs/docs.nestjs.com/contents/content/controllers.md" \
+  -H "Accept: application/vnd.github.raw"
+```
+
+**Không viết code NestJS từ trí nhớ khi có thể tra được.** Version thư viện: `npm view <pkg> version`, đừng đoán.

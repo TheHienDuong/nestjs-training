@@ -1,0 +1,6 @@
+# Git hook pre-commit — chạy TRƯỚC khi commit được tạo.
+#
+# Chỉ chạy lint-staged: eslint + prettier trên ĐÚNG những file đang staged.
+# Cố tình KHÔNG chạy cả bộ test ở đây — hook chậm là hook sẽ bị bỏ qua bằng
+# --no-verify. Test đầy đủ để CI lo (xem .github/workflows/ci.yml).
+pnpm exec lint-staged
