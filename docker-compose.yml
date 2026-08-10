@@ -1,0 +1,76 @@
+# Hạ tầng local cho dự án học tập.
+#
+# Vì sao dùng Docker thay vì cài PostgreSQL trực tiếp vào máy:
+#   1. Xoá sạch được. Học xong `docker compose down -v` là máy trở lại như cũ.
+#   2. Version cố định. Bạn và CI dùng đúng Postgres 16, không phải "bản nào máy tôi có".
+#   3. Nhiều project song song không tranh nhau port hay đè database của nhau.
+#   4. Đây chính là cách các team thật dựng môi trường dev.
+#
+# Lệnh:
+#   docker compose up -d      # bật (chạy nền)
+#   docker compose ps         # kiểm tra healthy
+#   docker compose logs -f    # xem log
+#   docker compose down       # tắt, GIỮ dữ liệu
+#   docker compose down -v    # tắt và XOÁ dữ liệu (mất sạch, kể cả migration)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nestjs-training-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-nestjs_training}
+    ports:
+      # Map ra 5433 chứ không phải 5432, để không đụng PostgreSQL nào đang chạy sẵn trên máy.
+      # DATABASE_URL trong .env vì thế phải trỏ tới cổng 5433.
+      - '${POSTGRES_PORT:-5433}:5432'
+    volumes:
+      # Named volume: dữ liệu sống sót qua `docker compose down`.
+      - postgres-data:/var/lib/postgresql/data
+    # healthcheck cho Docker biết container đã SẴN SÀNG NHẬN QUERY, không chỉ là
+    # "đã khởi động". Đây là khác biệt quan trọng: Postgres mất vài giây để nhận
+    # kết nối, và app khởi động trong khoảng đó sẽ chết vì connection refused.
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis dùng cho Phase 6 (caching). Bật sẵn từ đầu để không phải sửa file này giữa khoá.
+  redis:
+    image: redis:7-alpine
+    container_name: nestjs-training-redis
+    restart: unless-stopped
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis-data:/data
+    # --appendonly yes: Redis ghi dữ liệu xuống đĩa. Với cache thì không bắt buộc,
+    # nhưng bật lên để cache không bị rỗng mỗi lần restart container khi đang học.
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Giao diện web quản lý PostgreSQL, để nhìn thấy dữ liệu bằng mắt.
+  # KHÔNG bật mặc định (nằm trong profile "tools") vì không phải lúc nào cũng cần:
+  #   docker compose --profile tools up -d
+  # Vào http://localhost:8080  →  System: PostgreSQL, Server: postgres, DB: nestjs_training
+  adminer:
+    image: adminer:latest
+    container_name: nestjs-training-adminer
+    restart: unless-stopped
+    profiles: [tools]
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  redis-data:

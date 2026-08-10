@@ -1,0 +1,85 @@
+# CI — chạy tự động mỗi lần push và mỗi pull request.
+#
+# Mục đích: chứng minh code chạy được trên MỘT MÁY SẠCH, không chỉ trên máy bạn.
+# "Trên máy tôi vẫn chạy" là câu nói đã gây ra vô số sự cố production.
+#
+# Job này cũng là "required status check" của branch protection:
+# CI đỏ thì nút Merge trên GitHub bị vô hiệu hoá.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Push commit mới vào cùng một PR sẽ huỷ lần chạy cũ — đỡ tốn phút CI.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint · Test · Build
+    runs-on: ubuntu-latest
+
+    # Từ Phase 2 (khi có Prisma), bỏ comment khối dưới để cấp một PostgreSQL
+    # dùng riêng cho lần chạy CI này. Nó sống và chết cùng job.
+    #
+    # services:
+    #   postgres:
+    #     image: postgres:16-alpine
+    #     env:
+    #       POSTGRES_USER: postgres
+    #       POSTGRES_PASSWORD: postgres
+    #       POSTGRES_DB: nestjs_training_test
+    #     ports: ['5432:5432']
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      # Action này KHÔNG tự đoán version pnpm. Nó đọc field "packageManager"
+      # trong package.json ("pnpm@11.18.0"). Thiếu field đó là job fail ngay.
+      # Nhờ vậy máy bạn và CI dùng đúng một version pnpm — cùng lý do tồn tại
+      # của --frozen-lockfile ở bước dưới.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      # cache: 'pnpm' cache lại pnpm store -> lần chạy sau nhanh hơn nhiều.
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # --frozen-lockfile: cài đúng theo pnpm-lock.yaml, không tự nâng version.
+      # Nếu lockfile lệch với package.json, job FAIL thay vì âm thầm cài khác.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # --max-warnings=0: cảnh báo cũng bị coi là lỗi trên CI.
+      # (Ở máy local `pnpm lint` có --fix nên tự sửa; ở CI thì chỉ kiểm tra.)
+      - name: Lint
+        run: pnpm exec eslint "{src,apps,libs,test}/**/*.ts" --max-warnings=0
+
+      - name: Kiểm tra format (Prettier)
+        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts"
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      # E2E cần database nên bật cùng lúc với services.postgres ở Phase 2.
+      # - name: E2E tests
+      #   run: pnpm test:e2e
+      #   env:
+      #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nestjs_training_test
