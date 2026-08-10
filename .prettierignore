@@ -1,0 +1,16 @@
+# Prettier is the "single source of truth" for formatting in this repository:
+# it formats .ts, .json, .md, and .yml — so no one has to debate style.
+# The list below contains everything Prettier MUST NOT touch.
+
+# Generated files — formatting them creates noisy diffs and may corrupt them.
+pnpm-lock.yaml
+dist/
+coverage/
+node_modules/
+
+# Prisma formats the schema itself with `prisma format` (from Lesson 07).
+prisma/migrations/
+
+# Tool-generated directories
+.serena/
+graphify-out/
