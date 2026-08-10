@@ -45,6 +45,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      # Action này KHÔNG tự đoán version pnpm. Nó đọc field "packageManager"
+      # trong package.json ("pnpm@11.18.0"). Thiếu field đó là job fail ngay.
+      # Nhờ vậy máy bạn và CI dùng đúng một version pnpm — cùng lý do tồn tại
+      # của --frozen-lockfile ở bước dưới.
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 

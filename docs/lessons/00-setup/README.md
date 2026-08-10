@@ -162,6 +162,29 @@ concurrency:
 
 Push commit mới vào cùng PR → huỷ lần chạy cũ. Không ai quan tâm kết quả của commit đã bị thay thế.
 
+#### Lần chạy CI đầu tiên của repo này đã ĐỎ — và đó là một bài học
+
+PR đầu tiên fail ngay ở bước thứ hai:
+
+```
+Error: No pnpm version specified.
+Please specify one of these ways:
+  - in GitHub Action config key "version"
+  - in package.json key "packageManager"
+```
+
+`pnpm/action-setup` **không tự đoán** version pnpm. Nó đọc field `packageManager` trong `package.json` — mà scaffold của `nest new` không sinh ra field đó. Cách sửa:
+
+```json
+"packageManager": "pnpm@11.18.0"
+```
+
+Điều đáng chú ý: lỗi này **không thể phát hiện ở máy bạn**, vì máy bạn đã có pnpm cài sẵn. Chỉ một môi trường sạch mới lộ ra rằng repo chưa nói cho ai biết nó cần pnpm phiên bản nào.
+
+Đây chính là **giá trị của CI, thể hiện ngay lần chạy đầu**: nó không tìm bug trong logic của bạn, nó tìm những **giả định ngầm** mà bạn không biết mình đang dựa vào.
+
+Field `packageManager` cũng là chuẩn chung của Node.js (Corepack đọc nó), nên thêm vào là ghim luôn version pnpm cho mọi người và mọi máy — cùng mục đích với `--frozen-lockfile`.
+
 ### 6. Vì sao chạy database bằng Docker thay vì cài vào máy?
 
 `docker-compose.yml` khai báo hai service: PostgreSQL 16 và Redis 7.
