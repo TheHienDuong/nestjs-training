@@ -1,0 +1,76 @@
+# Local infrastructure for the learning project.
+#
+# Why use Docker instead of installing PostgreSQL directly on the machine:
+#   1. It can be completely removed. After learning, `docker compose down -v` returns the machine to its previous state.
+#   2. Fixed version. You and CI use exactly Postgres 16, not "whatever version my machine has".
+#   3. Multiple projects can run in parallel without competing for ports or overwriting each other's databases.
+#   4. This is exactly how real teams build development environments.
+#
+# Commands:
+#   docker compose up -d      # start (in the background)
+#   docker compose ps         # check health
+#   docker compose logs -f    # view logs
+#   docker compose down       # stop, KEEP data
+#   docker compose down -v    # stop and DELETE data (everything is lost, including migrations)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nestjs-training-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-nestjs_training}
+    ports:
+      # Map to 5433 instead of 5432 to avoid conflicting with PostgreSQL already running on the machine.
+      # DATABASE_URL in .env must therefore point to port 5433.
+      - '${POSTGRES_PORT:-5433}:5432'
+    volumes:
+      # Named volume: data survives `docker compose down`.
+      - postgres-data:/var/lib/postgresql/data
+    # healthcheck tells Docker that the container is READY TO ACCEPT QUERIES, not merely
+    # "started". This is an important distinction: Postgres takes a few seconds to accept
+    # connections, and an app starting during that interval will die from connection refused.
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis is used for Phase 6 (caching). It is enabled from the start to avoid changing this file midway through the course.
+  redis:
+    image: redis:7-alpine
+    container_name: nestjs-training-redis
+    restart: unless-stopped
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis-data:/data
+    # --appendonly yes: Redis writes data to disk. This is not required for a cache,
+    # but it is enabled so the cache is not emptied every time the container restarts during learning.
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Web interface for managing PostgreSQL, so the data can be inspected visually.
+  # NOT enabled by default (it is in the "tools" profile) because it is not always needed:
+  #   docker compose --profile tools up -d
+  # Go to http://localhost:8080  →  System: PostgreSQL, Server: postgres, DB: nestjs_training
+  adminer:
+    image: adminer:latest
+    container_name: nestjs-training-adminer
+    restart: unless-stopped
+    profiles: [tools]
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  redis-data:

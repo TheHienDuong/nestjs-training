@@ -1,0 +1,6 @@
+# Git hook pre-commit — runs BEFORE the commit is created.
+#
+# Only runs lint-staged: eslint + prettier on EXACTLY the staged files.
+# Intentionally DOES NOT run the full test suite here — a slow hook is a hook that will be bypassed with
+# --no-verify. Leave the full tests to CI (see .github/workflows/ci.yml).
+pnpm exec lint-staged

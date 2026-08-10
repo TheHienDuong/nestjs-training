@@ -1,0 +1,52 @@
+# Dependabot — GitHub's bot automatically monitors dependencies and opens PRs when new versions are available.
+#
+# Why a learning project should enable it too:
+#   1. Outdated dependencies are one of the most common sources of security vulnerabilities in Node.js.
+#   2. You practice a real habit: upgrade version -> read changelog -> wait for CI ->
+#      merge, instead of having to upgrade 40 packages at once two years later.
+#   3. Every Dependabot PR is an opportunity to see CI at work: if the new version breaks tests,
+#      CI turns red on that PR and you immediately know why.
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+    # Limit open PRs to 5 at a time to avoid being overwhelmed.
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    # Group packages from the same family into ONE PR. Upgrading @nestjs/* individually can easily cause version mismatches
+    # between packages in the same suite, and Nest requires them to move together.
+    groups:
+      nestjs:
+        patterns:
+          - '@nestjs/*'
+      typescript-eslint:
+        patterns:
+          - 'typescript-eslint'
+          - '@typescript-eslint/*'
+          - 'eslint*'
+      testing:
+        patterns:
+          - 'jest'
+          - 'ts-jest'
+          - '@types/jest'
+          - 'supertest'
+          - '@types/supertest'
+    labels:
+      - dependencies
+
+  # Keep the GitHub Actions used by the workflow up to date.
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: chore
+    labels:
+      - dependencies
+      - ci

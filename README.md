@@ -1,98 +1,80 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Training
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> A project for **learning NestJS 11** from the official documentation [docs.nestjs.com](https://docs.nestjs.com), but operated **like a real backend project**: Linear for task management, GitHub PRs + CI for quality control, Slack for progress updates, and Notion as a knowledge base.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Final course product: a **Task Management API** (User · Project · Task · Comment) with validation, centralized error handling, JWT auth + RBAC, Swagger docs, API versioning, cache Redis, health check, unit + e2e test, automated CI.
 
-## Description
+## Where to start
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| You want to                                      | Read                                                                 |
+| ------------------------------------------------ | -------------------------------------------------------------------- |
+| View the complete learning roadmap               | [`docs/ROADMAP.md`](docs/ROADMAP.md)                                 |
+| Understand the workflow for each lesson          | [`docs/workflow/WORKFLOW.md`](docs/workflow/WORKFLOW.md)             |
+| Understand why the repository is set up this way | [`docs/lessons/00-setup/README.md`](docs/lessons/00-setup/README.md) |
+| View architecture decisions and their rationale  | [`docs/adr/`](docs/adr/README.md)                                    |
+| Understand how multiple AI agents collaborate    | [`docs/workflow/AGENT-MODEL.md`](docs/workflow/AGENT-MODEL.md)       |
 
-## Project setup
+## Environment setup
+
+Requirements: **Node.js >= 20** (required by the NestJS docs), **pnpm**, **Docker**.
 
 ```bash
-$ pnpm install
+pnpm install          # husky installs git hooks automatically through the "prepare"
+cp .env.example .env  # then enter real values
+docker compose up -d  # postgres:16 + redis:7
+docker compose ps     # both must have status (healthy)
+pnpm start:dev        # http://localhost:3000
 ```
 
-## Compile and run the project
+## Common commands
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm start:dev        # dev, watch mode — main development loop
+pnpm lint             # eslint --fix
+pnpm format           # prettier --write
+pnpm test             # unit test
+pnpm test:e2e         # e2e test
+pnpm test:cov         # coverage
+pnpm verify               # exactly what CI runs — use BEFORE opening a PR
+pnpm db:up / db:down  # start/stop postgres + redis
 ```
 
-## Run tests
+## Structure
 
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+```
+src/                       # application code (main.ts, app.module.ts, feature modules)
+test/                      # e2e test (*.e2e-spec.ts)
+docs/
+  ROADMAP.md               # 8 phase, ~26 lesson, official docs links
+  workflow/                # WORKFLOW.md · AGENT-MODEL.md
+  adr/                     # architecture decision records
+  lessons/XX-*/README.md   # English notes for each lesson
+  templates/               # template lesson note · retro
+.claude/skills/            # lesson-start · teach · lesson-review · sync-progress
+.github/workflows/ci.yml   # lint → format → test → build
+.husky/                    # pre-commit (lint-staged) · commit-msg (commitlint)
+docker-compose.yml         # postgres:16 · redis:7 · adminer (profile "tools")
+postman/                   # collection for manual API testing
 ```
 
-## Deployment
+## Important rules
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- **The package manager is `pnpm`** — do not use npm/yarn (they create a second lockfile and make CI fail).
+- **Conventional Commits are required** — `commitlint` is enforced by a git hook; an invalid format causes the commit to be rejected.
+- **Do not push directly to `main`** — branch protection is enabled; every change goes through a PR with passing CI.
+- **The PR must contain `Fixes NES-XX`** — this makes Linear move the issue to Done automatically.
+- **AI does not write hands-on code for the learner** — see [AGENTS.md](AGENTS.md).
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Quality
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
+| Guardrail         | Where             | What it blocks                       |
+| ----------------- | ----------------- | ------------------------------------ |
+| `lint-staged`     | hook `pre-commit` | Unformatted code / lint errors       |
+| `commitlint`      | hook `commit-msg` | Invalid commit message               |
+| GitHub Actions    | every push & PR   | Lint · format · test · build         |
+| Branch protection | `main`            | Direct pushes, merging when CI fails |
+| Dependabot        | weekly            | Outdated dependencies                |
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Notes
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+The repository has two remotes: `origin` (GitHub — primary workspace) and `gitlab` (company training repository). The entire workflow in this document uses `origin`.
