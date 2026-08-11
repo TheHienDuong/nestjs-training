@@ -50,7 +50,7 @@ jobs:
       # Nhờ vậy máy bạn và CI dùng đúng một version pnpm — cùng lý do tồn tại
       # của --frozen-lockfile ở bước dưới.
       - name: Setup pnpm
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
 
       # cache: 'pnpm' cache lại pnpm store -> lần chạy sau nhanh hơn nhiều.
       - name: Setup Node.js
