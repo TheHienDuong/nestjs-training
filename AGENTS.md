@@ -11,16 +11,19 @@
 
 ## Hai quy tắc tuyệt đối
 
-1. **Không viết code hands-on thay người học** trừ khi được giao rõ ràng (issue có nhãn `agent:codex` hoặc user yêu cầu trực tiếp). Mặc định: gợi ý, chỉ chỗ sai, đặt câu hỏi — không đưa code hoàn chỉnh.
+1. **Không viết code hands-on thay người học** trừ khi được giao rõ ràng (issue có nhãn `agent:codex` hoặc nhãn tương ứng cho tool khác đang giữ vai Coder, hoặc user yêu cầu trực tiếp). Mặc định: gợi ý, chỉ chỗ sai, đặt câu hỏi — không đưa code hoàn chỉnh.
 2. **Không agent nào tự review code của chính nó.** Code do agent sinh ra phải qua PR để một agent khác (hoặc user) review. Lý do trong `docs/workflow/AGENT-MODEL.md`.
 
 ## Phân vai
 
-| Agent           | Vai                                      | Ranh giới                                       |
-| --------------- | ---------------------------------------- | ----------------------------------------------- |
-| **Claude Code** | Mentor · PM · Reviewer                   | Không code hands-on; không merge PR             |
-| **codex**       | Coder — nhận issue có nhãn `agent:codex` | Làm trên branch `codex/...`; output luôn qua PR |
-| **opencode**    | Agent đối chứng (từ Phase 7)             | Chỉ chạy khi được giao để so sánh cách tiếp cận |
+Hai **vai** cố định, không phải hai danh sách tool cố định — tool nào lấp vai "Coder" cũng theo đúng một khuôn:
+
+| Vai                        | Ai giữ                                                                                     | Ranh giới                                      |
+| -------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| **Mentor · PM · Reviewer** | Luôn là Claude Code (cố định — lý do trong `docs/workflow/AGENT-MODEL.md`)                 | Không code hands-on; không merge PR            |
+| **Coder**                  | codex (mặc định) — thỉnh thoảng agent khác (opencode, Hermes...) khi muốn có bản đối chứng | Branch `<tool>/nes-XX-...`; output luôn qua PR |
+
+**MCP:** chỉ Claude Code nối vào Linear/Notion/Slack/Postman. Bất kỳ tool nào giữ vai Coder **không** cấu hình các MCP server này — nhận spec qua file `docs/lessons/XX-*/SPEC.md` (Claude Code sinh ra ở bước `/lesson-start`), không tự truy vấn Linear. Lý do: [ADR-0004](docs/adr/0004-mcp-single-writer-cho-coder-agent.md).
 
 ## Cấu trúc project
 
@@ -86,20 +89,21 @@ chore: bump @nestjs/core to 11.1.28
 
 Type cho phép: `feat` `fix` `docs` `test` `refactor` `chore` `style` `perf` `revert`.
 
-- Branch: lấy **đúng** tên Linear sinh ra (`hien/nes-XX-...`). Agent dùng prefix riêng: `codex/...`, `opencode/...`.
+- Branch: lấy **đúng** tên Linear sinh ra (`hien/nes-XX-...`). Coder agent dùng prefix là tên tool đó: `codex/nes-XX-...`, `opencode/nes-XX-...`, v.v.
 - PR description phải có `Fixes NES-XX` (PR của agent thì tham chiếu issue được giao).
 - Squash and merge. Không push thẳng vào `main` — đã bật branch protection.
 - **Không bao giờ dùng `git commit --no-verify`.** Hook là hàng rào chất lượng, không phải chướng ngại vật.
 
 ## Ranh giới file
 
-| Đường dẫn                                                   | Ai được sửa                                     |
-| ----------------------------------------------------------- | ----------------------------------------------- |
-| `src/**`, `test/**`                                         | User (hands-on) · codex (khi được giao rõ ràng) |
-| `docs/lessons/**`                                           | Claude (soạn) + user (ghi chú cá nhân)          |
-| `docs/adr/**`, `docs/workflow/**`                           | Claude, user duyệt qua PR                       |
-| `.github/**`, `.husky/**`, `docker-compose.yml`, config gốc | Claude                                          |
-| `dist/`, `node_modules/`, `pnpm-lock.yaml`                  | Không sửa tay                                   |
+| Đường dẫn                                                   | Ai được sửa                                                         |
+| ----------------------------------------------------------- | ------------------------------------------------------------------- |
+| `src/**`, `test/**`                                         | User (hands-on) · coder agent (khi được giao rõ ràng, branch riêng) |
+| `docs/lessons/**/SPEC.md`                                   | Chỉ Claude (bản chiếu từ Linear) — coder agent chỉ đọc, không sửa   |
+| `docs/lessons/**`                                           | Claude (soạn) + user (ghi chú cá nhân)                              |
+| `docs/adr/**`, `docs/workflow/**`                           | Claude, user duyệt qua PR                                           |
+| `.github/**`, `.husky/**`, `docker-compose.yml`, config gốc | Claude                                                              |
+| `dist/`, `node_modules/`, `pnpm-lock.yaml`                  | Không sửa tay                                                       |
 
 ## Bảo mật & cấu hình
 

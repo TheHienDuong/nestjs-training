@@ -17,7 +17,9 @@ Nguyên tắc thứ hai, quan trọng với người học:
 
 ## Phân vai
 
-### 🎓 Claude Code — Mentor · PM · Reviewer
+Chỉ **2 vai**, không phải một danh sách tool cố định. Vai "Coder" **linh hoạt** — tool nào lấp vai đó cũng theo đúng một khuôn, không cần luật riêng cho từng tool. Bạn dùng chủ yếu codex; thỉnh thoảng đổi hoặc thêm tool khác chỉ cần đổi tên trong lệnh, không phải học lại quy tắc.
+
+### 🎓 Claude Code — Mentor · PM · Reviewer (cố định)
 
 | Làm                                                           | Không làm                          |
 | ------------------------------------------------------------- | ---------------------------------- |
@@ -26,30 +28,66 @@ Nguyên tắc thứ hai, quan trọng với người học:
 | Review PR như senior, quiz kiểm tra hiểu                      | Tự review code do chính nó sinh ra |
 | Viết lesson note, ADR, đồng bộ Notion/Slack                   |                                    |
 
-**Vì sao Claude giữ vai mentor:** context window lớn giúp nó nắm được cả roadmap + toàn bộ note + lịch sử học của bạn cùng lúc — đúng thứ một người thầy cần.
+**Vì sao vai này cố định ở Claude:** context window lớn giúp nó nắm được cả roadmap + toàn bộ note + lịch sử học của bạn cùng lúc — đúng thứ một người thầy cần. Vai PM cũng cần **một** nơi ghi trạng thái duy nhất (xem mục MCP bên dưới) — cố định một agent giữ vai này là điều kiện để tránh xung đột, không phải sở thích.
 
-### ⚙️ codex — Coder
+### ⚙️ Coder — vai linh hoạt, giao cho tool nào cũng theo cùng một khuôn
 
-Nhận issue có nhãn `agent:codex`. **Description trên Linear chính là spec** — nếu spec mơ hồ thì output sẽ mơ hồ, và đó cũng là bài học về cách viết ticket tốt.
+Nhận issue có nhãn `agent:codex` (hoặc nhãn tương ứng nếu bạn giao cho tool khác). **`SPEC.md` sinh ra từ description Linear chính là spec** — spec mơ hồ thì output mơ hồ, đó cũng là bài học về cách viết ticket tốt.
+
+Quy tắc — áp dụng cho **bất kỳ tool nào** đang giữ vai Coder, không riêng codex:
+
+- Làm trên **branch riêng**, đặt tên `<tên tool>/nes-XX-...` (`codex/...`, `opencode/...`, hay tên tool khác) — không bao giờ commit thẳng vào branch lesson `hien/...` của bạn
+- Đọc `AGENTS.md` (hợp đồng chung) + `docs/lessons/XX-*/SPEC.md` (spec của đúng lesson) trước khi làm
+- Output **luôn đi qua PR** để Claude review — không merge thẳng
+
+**Dùng chủ yếu:** codex — công cụ mặc định cho vai Coder.
 
 ```bash
-# Giao việc: mở terminal ở thư mục repo, checkout branch riêng trước
 git checkout -b codex/nes-12-reference-solution
 codex "Đọc AGENTS.md trước. Implement theo spec trong docs/lessons/02-controllers/SPEC.md.
        Chỉ sửa file trong src/. Không sửa docs/ và .github/."
 ```
 
-Ràng buộc bắt buộc:
+**Dùng thỉnh thoảng (không bắt buộc):** khi muốn thêm một góc nhìn để đối chiếu, giao **cùng một `SPEC.md`** cho tool khác (opencode, hoặc bất kỳ CLI agent nào bạn có sẵn) trên branch riêng của tool đó — quy tắc ở trên áp dụng y hệt, không cần tài liệu riêng cho từng tool. Mục tiêu không phải tìm "tool nào giỏi hơn" mà nhận ra: cùng một spec có thể sinh nhiều thiết kế hợp lệ, và **bạn** là người quyết định chọn cái nào.
 
-- Làm trên **branch riêng** (`codex/...`), không bao giờ commit thẳng vào branch lesson của bạn
-- Output **luôn đi qua PR** để Claude review
-- Phải đọc `AGENTS.md` trước — file này là hợp đồng chung cho mọi agent
+**Cách dùng có ích nhất khi học:** bạn tự làm hands-on trước, _xong xuôi rồi_ mới xem "lời giải tham chiếu" của Coder agent và so sánh. Khác biệt giữa hai bản là bài học đắt giá nhất trong lesson đó.
 
-**Cách dùng có ích nhất khi học:** bạn tự làm hands-on trước, _xong xuôi rồi_ mới xem "lời giải tham chiếu" của codex và so sánh. Khác biệt giữa hai bản là bài học đắt giá nhất trong lesson đó.
+---
 
-### 🧪 opencode — Agent đối chứng
+## MCP: chỉ Claude Code nối vào PM/knowledge tool
 
-Dùng từ Phase 7 trở đi. Giao **cùng một task** cho codex và opencode, rồi so sánh cách hai model tiếp cận. Mục tiêu không phải tìm ra "model nào giỏi hơn" mà là nhận ra: cùng một spec có thể sinh ra nhiều thiết kế hợp lệ, và **bạn** mới là người quyết định chọn cái nào.
+**Nguyên tắc: Claude Code là single-writer cho Linear/Notion/Slack/Postman.** Vai Coder — bất kể tool nào đang giữ vai đó — **không** cấu hình các MCP server này, dù về mặt kỹ thuật nhiều CLI agent (codex, opencode...) đều hỗ trợ tự thêm MCP server riêng qua file config của chính nó.
+
+Lý do và các phương án đã cân nhắc: xem [ADR-0004](../adr/0004-mcp-single-writer-cho-coder-agent.md). Tóm tắt: nhiều agent cùng ghi vào Linear/Notion/Slack tạo race condition thật (đổi trạng thái issue chồng nhau, Slack nhận thông báo trùng, Notion bị ghi đè) — đúng vấn đề "nhiều nguồn sự thật" mà [ADR-0002](../adr/0002-linear-lam-nguon-su-that.md) đã né ở tầng hệ thống, giờ né tiếp ở tầng agent.
+
+| Vai                     | Nối Linear/Notion/Slack/Postman? | Cách nhận spec                  |
+| ----------------------- | -------------------------------- | ------------------------------- |
+| Claude Code (PM)        | Có — agent PM duy nhất           | Đọc thẳng issue qua Linear MCP  |
+| Coder (bất kỳ tool nào) | Không                            | Đọc `docs/lessons/XX-*/SPEC.md` |
+
+### SPEC.md là gì
+
+Ở bước `/lesson-start`, Claude Code copy nguyên description của issue Linear thành `docs/lessons/XX-ten-lesson/SPEC.md`. Đây là **bản chiếu tại một thời điểm** — giống vai trò `ROADMAP.md` với Linear — không phải nguồn sự thật. Nếu issue đổi sau đó, chỉ Claude Code được cập nhật lại file; Coder agent không tự sửa.
+
+---
+
+## Cheatsheet: giao việc cho Coder
+
+Một khuôn duy nhất, đổi tên tool tùy bạn dùng gì hôm đó. Luôn checkout branch riêng trước, không bao giờ làm trên branch `hien/...` của bạn:
+
+```bash
+# Mặc định: codex
+git checkout -b codex/nes-12-reference-solution
+codex "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
+       Implement theo spec. Chỉ sửa file trong src/ và test/."
+
+# Muốn thêm góc nhìn đối chứng: đổi branch prefix + lệnh gọi tool khác, quy tắc y hệt
+git checkout -b opencode/nes-12-alt-solution
+opencode run "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
+              Implement theo spec. Chỉ sửa file trong src/ và test/."
+```
+
+Sau đó luôn mở PR riêng cho mỗi branch để Claude Code review — không merge thẳng, không gộp chung PR với branch hands-on của bạn.
 
 ---
 
@@ -67,13 +105,14 @@ Nhiều agent chỉ hợp tác được khi cùng đọc một nguồn ngữ c�
 
 ## Ranh giới file (tránh agent giẫm chân nhau)
 
-| Đường dẫn                                       | Ai được sửa                                    |
-| ----------------------------------------------- | ---------------------------------------------- |
-| `src/**`, `test/**`                             | Bạn (hands-on) · codex (khi được giao rõ ràng) |
-| `docs/lessons/**`                               | Claude (soạn) + bạn (bổ sung ghi chú cá nhân)  |
-| `docs/adr/**`, `docs/workflow/**`               | Claude, kèm bạn duyệt qua PR                   |
-| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                         |
-| `AGENTS.md`, `CLAUDE.md`                        | Claude, kèm bạn duyệt qua PR                   |
+| Đường dẫn                                       | Ai được sửa                                                        |
+| ----------------------------------------------- | ------------------------------------------------------------------ |
+| `src/**`, `test/**`                             | Bạn (hands-on) · Coder agent (khi được giao rõ ràng, branch riêng) |
+| `docs/lessons/**/SPEC.md`                       | Chỉ Claude (bản chiếu từ Linear) — Coder agent chỉ đọc, không sửa  |
+| `docs/lessons/**`                               | Claude (soạn) + bạn (bổ sung ghi chú cá nhân)                      |
+| `docs/adr/**`, `docs/workflow/**`               | Claude, kèm bạn duyệt qua PR                                       |
+| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                             |
+| `AGENTS.md`, `CLAUDE.md`                        | Claude, kèm bạn duyệt qua PR                                       |
 
 ## Nhật ký thử nghiệm agent
 

@@ -62,7 +62,7 @@ Claude đóng vai người thầy:
 
 **Claude không code hộ phần hands-on.** Vai trò của Claude ở bước này là gợi ý, chỉ chỗ sai, đặt câu hỏi ngược.
 
-Muốn có "lời giải tham chiếu" để đối chiếu sau khi tự làm xong: gắn nhãn `agent:codex` lên issue và giao cho **codex** làm ở branch riêng — xem [AGENT-MODEL.md](AGENT-MODEL.md).
+Muốn có "lời giải tham chiếu" để đối chiếu sau khi tự làm xong: gắn nhãn `agent:codex` (hoặc nhãn tương ứng cho tool khác) lên issue và giao cho **Coder agent** — mặc định là codex — làm ở branch riêng, xem [AGENT-MODEL.md](AGENT-MODEL.md).
 
 ### Bước 4 — Review · `/lesson-review`
 
