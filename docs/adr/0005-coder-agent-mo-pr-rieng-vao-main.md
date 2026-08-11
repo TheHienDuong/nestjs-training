@@ -6,7 +6,7 @@
 
 ## Bối cảnh
 
-ADR-0003, quyết định #5: *"Nhánh của agent (`codex/...`) merge vào **branch lesson**, không merge trực tiếp vào `main`"* — thiết kế tại thời điểm đó cho đúng một Coder cố định (codex) làm "lời giải tham chiếu" cho từng lesson.
+ADR-0003, quyết định #5: _"Nhánh của agent (`codex/...`) merge vào **branch lesson**, không merge trực tiếp vào `main`"_ — thiết kế tại thời điểm đó cho đúng một Coder cố định (codex) làm "lời giải tham chiếu" cho từng lesson.
 
 [ADR-0004](0004-mcp-single-writer-cho-coder-agent.md) (2026-08-11) đổi sang mô hình **vai Coder linh hoạt**: nhiều tool (codex, opencode, Hermes...) đều có thể đóng vai, mỗi tool làm trên branch riêng đặt tên theo chính tool đó, và output bắt buộc qua PR để Claude Code (vai Reviewer) duyệt. Với mô hình mới, quyết định #5 của ADR-0003 không còn phù hợp:
 
@@ -22,11 +22,11 @@ ADR-0003, quyết định #5: *"Nhánh của agent (`codex/...`) merge vào **br
 
 ## Các phương án đã cân nhắc
 
-| Phương án                                       | Ưu                                                        | Nhược                                                                     | Vì sao không chọn                                          |
-| ----------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| Merge vào branch lesson (ADR-0003 #5)           | Lời giải tham chiếu nằm ngay cạnh code của học viên       | Nhiễu lịch sử lesson; không rõ "branch lesson" nào khi nhiều tool; review lệch tuyến | Mâu thuẫn với ADR-0004                                      |
-| **PR riêng vào main** _(đã chọn)_               | Một điểm review duy nhất; lịch sử main sạch; áp dụng cho mọi tool | Mỗi lời giải tham chiếu tốn thêm một PR                                    | —                                                          |
-| Commit thẳng vào branch lesson, không review    | Nhanh nhất                                                 | Vi phạm "không agent nào tự review code mình"                             | Mất đúng phần giá trị học tập cao nhất                      |
+| Phương án                                    | Ưu                                                                | Nhược                                                                                | Vì sao không chọn                      |
+| -------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------- |
+| Merge vào branch lesson (ADR-0003 #5)        | Lời giải tham chiếu nằm ngay cạnh code của học viên               | Nhiễu lịch sử lesson; không rõ "branch lesson" nào khi nhiều tool; review lệch tuyến | Mâu thuẫn với ADR-0004                 |
+| **PR riêng vào main** _(đã chọn)_            | Một điểm review duy nhất; lịch sử main sạch; áp dụng cho mọi tool | Mỗi lời giải tham chiếu tốn thêm một PR                                              | —                                      |
+| Commit thẳng vào branch lesson, không review | Nhanh nhất                                                        | Vi phạm "không agent nào tự review code mình"                                        | Mất đúng phần giá trị học tập cao nhất |
 
 ## Hệ quả
 

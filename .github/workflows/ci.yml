@@ -70,7 +70,7 @@ jobs:
         run: pnpm exec eslint "{src,apps,libs,test}/**/*.ts" --max-warnings=0
 
       - name: Kiểm tra format (Prettier)
-        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts"
+        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"
 
       - name: Unit tests
         run: pnpm test
