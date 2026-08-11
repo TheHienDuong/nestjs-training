@@ -1,6 +1,6 @@
 # ADR-0003: Trunk-based development — một lesson một PR, squash merge
 
-- **Trạng thái:** Accepted
+- **Trạng thái:** Accepted (quyết định #5 được thay thế bởi [ADR-0005](0005-coder-agent-mo-pr-rieng-vao-main.md))
 - **Ngày:** 2026-08-10
 - **Người quyết định:** Hien Duong
 

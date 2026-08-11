@@ -53,15 +53,21 @@ Copy `docs/templates/lesson-note.md` → `docs/lessons/XX-ten-lesson/README.md`.
 
 Điền sẵn: tiêu đề, bảng metadata (phase, Linear ID, branch, docs, ngày hôm nay), và phần **🎯 Mục tiêu** lấy từ description của issue. **Để trống** các mục Lý thuyết / Hands-on / Quiz — chúng được điền ở bước `/teach` và `/lesson-review`.
 
-### 6. Chuyển issue sang In Progress
+### 6. Sinh SPEC.md cho coder agent
+
+Copy nguyên description của issue Linear thành `docs/lessons/XX-ten-lesson/SPEC.md`. Đây là file duy nhất mà Coder agent (codex, hoặc tool khác đang lấp vai Coder) đọc để biết làm gì — không có quyền MCP vào Linear (xem [ADR-0004](../../docs/adr/0004-mcp-single-writer-cho-coder-agent.md) và `docs/workflow/AGENT-MODEL.md`). Chỉ Claude được sửa file này; nếu issue Linear đổi sau đó, cập nhật lại `SPEC.md` cùng lúc.
+
+### 7. Chuyển issue sang In Progress
 
 Cập nhật state issue qua Linear MCP. (Nếu GitHub integration đã bật thì bước 4 cũng tự làm việc này — cập nhật lại vẫn vô hại vì cùng một giá trị.)
 
-### 7. Báo cáo cho user
+Lưu ý: bước cập nhật Linear (bước 3, 6, 7) chỉ Claude Code làm được — Coder agent (dù là codex hay tool nào khác) không có kết nối MCP tới Linear (xem `docs/workflow/AGENT-MODEL.md`), nên không thể tự chạy skill này.
+
+### 8. Báo cáo cho user
 
 Trả lời gọn bằng tiếng Việt:
 
-- Lesson nào, branch nào, note ở đâu
+- Lesson nào, branch nào, note ở đâu, `SPEC.md` ở đâu
 - Mục tiêu của lesson (3–5 bullet)
 - Câu tiếp theo nên gõ: `/teach <chủ đề>`
 
@@ -98,3 +104,4 @@ Trả lời gọn bằng tiếng Việt:
 - **Không** viết code `src/` — đây là bước mở lesson, chưa phải bước làm.
 - **Không** commit gì. Chỉ tạo branch và file note.
 - **Không** tự đổi tên branch của Linear cho "đẹp hơn".
+- `SPEC.md` chỉ Claude được sửa — Coder agent (codex hoặc tool khác lấp vai đó) chỉ đọc.

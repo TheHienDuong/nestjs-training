@@ -24,11 +24,13 @@ Với bạn, ADR còn có giá trị riêng: **viết ADR buộc bạn phải di
 
 ## Danh sách
 
-| #                                             | Quyết định                                                         | Trạng thái |
-| --------------------------------------------- | ------------------------------------------------------------------ | ---------- |
-| [0001](0001-chon-prisma-lam-orm.md)           | Chọn Prisma làm ORM thay vì TypeORM                                | Accepted   |
-| [0002](0002-linear-lam-nguon-su-that.md)      | Linear là nguồn sự thật cho task, tích hợp native với GitHub/Slack | Accepted   |
-| [0003](0003-trunk-based-mot-lesson-mot-pr.md) | Trunk-based development: một lesson một PR                         | Accepted   |
+| #                                                 | Quyết định                                                         | Trạng thái |
+| ------------------------------------------------- | ------------------------------------------------------------------ | ---------- |
+| [0001](0001-chon-prisma-lam-orm.md)               | Chọn Prisma làm ORM thay vì TypeORM                                | Accepted   |
+| [0002](0002-linear-lam-nguon-su-that.md)          | Linear là nguồn sự thật cho task, tích hợp native với GitHub/Slack | Accepted   |
+| [0003](0003-trunk-based-mot-lesson-mot-pr.md)     | Trunk-based development: một lesson một PR                         | Accepted   |
+| [0004](0004-mcp-single-writer-cho-coder-agent.md) | Claude Code là single-writer MCP; coder agent chỉ nhận SPEC.md     | Accepted   |
+| [0005](0005-coder-agent-mo-pr-rieng-vao-main.md)   | Coder agent mở PR riêng vào main (thay thế quyết định #5 của ADR-0003) | Accepted   |
 
 ## Template
 
