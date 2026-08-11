@@ -5,6 +5,9 @@
 .serena
 .claude/*.json
 
+# Hermes local working docs (plans — không commit)
+.hermes/plans/
+
 # Logs
 logs
 *.log
