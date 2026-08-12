@@ -54,7 +54,7 @@ PR with the line  "Fixes NES-12"  gets merged →  issue NES-12 automatically mo
 
 This is why **branch names and PR descriptions are data, not decorative text**. Name a branch wrong and the automation silently stops working — no error messages, and this is the hardest type of error to detect.
 
-> 📖 Reason for choosing Linear over Trello / GitHub Projects: [ADR-0002](../../adr/0002-linear-lam-nguon-su-that.md)
+> 📖 Reason for choosing Linear over Trello / GitHub Projects: [ADR-0002](../../adr/0002-linear-as-source-of-truth.md)
 
 ### 2. Why does Git only have one main branch (`main`)?
 
@@ -75,7 +75,7 @@ git log --oneline main
 
 `git log` tells the story of your learning journey. If you keep every "wip", "fix typo" commit, you lose this property.
 
-> 📖 [ADR-0003](../../adr/0003-trunk-based-mot-lesson-mot-pr.md)
+> 📖 [ADR-0003](../../adr/0003-trunk-based-one-lesson-one-pr.md)
 
 ### 3. Conventional Commits — why are you blocked when you write a wrong commit message?
 
@@ -451,7 +451,7 @@ Answer in your own words, don't copy from the section above.
 - [Docker Compose — Compose file reference](https://docs.docker.com/reference/compose-file/)
 - [Linear — GitHub integration](https://linear.app/docs/github)
 - [husky](https://typicode.github.io/husky/) · [lint-staged](https://github.com/lint-staged/lint-staged) · [commitlint](https://commitlint.js.org/)
-- Repo ADRs: [0001 Prisma](../../adr/0001-chon-prisma-lam-orm.md) · [0002 Linear](../../adr/0002-linear-lam-nguon-su-that.md) · [0003 Trunk-based](../../adr/0003-trunk-based-mot-lesson-mot-pr.md)
+- Repo ADRs: [0001 Prisma](../../adr/0001-choose-prisma-as-orm.md) · [0002 Linear](../../adr/0002-linear-as-source-of-truth.md) · [0003 Trunk-based](../../adr/0003-trunk-based-one-lesson-one-pr.md)
 
 ---
 

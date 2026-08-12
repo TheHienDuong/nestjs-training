@@ -58,7 +58,7 @@ codex "Read AGENTS.md first. Implement per the spec in docs/lessons/02-controlle
 
 **Principle: Claude Code is the single-writer for Linear/Notion/Slack/Postman.** The Coder role — no matter which tool is filling it — **does not** configure these MCP servers, even though technically many CLI agents (codex, opencode...) support adding their own MCP servers via their own config files.
 
-Reasons and considered alternatives: see [ADR-0004](../adr/0004-mcp-single-writer-cho-coder-agent.md). Summary: multiple agents writing to Linear/Notion/Slack creates real race conditions (overlapping issue status changes, duplicate Slack notifications, overwritten Notion entries) — this is exactly the "multiple sources of truth" problem that [ADR-0002](../adr/0002-linear-lam-nguon-su-that.md) avoided at the system layer, and now avoids at the agent layer.
+Reasons and considered alternatives: see [ADR-0004](../adr/0004-mcp-single-writer-for-coder-agent.md). Summary: multiple agents writing to Linear/Notion/Slack creates real race conditions (overlapping issue status changes, duplicate Slack notifications, overwritten Notion entries) — this is exactly the "multiple sources of truth" problem that [ADR-0002](../adr/0002-linear-as-source-of-truth.md) avoided at the system layer, and now avoids at the agent layer.
 
 | Role             | Connects to Linear/Notion/Slack/Postman? | How to receive spec                  |
 | ---------------- | ---------------------------------------- | ------------------------------------ |

@@ -8,7 +8,7 @@
 
 ADR-0003, decision #5: _"Agent branches (`codex/...`) merge into the **lesson branch**, not directly into `main`"_ — this design was correct at the time for a single fixed Coder (codex) serving as the "reference solution" for each lesson.
 
-[ADR-0004](0004-mcp-single-writer-cho-coder-agent.md) (2026-08-11) switched to a **flexible Coder role model**: multiple tools (codex, opencode, Hermes...) can all take on the Coder role, each tool works on its own branch named after the tool itself, and all output must go through a PR for Claude Code (in the Reviewer role) to review. Under the new model, decision #5 of ADR-0003 is no longer appropriate:
+[ADR-0004](0004-mcp-single-writer-for-coder-agent.md) (2026-08-11) switched to a **flexible Coder role model**: multiple tools (codex, opencode, Hermes...) can all take on the Coder role, each tool works on its own branch named after the tool itself, and all output must go through a PR for Claude Code (in the Reviewer role) to review. Under the new model, decision #5 of ADR-0003 is no longer appropriate:
 
 - **The lesson branch is where learners do hands-on practice.** Mixing Coder agent code into it pollutes the learning history and the comparison log `docs/lessons/_agent-log.md` (you can no longer tell which parts belong to the learner and which belong to the agent).
 - **There is no way to identify which "lesson branch" to use** when multiple tools are all taking on the Coder role (each tool has its own separate branch).

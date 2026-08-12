@@ -26,11 +26,11 @@ For you, ADRs also have unique value: **writing an ADR forces you to articulate 
 
 | #                                                 | Decision                                                                                  | Status   |
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------- |
-| [0001](0001-chon-prisma-lam-orm.md)               | Choose Prisma as ORM instead of TypeORM                                                   | Accepted |
-| [0002](0002-linear-lam-nguon-su-that.md)          | Linear is the single source of truth for tasks, with native integration with GitHub/Slack | Accepted |
-| [0003](0003-trunk-based-mot-lesson-mot-pr.md)     | Trunk-based development: one lesson per PR                                                | Accepted |
-| [0004](0004-mcp-single-writer-cho-coder-agent.md) | Claude Code is the single-writer MCP; coder agent only receives SPEC.md                   | Accepted |
-| [0005](0005-coder-agent-mo-pr-rieng-vao-main.md)  | Coder agent opens separate PRs to main (replaces decision #5 from ADR-0003)               | Accepted |
+| [0001](0001-choose-prisma-as-orm.md)              | Choose Prisma as ORM instead of TypeORM                                                   | Accepted |
+| [0002](0002-linear-as-source-of-truth.md)         | Linear is the single source of truth for tasks, with native integration with GitHub/Slack | Accepted |
+| [0003](0003-trunk-based-one-lesson-one-pr.md)     | Trunk-based development: one lesson per PR                                                | Accepted |
+| [0004](0004-mcp-single-writer-for-coder-agent.md) | Claude Code is the single-writer MCP; coder agent only receives SPEC.md                   | Accepted |
+| [0005](0005-coder-agent-opens-pr-to-main.md)      | Coder agent opens separate PRs to main (replaces decision #5 from ADR-0003)               | Accepted |
 
 ## Template
 

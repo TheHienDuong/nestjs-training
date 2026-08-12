@@ -11,7 +11,7 @@ Sync progress parts that **native integrations can't handle**.
 
 ## Why you need this skill — and its most important boundary
 
-As per `docs/adr/0002-linear-lam-nguon-su-that.md`, Linear is the single source of truth for task status, and it **automatically** updates status via GitHub integration, **automatically** sends notifications via Slack integration.
+As per `docs/adr/0002-linear-as-source-of-truth.md`, Linear is the single source of truth for task status, and it **automatically** updates status via GitHub integration, **automatically** sends notifications via Slack integration.
 
 > ⚠️ This skill **does not** update Linear issue status.
 > Doing that would create a second source of truth — exactly what ADR-0002 aims to avoid.

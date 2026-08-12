@@ -14,7 +14,7 @@ Open a new lesson following the correct process, so all lessons look consistent 
 
 ## Why this skill is needed
 
-This task is repeated 26 times. Doing it manually will lead to inconsistencies: Lesson 3 uses one branch naming style, Lesson 12 uses another, notes are missing the "Connect to prior knowledge" section — which is actually the most important section. Especially, the branch name **must** match the Linear convention, otherwise you will lose all task status automation (see `docs/adr/0002-linear-lam-nguon-su-that.md`).
+This task is repeated 26 times. Doing it manually will lead to inconsistencies: Lesson 3 uses one branch naming style, Lesson 12 uses another, notes are missing the "Connect to prior knowledge" section — which is actually the most important section. Especially, the branch name **must** match the Linear convention, otherwise you will lose all task status automation (see `docs/adr/0002-linear-as-source-of-truth.md`).
 
 ## Inputs
 
@@ -60,7 +60,7 @@ Pre-fill: the title, metadata table (phase, Linear ID, branch, docs, today's dat
 
 ### 6. Generate SPEC.md for the coder agent
 
-Copy the full Linear issue description to `docs/lessons/XX-lesson-name/SPEC.md`. This is the only file the Coder agent (codex, or any other tool acting as the Coder) reads to know what to do — it has no MCP access to Linear (see [ADR-0004](../../docs/adr/0004-mcp-single-writer-cho-coder-agent.md) and `docs/workflow/AGENT-MODEL.md`). Only Claude can edit this file; if the Linear issue is updated later, update `SPEC.md` at the same time.
+Copy the full Linear issue description to `docs/lessons/XX-lesson-name/SPEC.md`. This is the only file the Coder agent (codex, or any other tool acting as the Coder) reads to know what to do — it has no MCP access to Linear (see [ADR-0004](../../docs/adr/0004-mcp-single-writer-for-coder-agent.md) and `docs/workflow/AGENT-MODEL.md`). Only Claude can edit this file; if the Linear issue is updated later, update `SPEC.md` at the same time.
 
 ### 7. Move the issue to In Progress
 

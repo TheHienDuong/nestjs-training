@@ -1,6 +1,6 @@
 # ADR-0003: Trunk-based development — one lesson, one PR, squash merge
 
-- **Status:** Accepted (decision #5 is superseded by [ADR-0005](0005-coder-agent-mo-pr-rieng-vao-main.md))
+- **Status:** Accepted (decision #5 is superseded by [ADR-0005](0005-coder-agent-opens-pr-to-main.md))
 - **Date:** 2026-08-10
 - **Decision maker:** Hien Duong
 

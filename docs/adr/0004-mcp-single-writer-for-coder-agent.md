@@ -8,7 +8,7 @@
 
 The project splits two roles: Claude Code holds the fixed roles of Mentor·PM·Reviewer; the **Coder** role is flexible, primarily **codex**, occasionally replaced/augmented by other tools (**opencode**, or opencode running the DeepSeek model via the `opencode-go` provider...). All these CLI agents support self-configuring MCP servers (Linear, Notion, Slack...) exactly the same way Claude Code currently does.
 
-If each agent independently connects to Linear/Notion/Slack to **read and write**, the risks are real: two agents simultaneously changing the status of the same issue, Slack receiving duplicate notifications from multiple sources, Notion notes being overwritten by one agent and overwriting another. This is exactly the "multiple sources of truth" problem that [ADR-0002](0002-linear-lam-nguon-su-that.md) avoided by selecting Linear as the single source of truth — but ADR-0002 only addressed multiple _systems_, not multiple _agents_.
+If each agent independently connects to Linear/Notion/Slack to **read and write**, the risks are real: two agents simultaneously changing the status of the same issue, Slack receiving duplicate notifications from multiple sources, Notion notes being overwritten by one agent and overwriting another. This is exactly the "multiple sources of truth" problem that [ADR-0002](0002-linear-as-source-of-truth.md) avoided by selecting Linear as the single source of truth — but ADR-0002 only addressed multiple _systems_, not multiple _agents_.
 
 ## Decision
 
