@@ -1,42 +1,42 @@
 /**
-  * commitlint — checks commit messages against the Conventional Commits standard.
-  * Run through the .husky/commit-msg git hook
+ * commitlint — validates commit messages against the Conventional Commits standard.
+ * Runs via the .husky/commit-msg git hook
  *
-  * Format:  <type>(<scope>): <description>
-  * Correct example: feat(tasks): add CRUD endpoints for tasks
-  * docs(lesson-02): notes on controllers and routing
+ * Format:     <type>(<scope>): <description>
+ * Good examples: feat(tasks): add CRUD endpoints for tasks
+ *             docs(lesson-02): note about controllers and routing
  *             chore: bump @nestjs/core to 11.1.28
  *
-  * Why format constraints:
-  * - Git history should be readable like a changelog, not a list of "update", "fix bug" commits.
-  * - Type + scope tells you immediately what type a commit is without needing to open the diff.
-  * - Serves as a prerequisite for automatically generating CHANGELOG and semantic version at a later stage.
+ * Why enforce this format:
+ *   - Git history reads like a changelog, not a list of "update", "fix bug".
+ *   - Type + scope tells you IMMEDIATELY what kind of commit it is without opening the diff.
+ *   - It's a prerequisite for later auto-generating CHANGELOGs and semantic versions.
  *
-  * View all conventions in docs/workflow/WORKFLOW.md
+ * See the full conventions in docs/workflow/WORKFLOW.md
  */
 export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
-    // Limit types to avoid inventing a new type every day.
+    // Limit the types to avoid making up a new type every other day.
     'type-enum': [
       2,
       'always',
       [
-        'feat', // Add features to the API
-        'fix', // bug fix
+        'feat', // add a feature to the API
+        'fix', // fix a bug
         'docs', // lesson note, README, ADR
-        'test', // add/edit test
-        'refactor', // Change the structure, without changing the behavior.
+        'test', // add/edit tests
+        'refactor', // restructure code without changing behavior
         'chore', // config, dependency, CI
-        'style', // format, do not change logic
+        'style', // formatting, no logic change
         'perf', // performance optimization
-        'revert', // undo the previous commit
+        'revert', // revert a previous commit
       ],
     ],
-    // Allow the subject to be longer than the default, as Vietnamese descriptions consume more characters.
+    // Allow a longer subject than the default since Vietnamese descriptions take more characters.
     'subject-max-length': [2, 'always', 100],
-    // Off: the original rule prohibits subjects from starting with uppercase letters, but for Vietnamese
-    // Usually capitalize the first word of a sentence, as well as proper nouns (Prisma, NestJS).
+    // Disabled: the default rule forbids the subject from starting with an uppercase letter, but
+    // sentences are often capitalized at the start and proper nouns (Prisma, NestJS) are also capitalized.
     'subject-case': [0],
   },
 };

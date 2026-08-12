@@ -1,9 +1,11 @@
-# Dependabot — GitHub's bot that automatically monitors dependencies and opens PRs when new versions are available.
+# Dependabot — GitHub's bot that automatically tracks dependencies and opens a PR when a new version is available.
 #
-# Why even a learning project should enable it:
+# Why a learning project should also enable it:
 #   1. Outdated dependencies are the most common source of security vulnerabilities in Node.js.
-#   2. You get to build a real habit: bump version -> read changelog -> wait for CI -> merge, instead of having to upgrade 40 packages all at once 2 years later.
-#   3. Every Dependabot PR is a chance to see CI in action: if the new version breaks tests, CI will fail right on that PR and you'll immediately know why.
+#   2. You get to practice a real habit: bump version -> read the changelog -> wait for CI ->
+#      merge, instead of having to bump 40 packages at once two years later.
+#   3. Every Dependabot PR is a chance to see CI at work: if a new version breaks a test,
+#      CI goes red right on that PR and you immediately know why.
 
 version: 2
 updates:
@@ -12,12 +14,13 @@ updates:
     schedule:
       interval: weekly
       day: monday
-    # Limit to 5 open PRs at a time to avoid being overwhelmed.
+    # Limit to 5 open PRs at a time to avoid getting flooded.
     open-pull-requests-limit: 5
     commit-message:
       prefix: chore
       include: scope
-    # Group packages from the same family into a SINGLE PR. Upgrading @nestjs/* individually easily causes version mismatches between packages in the same suite, and Nest requires them to be upgraded together.
+    # Group packages from the same family into ONE PR. Bumping @nestjs/* individually easily causes
+    # version mismatches between packages in the same set, and Nest requires them to stay in sync.
     groups:
       nestjs:
         patterns:
@@ -37,8 +40,9 @@ updates:
     labels:
       - dependencies
 
-  # Keep the GitHub Actions in workflows up to date.
-  - package-ecosystem: github-actions    directory: '/'
+  # Keep the GitHub Actions used in the workflow up to date.
+  - package-ecosystem: github-actions
+    directory: '/'
     schedule:
       interval: monthly
     commit-message:

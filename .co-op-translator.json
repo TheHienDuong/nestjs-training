@@ -1,0 +1,146 @@
+{
+  ".claude/skills/lesson-review/SKILL.md": {
+    "original_hash": "e97d6be28e88d20d4c6a836ebf51883d",
+    "translation_date": "2026-08-12T03:19:16+00:00",
+    "source_file": ".claude/skills/lesson-review/SKILL.md",
+    "language_code": "en"
+  },
+  ".claude/skills/lesson-start/SKILL.md": {
+    "original_hash": "7e80c0ee28f3a777ec2a03395ca9a2b9",
+    "translation_date": "2026-08-12T03:18:06+00:00",
+    "source_file": ".claude/skills/lesson-start/SKILL.md",
+    "language_code": "en"
+  },
+  ".claude/skills/sync-progress/SKILL.md": {
+    "original_hash": "95e1eb8e97ceea3778dfa3a6e9a14cb4",
+    "translation_date": "2026-08-12T03:23:42+00:00",
+    "source_file": ".claude/skills/sync-progress/SKILL.md",
+    "language_code": "en"
+  },
+  ".claude/skills/teach/SKILL.md": {
+    "original_hash": "b7bcd9bff895bcc637fcdf5803d543b1",
+    "translation_date": "2026-08-12T03:22:49+00:00",
+    "source_file": ".claude/skills/teach/SKILL.md",
+    "language_code": "en"
+  },
+  ".hermes.md": {
+    "original_hash": "b1a790c854448ce09711a3d47f172bee",
+    "translation_date": "2026-08-12T03:09:20+00:00",
+    "source_file": ".hermes.md",
+    "language_code": "en"
+  },
+  ".hermes/README.md": {
+    "original_hash": "2395949a5db0c63c1163e268cffd12c2",
+    "translation_date": "2026-08-12T03:17:10+00:00",
+    "source_file": ".hermes/README.md",
+    "language_code": "en"
+  },
+  "AGENTS.md": {
+    "original_hash": "674a42d4f9843e3c551457d479d6056d",
+    "translation_date": "2026-08-12T03:11:17+00:00",
+    "source_file": "AGENTS.md",
+    "language_code": "en"
+  },
+  "CLAUDE.md": {
+    "original_hash": "b04e63fd1d865908b00f11ec85c63f86",
+    "translation_date": "2026-08-12T03:12:26+00:00",
+    "source_file": "CLAUDE.md",
+    "language_code": "en"
+  },
+  "README.md": {
+    "original_hash": "4b7f38a154db4bf55f29d2ea66592434",
+    "translation_date": "2026-08-12T03:08:01+00:00",
+    "source_file": "README.md",
+    "language_code": "en"
+  },
+  "docs/ROADMAP.md": {
+    "original_hash": "8b0c6d4c9f3bb49eed752005d2c55d72",
+    "translation_date": "2026-08-12T03:15:55+00:00",
+    "source_file": "docs/ROADMAP.md",
+    "language_code": "en"
+  },
+  "docs/adr/0001-chon-prisma-lam-orm.md": {
+    "original_hash": "964a44c82daba28c432d9845d1fe1069",
+    "translation_date": "2026-08-12T03:27:25+00:00",
+    "source_file": "docs/adr/0001-chon-prisma-lam-orm.md",
+    "language_code": "en"
+  },
+  "docs/adr/0002-linear-lam-nguon-su-that.md": {
+    "original_hash": "355fa53530fa0e83339e2ae1a8c7b4c6",
+    "translation_date": "2026-08-12T03:31:08+00:00",
+    "source_file": "docs/adr/0002-linear-lam-nguon-su-that.md",
+    "language_code": "en"
+  },
+  "docs/adr/0003-trunk-based-mot-lesson-mot-pr.md": {
+    "original_hash": "2eb853d471469b80c8f356efb6fb001b",
+    "translation_date": "2026-08-12T03:25:11+00:00",
+    "source_file": "docs/adr/0003-trunk-based-mot-lesson-mot-pr.md",
+    "language_code": "en"
+  },
+  "docs/adr/0004-mcp-single-writer-cho-coder-agent.md": {
+    "original_hash": "5b6c07eff2d370dda7a43cb52a604905",
+    "translation_date": "2026-08-12T03:29:33+00:00",
+    "source_file": "docs/adr/0004-mcp-single-writer-cho-coder-agent.md",
+    "language_code": "en"
+  },
+  "docs/adr/0005-coder-agent-mo-pr-rieng-vao-main.md": {
+    "original_hash": "40714b65953833c996108815879ccf72",
+    "translation_date": "2026-08-12T03:24:15+00:00",
+    "source_file": "docs/adr/0005-coder-agent-mo-pr-rieng-vao-main.md",
+    "language_code": "en"
+  },
+  "docs/adr/README.md": {
+    "original_hash": "2e642d8b949c21d6b584c01f846c76dc",
+    "translation_date": "2026-08-12T03:28:13+00:00",
+    "source_file": "docs/adr/README.md",
+    "language_code": "en"
+  },
+  "docs/lessons/00-setup/README.md": {
+    "original_hash": "a26381ae2b17cceea2f3e61b3a7de5a6",
+    "translation_date": "2026-08-12T03:48:23+00:00",
+    "source_file": "docs/lessons/00-setup/README.md",
+    "language_code": "en"
+  },
+  "docs/lessons/01-first-steps/README.md": {
+    "original_hash": "d2ac7b48ff6d982ac7f459c84aff0876",
+    "translation_date": "2026-08-12T03:43:06+00:00",
+    "source_file": "docs/lessons/01-first-steps/README.md",
+    "language_code": "en"
+  },
+  "docs/lessons/_agent-log.md": {
+    "original_hash": "d555a97564a34cbfcea617d00b6ef12e",
+    "translation_date": "2026-08-12T03:35:25+00:00",
+    "source_file": "docs/lessons/_agent-log.md",
+    "language_code": "en"
+  },
+  "docs/templates/lesson-note.md": {
+    "original_hash": "ad6042b521212b907dc675daabf5cc2c",
+    "translation_date": "2026-08-12T03:38:06+00:00",
+    "source_file": "docs/templates/lesson-note.md",
+    "language_code": "en"
+  },
+  "docs/templates/retro.md": {
+    "original_hash": "dac1509eb785e58c352400f5e0b7e438",
+    "translation_date": "2026-08-12T03:36:05+00:00",
+    "source_file": "docs/templates/retro.md",
+    "language_code": "en"
+  },
+  "docs/workflow/AGENT-MODEL.md": {
+    "original_hash": "bdd4b367cb86860dc98832c5cd842ee1",
+    "translation_date": "2026-08-12T03:32:49+00:00",
+    "source_file": "docs/workflow/AGENT-MODEL.md",
+    "language_code": "en"
+  },
+  "docs/workflow/WORKFLOW.md": {
+    "original_hash": "ca685aaa8e8f82ad96cc4d6ad2a1b9b9",
+    "translation_date": "2026-08-12T03:34:57+00:00",
+    "source_file": "docs/workflow/WORKFLOW.md",
+    "language_code": "en"
+  },
+  "postman/README.md": {
+    "original_hash": "9dc16263a9b2ad46808358f9c7a350dd",
+    "translation_date": "2026-08-12T03:14:24+00:00",
+    "source_file": "postman/README.md",
+    "language_code": "en"
+  }
+}
