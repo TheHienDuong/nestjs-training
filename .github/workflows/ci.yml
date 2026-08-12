@@ -1,10 +1,10 @@
-# CI — runs automatically on every push and pull request.
+# CI — runs automatically on every push and every pull request.
 #
-# Purpose: prove that the code runs on A CLEAN MACHINE, not only on your machine.
-# "It still works on my machine" is a phrase that has caused countless production incidents.
+# Purpose: prove that the code runs on A CLEAN MACHINE, not just on your local machine.
+# "It works on my machine" is the phrase that has caused countless production incidents.
 #
 # This job is also the "required status check" for branch protection:
-# when CI is red, the Merge button on GitHub is disabled.
+# If CI is red, the Merge button on GitHub is disabled.
 
 name: CI
 
@@ -14,7 +14,7 @@ on:
   pull_request:
     branches: [main]
 
-# Pushing a new commit to the same PR cancels the old run — saving CI minutes.
+# Pushing a new commit to the same PR will cancel the previous run — saves CI minutes.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,8 +24,8 @@ jobs:
     name: Lint · Test · Build
     runs-on: ubuntu-latest
 
-    # From Phase 2 (when Prisma is introduced), uncomment the block below to provide a PostgreSQL instance
-    # dedicated to this CI run. It lives and dies with the job.
+    # From Phase 2 (when Prisma is added), uncomment the block below to provision a dedicated PostgreSQL
+    # instance for this CI run. It lives and dies with the job.
     #
     # services:
     #   postgres:
@@ -43,34 +43,30 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
-      # This action DOES NOT guess the pnpm version. It reads the "packageManager" field
-      # in package.json ("pnpm@11.18.0"). Without that field, the job fails immediately.
-      # This ensures your machine and CI use the exact same pnpm version — the same reason
-      # --frozen-lockfile exists in the step below.
+      # This action does NOT auto-detect the pnpm version. It reads the "packageManager" field# in package.json ("pnpm@11.18.0"). If this field is missing, the job will fail immediately. This ensures your local machine and CI use the exact same pnpm version — which is also the reason the `--frozen-lockfile` flag exists in the step below.
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
-      # cache: 'pnpm' caches the pnpm store -> subsequent runs are much faster.
+      # cache: 'pnpm' caches the pnpm store, so subsequent runs are much faster.
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
 
-      # --frozen-lockfile: installs exactly from pnpm-lock.yaml without upgrading versions.
-      # If the lockfile differs from package.json, the job FAILS instead of silently installing something else.
+      # --frozen-lockfile: installs dependencies exactly as specified in pnpm-lock.yaml, without automatically upgrading versions. If the lockfile is out of sync with package.json, the job will FAIL instead of silently installing different versions.
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # --max-warnings=0: warnings are also treated as errors in CI.
-      # (Locally, `pnpm lint` includes --fix and fixes them automatically; CI only checks.)
+      # --max-warnings=0: warnings are also treated as errors on CI.
+      # (On your local machine `pnpm lint` has the --fix flag so it auto-fixes issues; on CI it only runs checks.)
       - name: Lint
         run: pnpm exec eslint "{src,apps,libs,test}/**/*.ts" --max-warnings=0
 
       - name: Check formatting (Prettier)
-        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts"
+        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"
 
       - name: Unit tests
         run: pnpm test
@@ -78,8 +74,7 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # E2E needs a database, so enable it together with services.postgres in Phase 2.
+      # E2E tests require a database, so they are enabled at the same time as services.postgres in Phase 2.
       # - name: E2E tests
       #   run: pnpm test:e2e
-      #   env:
-      #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nestjs_training_test
+      #   env:#     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nestjs_training_test

@@ -1,158 +1,141 @@
-# L00 — Setup dự án & quy trình làm việc chuyên nghiệp
+# L00 — Project Setup & Professional Workflow
 
 |                |                                                     |
 | -------------- | --------------------------------------------------- |
 | **Phase**      | 0 — Setup & Professional Workflow                   |
 | **Linear**     | NES-1                                               |
 | **Branch**     | `lesson/00-setup`                                   |
-| **Docs chính** | [/first-steps](https://docs.nestjs.com/first-steps) |
-| **Ngày học**   | 2026-08-10                                          |
+| **Main Docs**  | [/first-steps](https://docs.nestjs.com/first-steps) |
+| **Study Date** | 2026-08-10                                          |
 
 ---
 
-## 🎯 Mục tiêu
+## 🎯 Objectives
 
-- [ ] Giải thích được từng công cụ trong repo này **giải quyết vấn đề gì** — không chỉ biết nó tồn tại
-- [ ] Chạy được vòng lặp phát triển đầy đủ: sửa code → commit → push → CI → PR → merge
-- [ ] Hiểu vì sao có nhiều **hàng rào chất lượng** ở nhiều tầng khác nhau
-- [ ] Dựng được PostgreSQL + Redis bằng `docker compose` mà không cài gì vào máy
-- [ ] Biết cách tra tài liệu NestJS đúng nguồn (và vì sao Google/trí nhớ AI không đủ)
+- [ ] Be able to explain what problem each tool in this repo solves — not just know that it exists
+- [ ] Be able to run the full development loop: edit code → commit → push → CI → PR → merge
+- [ ] Understand why there are multiple **quality gates** at different layers
+- [ ] Be able to spin up PostgreSQL + Redis with `docker compose` without installing anything on your machine
+- [ ] Know how to look up official NestJS documentation (and why Google/AI memory is not enough)
 
 ---
 
-## 📚 Lý thuyết
+## 📚 Theory
 
-Lesson này không có khái niệm NestJS nào. Nó trả lời một câu hỏi khác: **một dự án backend thật khác một thư mục chứa code ở chỗ nào?**
+This lesson does not cover any NestJS concepts. It answers a different question: **what makes a real backend project different from a folder that just holds code?**
 
-Câu trả lời ngắn: ở **những thứ xung quanh code**. Và những thứ đó tồn tại vì mỗi cái đã từng có một sự cố sinh ra nó.
+The short answer: it's the **things surrounding the code**. And these things exist because each one was created to solve a real incident that happened before.
 
-### 1. Vì sao cần một PM tool riêng (Linear), không phải file TODO?
+### 1. Why do we need a dedicated PM tool (Linear) instead of a TODO file?A `TODO.md` file has three issues that you only notice after a few weeks:
+1. **No reliable status.** You only update it when you remember to, which means you almost never do.
+2. **No connection to code.** You can't tell which task corresponds to which PR.
+3. **No measurable metrics.** You don't know how much work you complete in a week, or how far off your estimates are.
 
-Một file `TODO.md` có ba vấn đề mà bạn chỉ thấy sau vài tuần:
+Linear solves all three of these:
 
-1. **Không có trạng thái đáng tin.** Bạn sửa nó khi nhớ ra, tức là thường không sửa.
-2. **Không nối được với code.** Không biết task nào ứng với PR nào.
-3. **Không đo được gì.** Không biết một tuần mình làm được bao nhiêu, ước lượng lệch bao nhiêu.
+| Linear Concept | In this project                                                |
+|----------------|----------------------------------------------------------------|
+| **Initiative** | The entire "NestJS Mastery" course                             |
+| **Project**    | One phase (Phase 1 — Foundations…)                             |
+| **Issue**      | One lesson, with full description + Definition of Done         |
+| **Sub-issue**  | The three steps in the lesson: Theory & note · Hands-on · Review & quiz |
+| **Cycle**      | One week of learning — shows you your real **velocity**        |
+| **Estimate**   | Estimate points → compared to actuals to practice estimation   |
 
-Linear giải quyết cả ba:
-
-| Khái niệm Linear | Trong dự án này                                                |
-| ---------------- | -------------------------------------------------------------- |
-| **Initiative**   | Cả khoá học "NestJS Mastery"                                   |
-| **Project**      | Một phase (Phase 1 — Foundations…)                             |
-| **Issue**        | Một lesson, có description đầy đủ + Definition of Done         |
-| **Sub-issue**    | Ba bước trong lesson: Theory & note · Hands-on · Review & quiz |
-| **Cycle**        | Một tuần học — cho biết **velocity** thật của bạn              |
-| **Estimate**     | Điểm ước lượng → so với thực tế để tập ước lượng               |
-
-**Điểm hay nhất, và cũng là bài học nghề:** trạng thái task chuyển động **do sự kiện git**, không do ai bấm tay.
+**The best part, and also a key professional takeaway:** task statuses are updated **by git events**, not by someone manually clicking buttons.
 
 ```
-Tạo branch  hien/nes-12-controllers   →  issue NES-12 tự sang In Progress
-PR có dòng  "Fixes NES-12"  được merge →  issue NES-12 tự sang Done
-```
+Create branch  hien/nes-12-controllers   →  issue NES-12 automatically moves to In Progress
+PR with the line  "Fixes NES-12"  is merged →  issue NES-12 automatically moves to Done
+```This is why **branch names and PR descriptions are data, not decorative text**. Naming a branch incorrectly will silently break automation — there are no error messages, and this is the hardest type of error to detect.
 
-Đây là lý do **tên branch và PR description là dữ liệu, không phải văn bản trang trí**. Đặt tên branch sai thì tự động hoá im lặng ngừng hoạt động — không có thông báo lỗi nào, và đó là kiểu lỗi khó phát hiện nhất.
+> 📖 Reason for choosing Linear over Trello / GitHub Projects: [ADR-0002](../../adr/0002-linear-as-source-of-truth.md)
 
-> 📖 Lý do chọn Linear thay vì Trello / GitHub Projects: [ADR-0002](../../adr/0002-linear-as-source-of-truth.md)
+### 2. Why does Git only have one main branch (`main`)?
 
-### 2. Vì sao Git chỉ có một nhánh chính (`main`)?
+You may have heard of **Git Flow** with `main` + `develop` + `feature/*` + `release/*`. This repository intentionally **does not** use it.
 
-Bạn có thể đã nghe về **Git Flow** với `main` + `develop` + `feature/*` + `release/*`. Repo này cố tình **không** dùng nó.
+We use **trunk-based development**: only `main` is the long-lived branch, each lesson gets its own branch that lives for a few days then disappears.
 
-Chúng ta dùng **trunk-based development**: chỉ `main` là nhánh dài hạn, mỗi lesson một nhánh sống vài ngày rồi biến mất.
+The reason: the longer a branch lives, the further it diverges from `main`, and the more painful merges become. Git Flow was created for the era of versioned software releases (2.1, 2.2… releases). Most web services today deploy multiple times a day, so trunk-based development is more common.
 
-Lý do: nhánh sống càng lâu thì càng xa `main`, và merge càng đau. Git Flow sinh ra cho thời phần mềm phát hành theo bản (release 2.1, 2.2…). Đa số web service ngày nay deploy nhiều lần một ngày, nên trunk-based phổ biến hơn.
-
-**Squash and merge** — mỗi lesson để lại đúng một commit trên `main`:
+**Squash and merge** — each lesson leaves exactly one commit on `main`:
 
 ```bash
 git log --oneline main
-# a1b2c3d docs(lesson-02): controllers và routing
-# e4f5g6h docs(lesson-01): cấu trúc project NestJS
-# 7h8i9j0 chore: setup workflow, CI, docker và tài liệu học tập
+# a1b2c3d docs(lesson-02): controllers and routing
+# e4f5g6h docs(lesson-01): NestJS project structure
+# 7h8i9j0 chore: set up workflow, CI, docker and learning materials
 ```
 
-`git log` đọc ra chính lộ trình học của bạn. Nếu giữ mọi commit "wip", "fix typo" thì mất tính chất này.
+`git log` reads out your exact learning path. If you keep every "wip", "fix typo" commit, you lose this property.
 
 > 📖 [ADR-0003](../../adr/0003-trunk-based-one-lesson-one-pr.md)
 
-### 3. Conventional Commits — vì sao bị chặn khi viết commit message sai?
+### 3. Conventional Commits — why are you blocked when writing an incorrect commit message?
 
-Thử gõ:
+Try typing:
 
 ```bash
-git commit -m "update code"
+```git commit -m "update code"
 # ✖ subject may not be empty / type may not be empty
 # husky - commit-msg script failed (code 1)
 ```
-
-Commit bị **từ chối ngay tại máy**, chưa kịp vào lịch sử git.
-
-Định dạng bắt buộc:
-
+The commit is **rejected right on your local machine**, before it even makes it into the git history.
 ```
-<type>(<scope>): <mô tả>
+Mandatory format:
+```
+<type>(<scope>): <description>
 
 feat(tasks): add CRUD endpoints for tasks
-docs(lesson-02): note về controllers và routing
-fix(auth): xử lý trường hợp token hết hạn
+docs(lesson-02): notes on controllers and routing
+fix(auth): handle expired token cases
 ```
+Why the strict requirements:
+- **Git history is documentation.** `git log --oneline` reads like a changelog, not a list of vague entries like "update", "fix bug", "asdf".
+- **The type tells you the nature of a commit at a glance** without needing to open the diff. When tracking down the root cause of a bug, `fix:` and `refactor:` are two very different suspects.
+- **It enables automation.** With standardized types, you can automatically generate CHANGELOGs and calculate semantic versions via tooling later.
+Why block at the **local hook** instead of in CI: if you push a commit message and want to correct it later, you have to rewrite history — which is far more costly than getting it right the first time.
+### 4. Four layers of quality gates — why not just one?
+| Layer           | Tool                           | Blocks what                            | Time taken |
+| --------------- | ------------------------------ | -------------------------------------- | ---------- |
+| 1. At commit time  | `lint-staged` (`pre-commit` hook) | Unformatted code / lint errors        | ~2 seconds     || 2. On commit  | `commitlint` (hook `commit-msg`)  | Non-compliant commit message           | ~1 second     |
+| 3. On push/PR | GitHub Actions CI                 | Lint, format, test, build fail     | ~2 minutes     |
+| 4. On merge   | Branch protection                 | Direct push to `main`, merge when CI is failing | immediately     |
 
-Vì sao ràng buộc chặt:
+The underlying principle: **the earlier you catch errors, the cheaper it is.**
 
-- **Lịch sử git là tài liệu.** `git log --oneline` đọc được như changelog, không phải một danh sách "update", "fix bug", "asdf".
-- **Type cho biết ngay bản chất một commit** mà không cần mở diff. Đi tìm nguyên nhân một bug, `fix:` và `refactor:` là hai loại nghi phạm rất khác nhau.
-- **Là tiền đề tự động hoá.** Có type chuẩn thì sau này sinh CHANGELOG và tính semantic version được bằng máy.
+Take the same missing semicolon error:
+- Caught at layer 1 → takes 2 seconds, no one notices
+- Caught at layer 3 → 2 minutes waiting for CI + a useless "fix lint" commit in the project history
+- Caught during review → wastes half a day of another person's time
+- Caught in production → wastes the entire team's evening
 
-Vì sao chặn ở **hook trên máy** thay vì ở CI: message đã push rồi mà muốn sửa thì phải rewrite history — đắt hơn nhiều so với viết đúng ngay lần đầu.
+This is exactly why teams invest in hooks and CI: not because they like the process, but because it's **cheaper**.
 
-### 4. Bốn tầng hàng rào chất lượng — vì sao không chỉ một?
+Two notable details in this repo:
+- `lint-staged` only runs on **staged files**, not the entire repo. Slow hooks get skipped with `--no-verify` — and a bypassed guard is as good as nothing.
+- CI runs `eslint --max-warnings=0`, meaning **warnings also fail CI**. Unfixed warnings will accumulate into hundreds of lines of noise, eventually hiding truly important warnings.
 
-| Tầng           | Công cụ                           | Chặn gì                            | Mất bao lâu |
-| -------------- | --------------------------------- | ---------------------------------- | ----------- |
-| 1. Khi commit  | `lint-staged` (hook `pre-commit`) | Code chưa format / lint lỗi        | ~2 giây     |
-| 2. Khi commit  | `commitlint` (hook `commit-msg`)  | Commit message sai chuẩn           | ~1 giây     |
-| 3. Khi push/PR | GitHub Actions CI                 | Lint, format, test, build fail     | ~2 phút     |
-| 4. Khi merge   | Branch protection                 | Push thẳng `main`, merge lúc CI đỏ | tức thì     |
+> **A warning:** `git commit --no-verify` skips all hooks. Do not use it in this repo. The feeling of being "blocked" is the fastest way to learn.
 
-Nguyên tắc đằng sau: **phát hiện lỗi càng sớm càng rẻ.**
+### 5. What is CI and why is it important?**CI (Continuous Integration)** = every time you push, code is built and retested on a **completely clean machine**.
 
-Cùng một lỗi thiếu dấu chấm phẩy:
+The problem it solves has a specific industry name: _**"it works on my machine"**_. The root cause is usually one of three things:
 
-- Bắt ở tầng 1 → mất 2 giây, không ai biết
-- Bắt ở tầng 3 → mất 2 phút chờ CI + một commit "fix lint" rác trong lịch sử
-- Bắt ở review → mất nửa ngày của người khác
-- Bắt ở production → mất một buổi tối của cả team
+- You have a `.env` file that is not present in the repository
+- You have installed a global package that is not listed in `package.json`
+- You forgot to commit a new file
 
-Đây chính là lý do các team đầu tư vào hook và CI: không phải vì thích quy trình, mà vì **rẻ hơn**.
+CI runs on a machine that only has exactly what is stored in git → any differences are exposed immediately.
 
-Hai chi tiết đáng chú ý trong repo này:
-
-- `lint-staged` chỉ chạy trên **file đang staged**, không phải toàn bộ repo. Vì hook chậm là hook sẽ bị bỏ qua bằng `--no-verify` — và một hàng rào bị bỏ qua thì bằng không.
-- CI chạy `eslint --max-warnings=0`, nghĩa là **warning cũng làm CI đỏ**. Warning mà không ai sửa sẽ tích tụ thành hàng trăm dòng nhiễu, rồi che mất warning thật sự quan trọng.
-
-> **Một cảnh báo:** `git commit --no-verify` bỏ qua được mọi hook. Đừng dùng nó ở repo này. Cảm giác "bị chặn" chính là phần dạy nhanh nhất.
-
-### 5. CI là gì và vì sao nó quan trọng?
-
-**CI (Continuous Integration)** = mỗi lần push, code được build và test lại trên **một máy sạch hoàn toàn**.
-
-Vấn đề nó giải quyết có tên riêng trong nghề: _**"trên máy tôi vẫn chạy mà"**_. Nguyên nhân thường là một trong ba thứ:
-
-- Bạn có file `.env` mà repo không có
-- Bạn cài một package global mà `package.json` không ghi
-- Bạn quên commit một file mới
-
-CI chạy trên máy chỉ có đúng những gì có trong git → mọi khác biệt lộ ra ngay.
-
-Đọc `.github/workflows/ci.yml`, chú ý vài chi tiết:
+Read `.github/workflows/ci.yml`, and note a few details:
 
 ```yaml
 - run: pnpm install --frozen-lockfile
 ```
 
-`--frozen-lockfile` = cài **đúng** theo `pnpm-lock.yaml`, không tự nâng version. Nếu `package.json` và lockfile lệch nhau, job **fail** thay vì âm thầm cài phiên bản khác. Đây là điều bạn muốn: bản chạy trên CI phải giống hệt bản chạy trên máy bạn.
+`--frozen-lockfile` = install **exactly** according to `pnpm-lock.yaml`, without automatically upgrading versions. If `package.json` and the lockfile are out of sync, the job will **fail** instead of silently installing a different version. This is the desired behavior: the build running on CI must be identical to the build running on your local machine.
 
 ```yaml
 concurrency:
@@ -160,130 +143,121 @@ concurrency:
   cancel-in-progress: true
 ```
 
-Push commit mới vào cùng PR → huỷ lần chạy cũ. Không ai quan tâm kết quả của commit đã bị thay thế.
+Pushing a new commit to the same PR → cancels the previous run. No one cares about the results of the commit that has been replaced.
 
-#### Lần chạy CI đầu tiên của repo này đã ĐỎ — và đó là một bài học
+#### The first CI run of this repo was RED — and that is a lesson
 
-PR đầu tiên fail ngay ở bước thứ hai:
+The first PR failed right at the second step:
 
 ```
 Error: No pnpm version specified.
 Please specify one of these ways:
   - in GitHub Action config key "version"
   - in package.json key "packageManager"
-```
-
-`pnpm/action-setup` **không tự đoán** version pnpm. Nó đọc field `packageManager` trong `package.json` — mà scaffold của `nest new` không sinh ra field đó. Cách sửa:
+````pnpm/action-setup` **does not automatically guess** the pnpm version. It reads the `packageManager` field in `package.json` — which the scaffold generated by `nest new` does not create. How to fix it:
 
 ```json
 "packageManager": "pnpm@11.18.0"
 ```
 
-Điều đáng chú ý: lỗi này **không thể phát hiện ở máy bạn**, vì máy bạn đã có pnpm cài sẵn. Chỉ một môi trường sạch mới lộ ra rằng repo chưa nói cho ai biết nó cần pnpm phiên bản nào.
+What's worth noting: this error **cannot be detected on your local machine**, because your machine already has pnpm pre-installed. Only a clean environment will reveal that the repo hasn't told anyone which pnpm version it needs.
 
-Đây chính là **giá trị của CI, thể hiện ngay lần chạy đầu**: nó không tìm bug trong logic của bạn, nó tìm những **giả định ngầm** mà bạn không biết mình đang dựa vào.
+This is precisely **the value of CI, visible right on the first run**: it doesn't catch bugs in your logic, it uncovers the **implicit assumptions** you didn't know you were relying on.
 
-Field `packageManager` cũng là chuẩn chung của Node.js (Corepack đọc nó), nên thêm vào là ghim luôn version pnpm cho mọi người và mọi máy — cùng mục đích với `--frozen-lockfile`.
+The `packageManager` field is also the universal Node.js standard (Corepack reads it), so adding it locks the pnpm version for all users and all machines — serving the same purpose as `--frozen-lockfile`.
 
-### 6. Vì sao chạy database bằng Docker thay vì cài vào máy?
+### 6. Why run the database with Docker instead of installing it directly on the machine?
 
-`docker-compose.yml` khai báo hai service: PostgreSQL 16 và Redis 7.
+`docker-compose.yml` declares two services: PostgreSQL 16 and Redis 7.
 
-Bốn lý do:
+Four reasons:
 
-1. **Xoá sạch được.** `docker compose down -v` và máy trở lại như chưa từng có gì.
-2. **Version cố định.** Bạn và CI dùng đúng Postgres 16, không phải "bản nào máy tôi có".
-3. **Không tranh nhau.** Nhiều project song song, mỗi cái database riêng, không đè nhau.
-4. Đây là **cách các team thật dựng môi trường dev**. Người mới vào team chỉ cần `docker compose up`.
+1. **Can be completely cleaned up.** Run `docker compose down -v` and your machine returns to a state as if nothing was ever there.
+2. **Fixed version.** You and CI use exactly Postgres 16, not "whatever version my machine has".
+3. **No conflicts.** Multiple parallel projects each have their own separate database, with no risk of overwriting each other.
+4. This is **how real teams set up development environments**. New team members only need to run `docker compose up`.
 
-Hai chi tiết cố ý trong file:
+Two intentional details in the file:
 
 ```yaml
 ports:
   - '${POSTGRES_PORT:-5433}:5432'
-```
-
-Map ra cổng **5433**, không phải 5432. Nếu máy bạn đã có PostgreSQL nào đang chạy thì nó đang giữ 5432 — và lỗi "port already in use" là lỗi rất hay gặp lúc mới học Docker. Vì thế `DATABASE_URL` trong `.env` phải trỏ tới `5433`.
+```Map to port **5433**, not 5432. If your machine already has a running PostgreSQL instance, it is occupying port 5432 — and the "port already in use" error is a very common error when first learning Docker. Therefore, the `DATABASE_URL` in `.env` must point to `5433`.
 
 ```yaml
 healthcheck:
   test: ['CMD-SHELL', 'pg_isready -U postgres']
 ```
 
-Healthcheck cho Docker biết container đã **sẵn sàng nhận query**, không chỉ "đã khởi động". Khác biệt này quan trọng: Postgres mất vài giây mới nhận kết nối, và app khởi động trong khoảng đó sẽ chết vì `connection refused`.
+The healthcheck tells Docker that the container is **ready to accept queries**, not just "started". This difference is important: Postgres takes a few seconds to accept connections, and any app that starts during that window will crash due to `connection refused`.
 
-### 7. `.env` và `.env.example` — hai file, hai mục đích
+### 7. `.env` and `.env.example` — two files, two purposes
 
-| File           | Có trong git? | Vai trò                                              |
+| File           | Included in git? | Role                                              |
 | -------------- | ------------- | ---------------------------------------------------- |
-| `.env.example` | ✅ có         | **Tài liệu** — liệt kê app cần biến nào, giá trị giả |
-| `.env`         | ❌ không      | **Bí mật** — giá trị thật, chỉ tồn tại trên máy bạn  |
+| `.env.example` | ✅ Yes         | **Documentation** — lists which environment variables the app needs, with dummy values |
+| `.env`         | ❌ No          | **Secret** — real values, only exist on your local machine  |
 
 ```bash
-cp .env.example .env   # rồi điền giá trị thật
+cp .env.example .env   # then fill in the real values
 ```
 
-> ⚠️ **Quy tắc vàng:** secret bị commit là secret **đã bị lộ**. Xoá ở commit sau không cứu được — nó vẫn nằm trong lịch sử git và trong mọi bản clone. Cách xử lý đúng là **thu hồi (revoke) secret đó** và tạo cái mới.
+> ⚠️ **Golden rule:** A secret that is committed is a secret **that has been exposed**. Deleting it in a later commit won't fix it — it still remains in the git history and in every clone. The correct way to handle this is to **revoke that secret** and create a new one.
 
-Đây là một trong những lỗi bảo mật phổ biến nhất của dev mới. Có cả bot quét GitHub tìm API key bị commit.
+This is one of the most common security mistakes made by new developers. There are even bots that scan GitHub for committed API keys.
 
-### 8. ADR — ghi lại **vì sao**, không chỉ **cái gì**
+### 8. ADR — record the **why**, not just the **what**`docs/adr/` contains **Architecture Decision Records**: each file documents one technical decision, the reasoning behind it, and the discarded alternatives.
 
-`docs/adr/` chứa các **Architecture Decision Record**: mỗi file một quyết định kỹ thuật + lý do + các phương án đã loại.
+Why is this needed? The hardest question when returning to a codebase after 6 months is not _"what does this code do?"_ — you can figure that out by reading the code. The hard question is _**"why was it done this way instead of another way?"**_
 
-Vì sao cần: câu hỏi khó nhất khi quay lại một codebase sau 6 tháng không phải _"code này làm gì?"_ — đọc code là biết. Câu hỏi khó là _**"tại sao lại làm thế này mà không làm cách kia?"**_
+Code only records the **outcome** of a decision. It does not document the discarded alternatives, the constraints in place at the time, or the tradeoffs that were accepted. Without ADRs, the next person (even if it's you) will revert a correct decision because they don't know the reasoning behind it.
 
-Code chỉ ghi **kết quả** của quyết định. Nó không ghi các phương án đã loại, ràng buộc lúc đó, hay đánh đổi đã chấp nhận. Không có ADR thì người sau (kể cả chính bạn) sẽ đảo ngược một quyết định đúng vì không biết lý do của nó.
+There's also a personal benefit for you: **writing an ADR forces you to articulate the reasoning behind your choice**. If you can't write an ADR for a decision, it's usually because you don't fully understand why you made that choice. This is one of the clearest differences between junior and senior engineers — it's not about knowing more, but about **knowing what tradeoffs you're making to get what you want**.
 
-Với bạn còn một giá trị riêng: **viết ADR buộc bạn diễn đạt được lý do lựa chọn**. Nếu không viết nổi ADR cho một quyết định, thường là vì bạn chưa thật hiểu tại sao mình chọn nó. Đây là một trong những khác biệt rõ nhất giữa junior và senior — không phải biết nhiều hơn, mà là **biết mình đang đánh đổi cái gì lấy cái gì**.
+> 📖 [How to write ADRs + template](../../adr/README.md)
 
-> 📖 [Cách viết ADR + template](../../adr/README.md)
+### 9. Multi-agent model — why separate roles?
 
-### 9. Mô hình nhiều agent — vì sao tách vai?
+This repo uses three agents with distinct roles:
 
-Repo này dùng ba agent với vai khác nhau:
-
-| Agent           | Vai                                      |
+| Agent           | Role                                      |
 | --------------- | ---------------------------------------- |
 | **Claude Code** | Mentor · PM · Reviewer                   |
-| **codex**       | Coder (nhận issue có nhãn `agent:codex`) |
-| **opencode**    | Agent đối chứng, từ Phase 7              |
+| **codex**       | Coder (handles issues labeled `agent:codex`) |
+| **opencode**    | Cross-check agent, starting from Phase 7  |
 
-Hai nguyên tắc:
+Two core principles:> **No agent can write code and review its own code at the same time.**
 
-> **Không agent nào vừa viết code vừa tự review code của chính nó.**
+This is the same reason real teams don't let authors approve their own PRs: the person who just wrote a solution is already committed to its underlying assumptions, so it's very hard for them to spot flaws in those assumptions themselves.
 
-Cùng lý do team thật không cho tác giả tự approve PR của mình: người vừa viết ra một giải pháp đã cam kết với giả định của nó, nên rất khó tự nhìn ra lỗ hổng trong giả định đó.
+> **Agents don't do hands-on work for you.**
 
-> **Agent không làm hộ phần hands-on.**
-
-Nếu AI viết code thay bạn, cái duy nhất được huấn luyện là AI. Cách dùng codex có ích nhất: **bạn tự làm xong trước**, rồi mới xem "lời giải tham chiếu" của codex và so sánh. Khác biệt giữa hai bản là bài học đắt giá nhất trong lesson.
+If AI writes code for you, the only thing that gets trained is the AI. The most useful way to use codex is: **you finish the work yourself first**, then look at codex's "reference solution" and compare. The difference between the two versions is the most valuable insight in the lesson.
 
 > 📖 [AGENT-MODEL.md](../../workflow/AGENT-MODEL.md)
 
-### 10. Tra tài liệu NestJS cho đúng
+### 10. Reference NestJS documentation correctly
 
-`docs.nestjs.com` là một **Angular SPA**: nội dung được render bằng JavaScript. Fetch HTML sẽ chỉ ra thẻ `<title>`, không có nội dung. AI nào fetch trang đó rồi "giảng" cho bạn thì đang giảng từ trí nhớ, không phải từ tài liệu.
+`docs.nestjs.com` is an **Angular SPA**: its content is rendered via JavaScript. Fetching the HTML will only return the `<title>` tag, with no actual content. Any AI that fetches this page and then "explains" it to you is reciting from its memory, not from the documentation.
 
-Nguồn markdown gốc nằm trong repo chính chủ:
+The original markdown source is hosted in the official upstream repo:
 
 ```bash
 gh api "repos/nestjs/docs.nestjs.com/contents/content/controllers.md" \
   -H "Accept: application/vnd.github.raw"
 ```
 
-Vài chỗ tên file **lệch** với URL — biết trước để không mất thời gian:
+Some file names **do not match** their corresponding URLs — know this in advance to avoid wasting time:
 
-| URL trên web                       | File markdown                                  |
-| ---------------------------------- | ---------------------------------------------- |
-| `/middleware`                      | `content/middlewares.md`                       |
-| `/fundamentals/custom-providers`   | `content/fundamentals/dependency-injection.md` |
+| Web URL                       | Markdown file                                  |
+| ------------------------------ | ---------------------------------------------- |
+| `/middleware`                  | `content/middlewares.md`                       || `/fundamentals/custom-providers`   | `content/fundamentals/dependency-injection.md` |
 | `/fundamentals/injection-scopes`   | `content/fundamentals/provider-scopes.md`      |
 | `/techniques/database`             | `content/techniques/sql.md`                    |
 | `/security/encryption-and-hashing` | `content/security/encryption-hashing.md`       |
 | `/faq/common-errors`               | `content/faq/errors.md`                        |
 
-Và luôn kiểm tra version thật thay vì tin vào ví dụ trên blog:
+And always check the actual version instead of relying on the examples on the blog:
 
 ```bash
 npm view @nestjs/config version
@@ -291,37 +265,34 @@ npm view @nestjs/config version
 
 ---
 
-## 🔗 Liên hệ kiến thức cũ
+## 🔗 Connecting to prior knowledge
 
-| Ở dự án Express/Prisma trước                  | Ở repo này                                                     | Khác nhau ở đâu                                                                                      |
+| In previous Express/Prisma projects                  | In this repository                                                     | What's the difference                                                                                      |
 | --------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Chạy `node index.js` hoặc `nodemon`           | `pnpm start:dev` (`nest start --watch`)                        | Nest CLI lo compile TypeScript + watch, không cần tự cấu hình                                        |
-| `npm install`                                 | `pnpm install`                                                 | pnpm dùng hard link nên nhanh và tiết kiệm đĩa; lockfile khác nên **không trộn** hai package manager |
-| Cài PostgreSQL trực tiếp vào máy              | `docker compose up -d`                                         | Version cố định, xoá sạch được, giống môi trường CI                                                  |
-| Commit trực tiếp vào `main`                   | Branch → PR → CI → squash merge                                | Có chỗ để review; `main` luôn ở trạng thái chạy được                                                 |
-| Nhớ trong đầu việc cần làm                    | Linear issue có Definition of Done                             | Trạng thái tự chuyển theo sự kiện git                                                                |
-| Prisma dùng như một singleton import khắp nơi | _(L07)_ `PrismaService` là một **provider** trong DI container | Nest quản lý vòng đời — connect/disconnect đúng lúc                                                  |
-| Hexagonal: tự tay tách domain khỏi hạ tầng    | Nest có DI container sẵn                                       | Nest **có sẵn** cơ chế đảo ngược phụ thuộc mà bạn từng phải tự dựng                                  |
-
-**Điều đáng suy nghĩ:** khi làm hexagonal với Express, bạn phải tự viết phần "tiêm phụ thuộc" — tự tạo interface cho port, tự dựng adapter, tự nối dây ở entry point. NestJS xây hệ thống đó vào framework. Đến L25 bạn sẽ refactor một module theo ports & adapters và thấy rất rõ: **cái bạn từng làm bằng tay chính là cái `@Module` + `@Injectable` đang làm cho bạn.**
+| Run `node index.js` or `nodemon`           | `pnpm start:dev` (`nest start --watch`)                        | Nest CLI handles TypeScript compilation + file watching, no need for manual configuration                                        || `npm install`                                 | `pnpm install`                                                 | pnpm uses hard links so it's faster and saves disk space; the lockfile is different so **do not mix** the two package managers |
+|-----------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| Install PostgreSQL directly on the machine    | `docker compose up -d`                                         | Fixed version, fully removable, matches the CI environment                                                                      |
+| Commit directly to `main`                     | Branch → PR → CI → squash merge                                | There is a place for review; `main` is always in a runnable state                                                               |
+| Keep pending work in mind                      | A Linear issue has a Definition of Done                        | Status updates automatically based on git events                                                                                |
+| Use Prisma as a singleton imported everywhere | _(L07)_ `PrismaService` is a **provider** in the DI container   | Nest manages the lifecycle — connects/disconnects at the right time                                                             |
+| Hexagonal architecture: manually separate the domain from the infrastructure | Nest has a built-in DI container | Nest **comes with built-in** dependency inversion mechanisms that you previously had to build yourself |**Food for thought:** When implementing hexagonal architecture with Express, you have to write the dependency injection part yourself — you have to manually create interfaces for ports, build adapters, and wire everything together at the entry point. NestJS builds this system directly into the framework. By L25, when you refactor a module to follow the ports & adapters pattern, it will become very clear: **what you used to do manually is exactly what `@Module` + `@Injectable` does for you.**
 
 ---
 
-## 💻Điểm quan trọng trong repo sau khi setup
-
+## 💻 Key points in the repo after setup
 ```
 docs/
-  ROADMAP.md              # 8 phase, 26 lesson, link docs từng lesson
-  workflow/WORKFLOW.md    # quy trình 6 bước, convention, Definition of Done
-  workflow/AGENT-MODEL.md # phân vai Claude / codex / opencode
-  adr/                    # 3 ADR + template
-  lessons/                # note tiếng Việt từng lesson (file này là L00)
-  templates/              # template lesson note + retro
+  ROADMAP.md              # 8 phases, 26 lessons, links to docs for each lesson
+  workflow/WORKFLOW.md    # 6-step process, conventions, Definition of Done
+  workflow/AGENT-MODEL.md # Role assignment for Claude / codex / opencode
+  adr/                    # 3 ADRs + template
+  lessons/                # Vietnamese notes for each lesson (this file is L00)
+  templates/              # Lesson note template + retro
 .github/
   workflows/ci.yml        # lint → format → test → build
   pull_request_template.md
-  dependabot.yml          # bot tự mở PR nâng dependency mỗi tuần
-.claude/skills/           # 4 skill: lesson-start · teach · lesson-review · sync-progress
+  dependabot.yml          # Bot that automatically opens PRs to upgrade dependencies every week
+.claude/skills/           # 4 skills: lesson-start · teach · lesson-review · sync-progress
 .husky/
   pre-commit              # lint-staged
   commit-msg              # commitlint
@@ -329,126 +300,122 @@ commitlint.config.mjs
 docker-compose.yml        # postgres:16 + redis:7 (+ adminer, profile "tools")
 .env.example
 postman/README.md
-AGENTS.md                 # hợp đồng chung cho mọi AI agent
-CLAUDE.md                 # chỉ dẫn riêng cho Claude Code
-```
+AGENTS.md                 # Shared contract for all AI agents
+CLAUDE.md                 # Specific instructions for Claude Code
+```### A small change in `src/` worth noting
 
-### Một sửa đổi nhỏ trong `src/` đáng để ý
-
-CI chạy `eslint --max-warnings=0`, và scaffold gốc của `nest new` có một warning:
+CI runs `eslint --max-warnings=0`, and the original scaffold from `nest new` has a warning:
 
 ```ts
-// src/main.ts — trước
+// src/main.ts — before
 bootstrap();
 
-// sau
+// after
 void bootstrap();
 ```
 
-`bootstrap()` là hàm `async`, tức là nó trả về một `Promise`. Gọi mà không xử lý Promise đó thì rule `@typescript-eslint/no-floating-promises` cảnh báo: nếu bên trong có lỗi xảy ra, không ai bắt, và Node.js sẽ báo unhandled rejection.
+`bootstrap()` is an `async` function, meaning it returns a `Promise`. If you call it without handling that Promise, the `@typescript-eslint/no-floating-promises` rule will warn: if an error occurs inside it, no one catches it, and Node.js will report an unhandled rejection.
 
-`void` là cách nói với TypeScript: _"tôi biết đây là Promise, và tôi cố ý không chờ nó."_ Ở `bootstrap()` thì hợp lý — đây là điểm khởi động của cả app, không có ai ở trên để `await`.
+`void` is a way to tell TypeScript: _"I know this is a Promise, and I intentionally don't wait for it."_ For `bootstrap()`, this makes sense — it's the entry point of the entire app, there's no code above it to `await`.
 
-**Bài học nhỏ nhưng thật:** hàng rào chất lượng vừa bắt được một vấn đề trong code do chính công cụ chính thống sinh ra. Đó là lý do đặt hàng rào.
+**A small but very real lesson:** the quality guard just caught a code issue generated by the official tool itself. That's exactly why we set up guards.
 
 ---
 
 ## 🛠 Hands-on
 
-Chạy trọn một vòng workflow để thấy tất cả các mảnh khớp vào nhau.
+Run through the entire workflow to see how all the pieces fit together.
 
-**1. Dựng môi trường**
+**1. Set up the environment**
 
 ```bash
-pnpm install                  # husky tự cài git hook qua script "prepare"
+pnpm install                  # husky automatically installs git hooks via the "prepare" script
 cp .env.example .env
 docker compose up -d
-docker compose ps             # cả hai service phải ở trạng thái (healthy)
+docker compose ps             # both services must be in (healthy) state
 ```
 
-**2. Chạy app**
+**2. Run the app**
 
 ```bash
 pnpm start:dev
 curl http://localhost:3000    # → Hello World!
 ```
 
-**3. Thử phá hàng rào (làm thật, để thấy nó chặn)**
+**3. Try to break the guard (do it for real, to see it block you)**
 
 ```bash
-# Thử commit message sai chuẩn -> phải BỊ TỪ CHỐI
+# Try committing a non-standard commit message -> it must be REJECTED
 echo "test" > /tmp/x && git add -A && git commit -m "update stuff"
-
-# Thử commit đúng chuẩn -> phải ĐƯỢC CHẤP NHẬN
-git commit -m "chore: thử conventional commit"
+```# Try a standard-compliant commit → it must be ACCEPTED
+git commit -m "chore: test conventional commit"
 ```
 
-**4. Chạy đúng những gì CI sẽ chạy** — trước khi push, để không phải chờ mới biết đỏ
+**4. Run exactly what CI will run** — before pushing, so you don't have to wait to find out it failed
 
 ```bash
 pnpm verify
 ```
 
-**5. Xem database bằng mắt** (tuỳ chọn)
+**5. View the database manually** (optional)
 
 ```bash
 docker compose --profile tools up -d
-# mở http://localhost:8080
+# open http://localhost:8080
 # System: PostgreSQL · Server: postgres · User: postgres · Password: postgres
 ```
 
-**6. Dọn dẹp**
+**6. Cleanup**
 
 ```bash
-docker compose down           # giữ dữ liệu
+docker compose down           # preserve data
 ```
 
 ---
 
-## ✅ Ôn tập & Quiz
+## ✅ Review & Quiz
 
-Trả lời bằng lời của mình, đừng copy lại từ phần trên.
+Answer in your own words, don't copy from the section above.
 
-1. **Vì sao commit message bị chặn ở git hook trên máy thay vì để CI kiểm tra?**
-   → _(tự trả lời)_
+1. **Why is the commit message blocked by the git hook on your local machine instead of being checked by CI?**
+   → _(answer yourself)_
 
-2. **`pnpm install --frozen-lockfile` trên CI khác `pnpm install` ở máy chỗ nào, và vì sao CI cần bản `--frozen-lockfile`?**
-   → _(tự trả lời)_
+2. **How is `pnpm install --frozen-lockfile` on CI different from `pnpm install` on your local machine, and why does CI need the `--frozen-lockfile` version?**
+   → _(answer yourself)_
 
-3. **Bạn đổi tên branch từ `hien/nes-12-controllers` thành `feature/controllers` cho "dễ đọc". Chuyện gì sẽ xảy ra, và vì sao nó khó phát hiện?**
-   → _(tự trả lời)_
+3. **You rename a branch from `hien/nes-12-controllers` to `feature/controllers` for "readability". What will happen, and why is it hard to detect?**
+   → _(answer yourself)_
 
-4. **Cùng một lỗi thiếu format, bắt ở `lint-staged` và bắt ở CI khác nhau bao nhiêu về chi phí? Suy ra nguyên tắc gì?**
-   → _(tự trả lời)_
+4. **For the same formatting error, what is the cost difference between catching it in `lint-staged` and catching it in CI? What principle can be derived from this?**
+   → _(answer yourself)_
 
-5. **`docker-compose.yml` map PostgreSQL ra cổng 5433 thay vì 5432. Vì sao? Nếu bỏ qua chi tiết này thì bạn gặp lỗi gì?**
-   → _(tự trả lời)_
+5. **`docker-compose.yml` maps PostgreSQL to port 5433 instead of 5432. Why? If you ignore this detail, what error will you encounter?**
+   → _(answer yourself)_
 
-6. **Bạn vô tình commit `.env` chứa JWT secret thật, rồi commit tiếp một commit xoá file đó. Secret đã an toàn chưa? Vì sao?**
-   → _(tự trả lời)_
+6. **You accidentally commit a `.env` file containing a real JWT secret, then commit another commit that deletes that file. Is the secret safe now? Why?**
+   → _(answer yourself)_→ _(self-answer)_
 
-**Nối với lesson sau:** L01 sẽ mổ chính 5 file trong `src/` mà `nest new` sinh ra. Trước khi bắt đầu, thử tự đoán: `main.ts` khác `index.js` của một app Express ở chỗ nào?
-
----
-
-## 🧠 Điểm cần nhớ
-
-1. **Trạng thái task nên chuyển động do sự kiện git, không do bấm tay.** Vì thế tên branch và PR description là dữ liệu, không phải văn bản trang trí.
-2. **Phát hiện lỗi càng sớm càng rẻ** — đó là toàn bộ lý do tồn tại của hook, CI và branch protection.
-3. **Secret bị commit là secret đã bị lộ.** Không cứu được bằng commit xoá; phải thu hồi và tạo mới.
-4. **ADR ghi lại _vì sao_, thứ mà code không bao giờ ghi lại được.** Viết được ADR là dấu hiệu bạn thật hiểu quyết định của mình.
-5. **AI không được làm hộ hands-on, và không được tự review code của chính nó.** Cả hai đều để bảo vệ giá trị — một cái là giá trị học tập, một cái là giá trị review.
+**Connect to the next lesson:** L01 will deep dive into the 5 files generated by `nest new` in the `src/` directory. Before starting, try to guess on your own: what is the difference between `main.ts` and the `index.js` of an Express app?
 
 ---
 
-## 📎 Nguồn
+## 🧠 Key points to remember
+
+1. **Task status should be updated via git events, not manual clicks.** That's why branch names and PR descriptions are data, not decorative text.
+2. **Catching errors early is cheaper** — this is the entire reason hooks, CI, and branch protection exist.
+3. **A secret that is committed is a leaked secret.** You can't fix this by deleting the commit; you must revoke it and generate a new one.
+4. **ADRs record the *why*, which code can never capture.** Being able to write an ADR is a sign that you truly understand your own decisions.
+5. **AI should not do hands-on work for you, and it should not review its own code.** Both rules exist to protect value: one protects learning value, the other protects review value.
+
+---
+
+## 📎 Sources
 
 - [NestJS — First Steps](https://docs.nestjs.com/first-steps)
 - [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
 - [Trunk Based Development](https://trunkbaseddevelopment.com/)
 - [Michael Nygard — Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
-- [GitHub Actions — Workflow syntax](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
-- [Docker Compose — Compose file reference](https://docs.docker.com/reference/compose-file/)
+- [GitHub Actions — Workflow syntax](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)- [Docker Compose — Compose file reference](https://docs.docker.com/reference/compose-file/)
 - [Linear — GitHub integration](https://linear.app/docs/github)
 - [husky](https://typicode.github.io/husky/) · [lint-staged](https://github.com/lint-staged/lint-staged) · [commitlint](https://commitlint.js.org/)
-- ADR của repo: [0001 Prisma](../../adr/0001-choose-prisma-as-orm.md) · [0002 Linear](../../adr/0002-linear-as-source-of-truth.md) · [0003 Trunk-based](../../adr/0003-trunk-based-one-lesson-one-pr.md)
+- Repo ADRs: [0001 Prisma](../../adr/0001-choose-prisma-as-orm.md) · [0002 Linear](../../adr/0002-linear-as-source-of-truth.md) · [0003 Trunk-based](../../adr/0003-trunk-based-one-lesson-one-pr.md)

@@ -5,6 +5,10 @@
 .serena
 .claude/*.json
 
+# Hermes local working state — only keep .md files (README, reference plans) to commit
+.hermes/*
+!.hermes/*.md
+
 # Logs
 logs
 *.log

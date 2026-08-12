@@ -1,8 +1,8 @@
-# Git hook commit-msg — checks the commit message content.
+# Git hook commit-msg — validates commit message content.
 #
-# commitlint checks the message against the Conventional Commits standard.
-# Wrong format -> the commit is REJECTED locally, before entering git history.
+# commitlint cross-checks the commit message against the Conventional Commits standard.
+# Incorrect format -> the commit is REJECTED immediately on your local machine, before it even enters the git history.
 #
-# Why enforce it strictly: git history is documentation. Fixing a message after pushing
-# requires rewriting history — much more expensive than writing it correctly the first time.
+# Why hard blocking is enforced: git history is documentation. Editing the commit message after pushing
+# requires rewriting history — which is far more costly than writing it correctly the first time.
 pnpm exec commitlint --edit "$1"

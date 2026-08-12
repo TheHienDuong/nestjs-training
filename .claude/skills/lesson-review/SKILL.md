@@ -1,19 +1,19 @@
 ---
 name: lesson-review
-description: Review a lesson's hands-on work like a senior backend reviewer — check idiomatic NestJS code, run lint/tests, grade a quiz to confirm genuine understanding, then record the result in the lesson note. Use when the user says "review my code", "I finished the hands-on work", "/lesson-review", or before opening a lesson PR.
+description: Review the hands-on portion of a lesson as a senior backend reviewer — check for idiomatic code following NestJS standards, run lint/test, grade the quiz to confirm the user truly understands, then record the results in the lesson note. Use when the user says "review my code", "I finished the hands-on", "/lesson-review", or before opening a PR for a lesson.
 ---
 
 # lesson-review
 
-Review the user's hands-on work like a real senior reviewer and confirm that the user **understands**, not merely that it **runs**.
+Review the user's hands-on work like a real senior reviewer, and confirm the user **understands** rather than just **can run it**.
 
 ## Why this skill is needed
 
-The greatest risk of AI-assisted learning is a **false sense of mastery**: the code runs and tests pass, but the user cannot recreate it. This skill adds a fixed guardrail: completion requires explaining _why_.
+The biggest risk of learning with AI support is **false sense of mastery**: the code runs, tests pass, but the user can't rewrite it on their own. This skill adds a fixed checkpoint: you only count as done if you can explain _why_ it works.
 
-It also keeps review quality consistent. Ad hoc reviews become more lenient over time precisely as the code grows more complex.
+It also keeps review quality consistent. Casual, arbitrary reviews will get more lenient over time, right when the code gets more complex.
 
-## Step 1 — Inspect the user's work
+## Step 1 — Check what the user has done
 
 ```bash
 git branch --show-current
@@ -21,9 +21,9 @@ git diff main...HEAD --stat
 git diff main...HEAD
 ```
 
-Read the **entire** diff before commenting. Also read the lesson note to understand the hands-on requirements.
+Read the **entire** diff before giving feedback. Also read the lesson note to know what the hands-on requirements are.
 
-## Step 2 — Run automated guardrails
+## Step 2 — Run automated checkpoints
 
 ```bash
 pnpm lint
@@ -31,81 +31,74 @@ pnpm test
 pnpm build
 ```
 
-If there are errors → inform the user and **let the user fix them**, with directional hints. Do not fix them: debugging is the most valuable part of learning.
+If there are errors → notify the user and **let the user fix them themselves**, along with directional hints. Don't fix it for them: fixing errors is the most valuable part of the learning process.
 
 ## Step 3 — Review like a senior
 
-Follow priority order. Correctness first, cleanliness second.
+Follow the priority order. Correctness first, cleanliness second.
 
-### 3.1 Correctness
-
-- Are there real bugs? Empty cases, `null`, nonexistent IDs?
-- Are HTTP status codes semantically correct? (`201` for create, `204` for delete without a response body, `404` when not found)
-- Are errors swallowed? Are all `async` calls properly `await`ed?
+### 3.1 Correctness- Is there actually a bug? What about empty input cases, `null`, non-existent IDs?
+- Are HTTP status codes semantically correct? (`201` for create, `204` for delete with no response body, `404` when not found)
+- Are errors being swallowed? Are all `async` operations properly `await`ed?
 
 ### 3.2 Idiomatic NestJS
 
-- Is business logic in the **service**, with controllers handling only HTTP? This is the most common mistake among developers coming from Express.
-- Do dependencies use **constructor injection**, with no direct `new` or global singleton imports?
-- Are providers declared and exported by the correct module?
-- Are built-ins used instead of reimplementing them? (`NotFoundException` instead of `throw new Error`, `ParseIntPipe` instead of `parseInt` manually)
-- Are decorators applied at the correct scope (method / controller / global)?
+- Is business logic placed in **services**, with controllers only handling HTTP? This is the most common mistake among developers migrating from Express.
+- Are dependencies injected via **constructor injection**, instead of being instantiated directly with `new` or imported as global singletons?
+- Are providers declared and exported in the correct modules?
+- Are built-in utilities used instead of being reimplemented? (`NotFoundException` instead of `throw new Error`, `ParseIntPipe` instead of manual `parseInt` calls)
+- Are decorators used at the correct scope (method / controller / global)?
 
-### 3.3 Reuse
+### 3.3 Reusability
 
-- Does logic duplicate existing code in `src/`? Search with serena MCP (`find_symbol`, `find_referencing_symbols`) before concluding it is new.
-- Is this reimplementing something NestJS already provides?
+- Is there duplicate logic already present in `src/`? Search using serena MCP (`find_symbol`, `find_referencing_symbols`) before concluding it is new.
+- Are you reimplementing functionality that NestJS already provides out of the box?
 
-### 3.4 Types and data boundaries
+### 3.4 Type and Data Boundaries
 
-- Is there unnecessary `any`? (the repository disables `no-explicit-any`, so ESLint will not catch it — reviewers must)
+- Are there unnecessary uses of `any`? (The repository disables the `no-explicit-any` rule, so ESLint will not flag these — reviewers must catch them)
 - Are DTOs validated at the input boundary? Do responses leak sensitive fields (`password`, `refreshToken`)?
 
-### 3.5 Test
+### 3.5 Testing
 
-- Do tests verify **behavior** or only that mocks were called?
-- Are there error cases, not only the happy path?
+- Do tests verify **behavior** instead of only checking that mocks were called?
+- Are error cases covered, not just the happy path?
 
-## Step 4 — Present findings
+## Step 4 — Presenting Feedback
 
-Group by severity and **always explain why**, not only what to change:
+Categorize feedback by severity, and **always explain the reasoning**, not just state what needs to be fixed:
 
-```
-🔴 Must fix      — bug or NestJS principle violation
-🟡 Should fix    — works but is not idiomatic
-🟢 Suggestion    — optional, for further learning
-👍 Done well     — be specific, not generic
-```
+```🔴 Must fix — bug or violates NestJS principles
+🟡 Should fix — runs but not idiomatic
+🟢 Suggestion — optional, for additional context
+👍 Well done — be specific, avoid generic praise
 
-For every 🔴 and 🟡: cite file:line, explain the reason, and include a documentation link. **Do not write the fix immediately** — describe the direction and let the user fix it. Provide sample code only after two unsuccessful attempts.
+For each 🔴 and 🟡: only list file:line, explain the reason, include a link to docs. **Do not provide the fix code right away** — describe the approach and let the user fix it themselves. Only provide sample code if the user fails to fix it after two attempts.
 
-Praise must be specific. "Great code" teaches nothing; "extracting `findOwnedProject` from `update` was correct because it will be reused in `delete`" does.
+Praise must be specific. "Great code" teaches nothing; "Separating `findOwnedProject` from `update` is the right decision, because this method will be reused in `delete`" is useful.
 
 ## Step 5 — Quiz (mandatory)
 
-Use the questions in **✅ Review & Quiz** from the lesson note (generated by `/teach`) and ask the user. Add 1–2 questions tied directly to the user's code:
+Take the questions from the **✅ Review & Quiz** section in the lesson note (generated by `/teach`) and ask the user. Add 1–2 questions closely related to the code the user just wrote:
 
-> _"In `TasksController.findOne`, you use `ParseIntPipe`. If a client calls `/tasks/abc`, what happens, what is the response status, and who creates that response?"_
+> _"In `TasksController.findOne` you use `ParseIntPipe`. What happens if a client calls `/tasks/abc`, and what is the response status? Who generates that response?"_
 
-Grade:
+Grading:
+- Answers in their own words → ✅
+- Answers correctly but sound like they're reading from docs → ask a follow-up "what if..." question to verify real understanding
+- Cannot answer → **lesson is not marked Done**. Go back to the relevant theoretical section, re-explain it in a different way, then ask again.
 
-- Can answer in their own words → ✅
-- Correct but sounds like reciting the docs → ask a follow-up "what if..." question to verify real understanding
-- Cannot answer → **the lesson is not Done**. Return to that theory section, teach it differently, then ask again.
+Add one **prior knowledge review question**: connect this lesson to a previous lesson, or to Express/Prisma/hexagonal architecture.
 
-Add one **prior-knowledge review** question connecting this lesson to an earlier lesson or to Express/Prisma/hexagonal.
+## Step 6 — Write to lesson note
 
-## Step 6 — Record in the lesson note
+Fill in `docs/lessons/XX-*/README.md`:- **✅ Review & Quiz** section: user's answers (verbatim, even if imperfect — they can see their progress when reviewing later)
+- **🧠 Key Takeaways** section: maximum 5 lines
+- **Misconceptions I Had** section: if the quiz reveals any misunderstandings
 
-Complete `docs/lessons/XX-*/README.md`:
+## Step 7 — Finalize
 
-- **✅ Review & Quiz** section: the user's answers (verbatim, even if imperfect — later they can see their progress)
-- **🧠 Key points to remember** section: no more than 5 lines
-- **What I previously misunderstood** section: if the quiz reveals a misconception
-
-## Step 7 — Conclude
-
-State clearly whether the lesson meets the **Definition of Done** (5 criteria in `docs/workflow/WORKFLOW.md`). If it does, provide instructions to open a PR:
+Explicitly state whether the lesson meets the **Definition of Done** (5 criteria in `docs/workflow/WORKFLOW.md`). If it does, guide them to open a PR:
 
 ```bash
 git push -u origin $(git branch --show-current)
@@ -114,7 +107,7 @@ gh pr create --fill   # remember to include the line "Fixes NES-XX" in the descr
 
 ## Boundaries
 
-- **Do not** fix the user's hands-on code.
-- **Do not** pass the lesson when the quiz is failed, even if the code is perfect.
-- **Do not** commit or push for the user.
-- Be rigorous without using trick questions. The goal is user understanding, not making the user feel inadequate.
+- **Do not** modify the user's hands-on code yourself.
+- **Do not** let it pass if the quiz is not passed, even if the code is perfect.
+- **Do not** commit or push on the user's behalf.
+- Be strict but not tricky. The goal is for the user to understand, not for the user to feel inadequate.

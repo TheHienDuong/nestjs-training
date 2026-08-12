@@ -1,17 +1,17 @@
 # Local infrastructure for the learning project.
 #
-# Why use Docker instead of installing PostgreSQL directly on the machine:
-#   1. It can be completely removed. After learning, `docker compose down -v` returns the machine to its previous state.
-#   2. Fixed version. You and CI use exactly Postgres 16, not "whatever version my machine has".
-#   3. Multiple projects can run in parallel without competing for ports or overwriting each other's databases.
-#   4. This is exactly how real teams build development environments.
+# Why use Docker instead of installing PostgreSQL directly on your machine:
+#   1. Easy to fully clean up. After finishing the learning project, running `docker compose down -v` restores your machine to its original state.
+#   2. Fixed version. You and CI use exactly PostgreSQL 16, not "whatever version happens to be installed on my machine".
+#   3. Multiple parallel projects don't conflict over ports or overwrite each other's databases.
+#   4. This is exactly how real dev teams set up their development environments.
 #
 # Commands:
-#   docker compose up -d      # start (in the background)
-#   docker compose ps         # check health
+#   docker compose up -d      # start (run in background)
+#   docker compose ps         # check healthy status
 #   docker compose logs -f    # view logs
 #   docker compose down       # stop, KEEP data
-#   docker compose down -v    # stop and DELETE data (everything is lost, including migrations)
+#   docker compose down -v    # stop and DELETE data (completely wiped, including migrations)
 
 services:
   postgres:
@@ -23,22 +23,21 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-nestjs_training}
     ports:
-      # Map to 5433 instead of 5432 to avoid conflicting with PostgreSQL already running on the machine.
-      # DATABASE_URL in .env must therefore point to port 5433.
+      # Map to port 5433 instead of 5432, to avoid conflicting with any PostgreSQL instance already running on your machine.
+      # The DATABASE_URL in .env must therefore point to port 5433.
       - '${POSTGRES_PORT:-5433}:5432'
     volumes:
-      # Named volume: data survives `docker compose down`.
+      # Named volume: data persists through `docker compose down`.
       - postgres-data:/var/lib/postgresql/data
-    # healthcheck tells Docker that the container is READY TO ACCEPT QUERIES, not merely
-    # "started". This is an important distinction: Postgres takes a few seconds to accept
-    # connections, and an app starting during that interval will die from connection refused.
+    # healthcheck to let Docker know the container is READY TO ACCEPT QUERIES, not just    # "has started". This is an important difference: Postgres takes a few seconds to accept
+    # connections, and any app that starts during that window will crash due to connection refused.
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Redis is used for Phase 6 (caching). It is enabled from the start to avoid changing this file midway through the course.
+  # Redis is used for Phase 6 (caching). It is enabled by default so you don't have to modify this file mid-course.
   redis:
     image: redis:7-alpine
     container_name: nestjs-training-redis
@@ -47,8 +46,8 @@ services:
       - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis-data:/data
-    # --appendonly yes: Redis writes data to disk. This is not required for a cache,
-    # but it is enabled so the cache is not emptied every time the container restarts during learning.
+    # --appendonly yes: Redis writes data to disk. This is not required for caching,
+    # but enabling it ensures the cache is not emptied every time the container restarts during the course.
     command: redis-server --appendonly yes
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
@@ -56,8 +55,8 @@ services:
       timeout: 5s
       retries: 5
 
-  # Web interface for managing PostgreSQL, so the data can be inspected visually.
-  # NOT enabled by default (it is in the "tools" profile) because it is not always needed:
+  # Web interface for managing PostgreSQL, to view data visually.
+  # NOT enabled by default (it is in the "tools" profile) as it is not always needed:
   #   docker compose --profile tools up -d
   # Go to http://localhost:8080  →  System: PostgreSQL, Server: postgres, DB: nestjs_training
   adminer:
@@ -68,8 +67,7 @@ services:
     ports:
       - '8080:8080'
     depends_on:
-      postgres:
-        condition: service_healthy
+      postgres:        condition: service_healthy
 
 volumes:
   postgres-data:

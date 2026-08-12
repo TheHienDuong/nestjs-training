@@ -1,33 +1,33 @@
 <!--
-This template appears automatically whenever you open a PR.
-Why it is needed: the PR description is what the reviewer (and you six months later) reads BEFORE reading the code.
-A PR without a description forces the reader to infer the intent from the diff — making incorrect assumptions very easy.
+This template automatically appears every time you open a PR.
+Why it's needed: The PR description is what reviewers (and you yourself 6 months later) read BEFORE reading the code.
+A PR with no description forces readers to infer intent from the diff — which is very easy to get wrong.
 -->
 
 ## Lesson / Task
 
-<!-- REQUIRED: the line below is what makes Linear automatically move the issue to Done when the PR is merged.
-     Entering the wrong ID or deleting this line -> loses the automation, and there will be no error notification. -->
+<!-- REQUIRED: The line below is what causes Linear to automatically move the issue to Done when the PR is merged.
+     Write the wrong code or delete this line -> you lose automation, and no error notifications will be sent. -->
 
 Fixes NES-XX
 
-## What I changed
+## What I did
 
-<!-- 2-4 bullet points. Describe the INTENT, not a repetition of the diff.
-     Good: "Add TasksService with in-memory storage to separate logic from the controller"
-     Poor: "Add tasks.service.ts, modify tasks.controller.ts" -->
+<!-- 2-4 bullet points. Write at the INTENT level, don't just list the diff.
+     Good:  "Add TasksService to store in-memory data to separate logic from the controller"
+     Bad:  "Add tasks.service.ts file, modify tasks.controller.ts" -->
 
 -
 
 ## What I learned
 
-<!-- A section specific to this repository. What did you understand for the first time, or what had you misunderstood? -->
+<!-- This section is specific to this repo. What new things did you understand, or what did you used to misunderstand? -->
 
 -
 
 ## How to verify
 
-<!-- Someone else must be able to reproduce it. Include specific commands. -->
+<!-- Others must be able to reproduce this. Write specific commands. -->
 
 ```bash
 pnpm install
@@ -37,14 +37,14 @@ pnpm start:dev
 
 ## Checklist
 
-- [ ] `pnpm lint` is clean
-- [ ] `pnpm test` pass
+- [ ] `pnpm lint` runs clean (no errors)
+- [ ] `pnpm test` passes
 - [ ] `pnpm build` succeeds
-- [ ] Lesson note is updated (including **Connection to existing knowledge** and **Sources**)
-- [ ] Passed the quiz in `/lesson-review`
-- [ ] No secrets / `.env` file committed
-- [ ] Read through my own diff once
+- [ ] Lesson notes have been updated (includes both **Connection to prior knowledge** and **Sources** sections)
+- [ ] Passed the quiz at the `/lesson-review` step
+- [ ] No secrets / `.env` files committed
+- [ ] Have re-read my own diff once
 
-## Notes for the reviewer
+## Notes for reviewers
 
-<!-- Where are you uncertain? Where do you want detailed feedback? State it so the review focuses on the right areas. -->
+<!-- Where are you not confident? Where do you want detailed feedback? Mention these so reviewers can focus on the areas that need it. -->

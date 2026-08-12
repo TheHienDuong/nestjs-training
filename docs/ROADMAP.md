@@ -1,143 +1,129 @@
 # 🗺️ ROADMAP — NestJS Mastery
 
-> **Nguồn sự thật về task:** Linear (project `NestJS Mastery`).
-> File này là bản đồ tổng thể để đọc offline + theo dõi tiến độ trong repo.
-> Cập nhật bởi skill `/sync-progress` sau mỗi lesson.
+> **Source of truth for tasks:** Linear (project `NestJS Mastery`).
+> This file is the overall roadmap for offline reading + tracking progress in the repo.
+> Updated by the `/sync-progress` skill after each lesson.
 
-## Sản phẩm cuối khóa
+## Final Course Project
 
-Một **Task Management API** production-grade viết bằng NestJS 11:
+A production-grade **Task Management API** built with NestJS 11:
+- `User` — registration, login, JWT + refresh token, role-based access control
+- `Project` — user-owned projects, member invitations (many-to-many relationship via a join table)
+- `Task` — belongs to a project, has an assignee, status, priority, due date
+- `Comment` — comments on tasks
 
-- `User` — đăng ký, đăng nhập, JWT + refresh token, phân quyền theo role
-- `Project` — người dùng sở hữu project, mời thành viên (quan hệ n-n qua bảng trung gian)
-- `Task` — thuộc project, có assignee, status, priority, due date
-- `Comment` — bình luận trên task
+Included features: input validation, centralized error handling, logging, Swagger documentation, API versioning, Redis cache, health checks, unit + e2e tests with coverage thresholds, automated CI, runnable via `docker compose`.
 
-Kèm theo: validation đầu vào, xử lý lỗi tập trung, logging, Swagger docs, API versioning, cache Redis, health check, unit + e2e test có coverage threshold, CI tự động, chạy được bằng `docker compose`.
+## Table Reading Convention
 
-## Quy ước đọc bảng
-
-| Cột            | Ý nghĩa                                                                                 |
-| -------------- | --------------------------------------------------------------------------------------- |
-| **L**          | Mã lesson (L00–L25)                                                                     |
-| **Trạng thái** | ⬜ Chưa bắt đầu · 🟦 Đang học · ✅ Hoàn thành                                           |
-| **Docs**       | Link tài liệu chính thống — **luôn đọc bản mới nhất trên web, không học từ file cache** |
-
-Mọi link `docs.nestjs.com/...` dưới đây đã được đối chiếu với routing thật của repo `nestjs/docs.nestjs.com`.
+| Column | Meaning |
+| ------ | ------- |
+| **L** | Lesson code (L00–L25) |
+| **Status** | ⬜ Not started · 🟦 In progress · ✅ Completed |
+| **Docs** | Link to official documentation — **always read the latest version on the web, do not learn from cached files** |All `docs.nestjs.com/...` links below have been cross-checked against the actual routing of the `nestjs/docs.nestjs.com` repo.
 
 ---
 
 ## Phase 0 — Setup & Professional Workflow
 
-> **Mục tiêu:** Dựng môi trường làm việc như một dự án thật trước khi viết dòng code nghiệp vụ đầu tiên. Bản thân việc setup là bài học.
+> **Objective:** Set up a working environment like a real project before writing the first line of business logic code. The setup process itself is a lesson.
 
-| L   | Lesson                                                         | Trạng thái | Docs / Nguồn                                                                 |
-| --- | -------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------- |
-| L00 | Setup dự án, Linear/GitHub/Slack/CI/Docker, quy trình làm việc | 🟦         | [Lesson note](lessons/00-setup/README.md) · [WORKFLOW](workflow/WORKFLOW.md) |
+| L   | Lesson                                                         | Status | Docs / Sources                                                                 |
+| --- | -------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------- |
+| L00 | Project setup, Linear/GitHub/Slack/CI/Docker, workflow        | 🟦     | [Lesson note](lessons/00-setup/README.md) · [WORKFLOW](workflow/WORKFLOW.md) |
 
 ---
 
 ## Phase 1 — Foundations
 
-> **Mục tiêu:** Hiểu 3 khối xây dựng của Nest (Module / Controller / Provider) và cơ chế Dependency Injection — thứ khác biệt lớn nhất so với Express.
+> **Objective:** Understand Nest's 3 core building blocks (Module / Controller / Provider) and the Dependency Injection mechanism — the biggest difference from Express.
 
-| L   | Lesson                                                               | Trạng thái | Docs                                                                                                                                                                                                                                |
-| --- | -------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| L01 | Cấu trúc project & bootstrap (`main.ts`, platform adapter)           | ⬜         | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
+| L   | Lesson                                                               | Status | Docs                                                                                                                                                                                                                                || --- | -------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| L01 | Project structure & bootstrap (`main.ts`, platform adapter)           | ⬜         | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
 | L02 | Controllers & Routing (`@Get`, `@Post`, `@Param`, `@Body`, `@Query`) | ⬜         | [/controllers](https://docs.nestjs.com/controllers)                                                                                                                                                                                 |
-| L03 | Providers & Dependency Injection                                     | ⬜         | [/providers](https://docs.nestjs.com/providers) · [/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers) · [/fundamentals/injection-scopes](https://docs.nestjs.com/fundamentals/injection-scopes) |
-| L04 | Modules + **Hands-on: CRUD Tasks (in-memory)**                       | ⬜         | [/modules](https://docs.nestjs.com/modules) · [/fundamentals/dynamic-modules](https://docs.nestjs.com/fundamentals/dynamic-modules)                                                                                                 |
+| L03 | Providers & Dependency Injection                                     | ⬜         | [/providers](https://docs.nestjs.com/providers) · [/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers) · [/fundamentals/injection-scopes](https://docs.nestjs.com/fundamentals/injection-scopes) || L04 | Modules + **Hands-on: CRUD Tasks (in-memory)**                       | ⬜         | [/modules](https://docs.nestjs.com/modules) · [/fundamentals/dynamic-modules](https://docs.nestjs.com/fundamentals/dynamic-modules)                                                                                                 |
 
-**Ôn kiến thức cũ:** `app.get('/path', handler)` của Express ↔ `@Controller` + `@Get`; `require()`/khởi tạo thủ công ↔ IoC container; router modular của Express ↔ `@Module`.
+**Review prior knowledge:** `app.get('/path', handler)` from Express ↔ `@Controller` + `@Get`; `require()`/manual initialization ↔ IoC container; Express modular router ↔ `@Module`.
 
 ---
 
 ## Phase 2 — Working with Data
 
-> **Mục tiêu:** Dữ liệu vào phải được kiểm chứng, cấu hình phải đến từ environment, và dữ liệu phải sống trong PostgreSQL thật qua Prisma.
+> **Objective:** Incoming data must be validated, configuration must come from the environment, and data must be stored in a real PostgreSQL database via Prisma.
 
-| L   | Lesson                                                            | Trạng thái | Docs                                                                                                                                |
-| --- | ----------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| L05 | DTO + Pipes + ValidationPipe (class-validator, class-transformer) | ⬜         | [/techniques/validation](https://docs.nestjs.com/techniques/validation) · [/pipes](https://docs.nestjs.com/pipes)                   |
-| L06 | Configuration & environment variables                             | ⬜         | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)                                                       |
+| L   | Lesson                                                            | Status | Docs                                                                                                                                |
+| --- | ----------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| L05 | DTO + Pipes + ValidationPipe (class-validator, class-transformer) | ⬜     | [/techniques/validation](https://docs.nestjs.com/techniques/validation) · [/pipes](https://docs.nestjs.com/pipes)                   || L06 | Configuration & environment variables                             | ⬜         | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)                                                       |
 | L07 | Prisma + PostgreSQL: `PrismaService`, lifecycle hooks             | ⬜         | [/recipes/prisma](https://docs.nestjs.com/recipes/prisma) · [prisma.io/docs](https://www.prisma.io/docs)                            |
 | L08 | Schema, relations, migrations, seed                               | ⬜         | [/techniques/database](https://docs.nestjs.com/techniques/database) · [Prisma schema](https://www.prisma.io/docs/orm/prisma-schema) |
 
-**Ôn kiến thức cũ:** Bạn đã dùng Prisma với Express — giờ so sánh cách bọc `PrismaClient` thành một **provider** để Nest quản lý vòng đời, thay vì import một singleton toàn cục.
+**Review prior knowledge:** You have used Prisma with Express — now compare how to wrap `PrismaClient` into a **provider** for Nest to manage the lifecycle, instead of importing a global singleton.
 
 ---
 
 ## Phase 3 — Request Lifecycle & Error Handling
 
-> **Mục tiêu:** Nắm trọn vòng đời một request trong Nest. Đây là chỗ Express-dev hay hiểu sai nhất, vì Nest có tới 5 loại "thứ chen vào giữa" thay vì chỉ middleware.
+> **Objective:** Master the full request lifecycle in Nest. This is the part that Express developers most often misunderstand, because Nest has up to 5 types of request-intercepting components instead of just middleware.
 
-| L   | Lesson                                    | Trạng thái | Docs                                                                                                                                                                                                                        |
-| --- | ----------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| L   | Lesson                                    | Status | Docs                                                                                                                                                                                                                        || --- | ----------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | L09 | Middleware                                | ⬜         | [/middleware](https://docs.nestjs.com/middleware)                                                                                                                                                                           |
-| L10 | Exception Filters & xử lý lỗi tập trung   | ⬜         | [/exception-filters](https://docs.nestjs.com/exception-filters)                                                                                                                                                             |
-| L11 | Interceptors + tổng hợp Request Lifecycle | ⬜         | [/interceptors](https://docs.nestjs.com/interceptors) · [/faq/request-lifecycle](https://docs.nestjs.com/faq/request-lifecycle) · [/fundamentals/execution-context](https://docs.nestjs.com/fundamentals/execution-context) |
+| L10 | Exception Filters & centralized error handling | ⬜         | [/exception-filters](https://docs.nestjs.com/exception-filters)                                                                                                                                                             |
+| L11 | Interceptors + Request Lifecycle overview | ⬜         | [/interceptors](https://docs.nestjs.com/interceptors) · [/faq/request-lifecycle](https://docs.nestjs.com/faq/request-lifecycle) · [/fundamentals/execution-context](https://docs.nestjs.com/fundamentals/execution-context) |
 
-**Thứ tự thực thi cần thuộc lòng:**
+**Execution order you must memorize:**
 `Middleware → Guard → Interceptor (before) → Pipe → Handler → Interceptor (after) → Exception Filter`
 
 ---
 
-## Phase 4 — Authentication & Authorization
-
-| L   | Lesson                                                    | Trạng thái | Docs                                                                                                                                                                                              |
+## Phase 4 — Authentication & Authorization| L   | Lesson                                                    | Status | Docs                                                                                                                                                                                              |
 | --- | --------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| L12 | Đăng ký / đăng nhập, băm mật khẩu                         | ⬜         | [/security/authentication](https://docs.nestjs.com/security/authentication) · [/security/encryption-and-hashing](https://docs.nestjs.com/security/encryption-and-hashing)                         |
+| L12 | Registration / login, password hashing                         | ⬜         | [/security/authentication](https://docs.nestjs.com/security/authentication) · [/security/encryption-and-hashing](https://docs.nestjs.com/security/encryption-and-hashing)                         |
 | L13 | JWT + Passport strategy                                   | ⬜         | [/security/authentication](https://docs.nestjs.com/security/authentication) · [/recipes/passport](https://docs.nestjs.com/recipes/passport)                                                       |
-| L14 | Guards + RBAC (`@Roles`, `Reflector`, quyền owner/member) | ⬜         | [/guards](https://docs.nestjs.com/guards) · [/security/authorization](https://docs.nestjs.com/security/authorization) · [/custom-decorators](https://docs.nestjs.com/custom-decorators)           |
-| L15 | Refresh token + hardening (helmet, CORS, rate limit)      | ⬜         | [/security/helmet](https://docs.nestjs.com/security/helmet) · [/security/cors](https://docs.nestjs.com/security/cors) · [/security/rate-limiting](https://docs.nestjs.com/security/rate-limiting) |
+| L14 | Guards + RBAC (`@Roles`, `Reflector`, owner/member permissions) | ⬜         | [/guards](https://docs.nestjs.com/guards) · [/security/authorization](https://docs.nestjs.com/security/authorization) · [/custom-decorators](https://docs.nestjs.com/custom-decorators)           || L15 | Refresh token + hardening (helmet, CORS, rate limit)      | ⬜         | [/security/helmet](https://docs.nestjs.com/security/helmet) · [/security/cors](https://docs.nestjs.com/security/cors) · [/security/rate-limiting](https://docs.nestjs.com/security/rate-limiting) |
 
 ---
 
 ## Phase 5 — Testing & Documentation
 
-| L   | Lesson                                                   | Trạng thái | Docs                                                                                                                                      |
-| --- | -------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| L16 | Unit testing (`Test.createTestingModule`, mock provider) | ⬜         | [/fundamentals/unit-testing](https://docs.nestjs.com/fundamentals/unit-testing)                                                           |
-| L17 | E2E testing với supertest + test database riêng          | ⬜         | [/fundamentals/e2e-testing](https://docs.nestjs.com/fundamentals/e2e-testing)                                                             |
-| L18 | Swagger / OpenAPI                                        | ⬜         | [/openapi/introduction](https://docs.nestjs.com/openapi/introduction) · [/openapi/cli-plugin](https://docs.nestjs.com/openapi/cli-plugin) |
+| L   | Lesson                                                   | Status | Docs                                                                                                                                      |
+| --- | -------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| L16 | Unit testing (`Test.createTestingModule`, mock provider) | ⬜     | [/fundamentals/unit-testing](https://docs.nestjs.com/fundamentals/unit-testing)                                                           |
+| L17 | E2E testing with supertest + separate test database      | ⬜     | [/fundamentals/e2e-testing](https://docs.nestjs.com/fundamentals/e2e-testing)                                                             || L18 | Swagger / OpenAPI                                        | ⬜         | [/openapi/introduction](https://docs.nestjs.com/openapi/introduction) · [/openapi/cli-plugin](https://docs.nestjs.com/openapi/cli-plugin) |
 | L19 | API Versioning                                           | ⬜         | [/techniques/versioning](https://docs.nestjs.com/techniques/versioning)                                                                   |
 
-**Quality gate mở từ phase này:** bật `coverageThreshold` trong Jest — CI fail nếu coverage tụt.
+**Quality gate is enabled starting this phase:** enable `coverageThreshold` in Jest — CI will fail if coverage drops.
 
 ---
 
 ## Phase 6 — Caching & Observability
 
-| L   | Lesson                                                   | Trạng thái | Docs                                                                                                                            |
-| --- | -------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| L20 | Caching với Redis: TTL, `CacheInterceptor`, invalidation | ⬜         | [/techniques/caching](https://docs.nestjs.com/techniques/caching)                                                               |
-| L21 | Logging chuẩn production + Health checks                 | ⬜         | [/techniques/logger](https://docs.nestjs.com/techniques/logger) · [/recipes/terminus](https://docs.nestjs.com/recipes/terminus) |
+| L   | Lesson                                                   | Status    | Docs                                                                                                                            |
+| --- | -------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| L20 | Caching with Redis: TTL, `CacheInterceptor`, invalidation | ⬜         | [/techniques/caching](https://docs.nestjs.com/techniques/caching)                                                               || L21 | Production-standard logging + Health checks                 | ⬜         | [/techniques/logger](https://docs.nestjs.com/techniques/logger) · [/recipes/terminus](https://docs.nestjs.com/recipes/terminus) |
 
 ---
 
-## Phase 7 — Mở rộng (sau khi xong core)
+## Phase 7 — Expansion (after completing the core)
 
-| L   | Lesson                                            | Trạng thái | Docs                                                                                                                                                      |
+| L   | Lesson                                            | Status | Docs                                                                                                                                                      |
 | --- | ------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | L22 | Queues (BullMQ) & Task Scheduling                 | ⬜         | [/techniques/queues](https://docs.nestjs.com/techniques/queues) · [/techniques/task-scheduling](https://docs.nestjs.com/techniques/task-scheduling)       |
 | L23 | Events (`EventEmitter`)                           | ⬜         | [/techniques/events](https://docs.nestjs.com/techniques/events)                                                                                           |
-| L24 | File upload & Serialization                       | ⬜         | [/techniques/file-upload](https://docs.nestjs.com/techniques/file-upload) · [/techniques/serialization](https://docs.nestjs.com/techniques/serialization) |
-| L25 | **Hexagonal architecture trong NestJS** + tổng ôn | ⬜         | [/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers) · [/recipes/cqrs](https://docs.nestjs.com/recipes/cqrs)           |
+| L24 | File upload & Serialization                       | ⬜         | [/techniques/file-upload](https://docs.nestjs.com/techniques/file-upload) · [/techniques/serialization](https://docs.nestjs.com/techniques/serialization) || L25 | **Hexagonal architecture in NestJS** + review | ⬜ | [/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers) · [/recipes/cqrs](https://docs.nestjs.com/recipes/cqrs) |
 
-> L25 là lesson khép vòng: refactor một module theo ports & adapters, rồi đặt cạnh dự án Express + hexagonal cũ của bạn để thấy Nest đã _có sẵn_ những gì bạn từng phải tự dựng bằng tay.
+> L25 is the capstone lesson: refactor a module following ports & adapters, then place it alongside your existing Express + hexagonal project to see what Nest already has _built-in_ that you previously had to build manually.
 
 ---
 
-## Repo tham khảo (đọc code người khác là cách học nhanh nhất)
+## Reference repos (reading other people's code is the fastest way to learn)
 
-| Repo                                                                                            | Dùng để                                                                      |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [nestjs/nest — `sample/`](https://github.com/nestjs/nest/tree/master/sample)                    | ~35 ví dụ chính chủ, mỗi thư mục một kỹ thuật. Nguồn đáng tin nhất sau docs. |
-| [nestjs/awesome-nestjs](https://github.com/nestjs/awesome-nestjs)                               | Danh mục thư viện & bài viết được cộng đồng tuyển chọn                       |
-| [lujakob/nestjs-realworld-example-app](https://github.com/lujakob/nestjs-realworld-example-app) | Một app thật hoàn chỉnh theo spec RealWorld                                  |
-| [brocoders/nestjs-boilerplate](https://github.com/brocoders/nestjs-boilerplate)                 | Boilerplate production: auth, i18n, mailer, test, docker                     |
-| [CatsMiaow/nestjs-project-structure](https://github.com/CatsMiaow/nestjs-project-structure)     | Cách tổ chức thư mục cho project lớn                                         |
+| Repo | Used for |
+| --- | --- |
+| [nestjs/nest — `sample/`](https://github.com/nestjs/nest/tree/master/sample) | ~35 official examples, one technique per directory. The most reliable source after the official docs. |
+| [nestjs/awesome-nestjs](https://github.com/nestjs/awesome-nestjs) | Community-curated list of libraries and articles |
+| [lujakob/nestjs-realworld-example-app](https://github.com/lujakob/nestjs-realworld-example-app) | A complete real-world app following the RealWorld spec || [brocoders/nestjs-boilerplate](https://github.com/brocoders/nestjs-boilerplate)                 | Boilerplate production: auth, i18n, mailer, test, docker                     |
+| [CatsMiaow/nestjs-project-structure](https://github.com/CatsMiaow/nestjs-project-structure)     | How to organize directories for large projects                                         |
 
-## Retrospective sau mỗi phase
+## Retrospective after each phase
 
-Kết thúc mỗi phase, viết một retro theo [`docs/templates/retro.md`](templates/retro.md) vào `docs/lessons/_retros/phase-X.md`. Đây là nghi thức thật của team Agile: nhìn lại để lần sau nhanh hơn.
+At the end of each phase, write a retrospective using the [`docs/templates/retro.md`](templates/retro.md) template and save it to `docs/lessons/_retros/phase-X.md`. This is a standard Agile team ceremony: reviewing past work to be faster next time.
