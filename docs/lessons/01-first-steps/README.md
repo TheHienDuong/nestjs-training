@@ -4,9 +4,9 @@
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Phase**      | 1 — Foundations                                                                                                                                       |
 | **Linear**     | NES-2                                                                                                                                                 |
-| **Branch**     | `hien/nes-2-...` _(taken from Linear)_                                                                                                                    |
-| **Main Docs** | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism) |
-| **Study Date**   | _(fill in when starting)_                                                                                                                                  |
+| **Branch**     | `hien/nes-2-...` _(taken from Linear)_                                                                                                                |
+| **Main Docs**  | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism) |
+| **Study Date** | _(fill in when starting)_                                                                                                                             |
 
 > 📝 **This is a draft** — the Theory section is pre-written for you to read in advance. Run `/teach first-steps` when starting the lesson to dive deeper and supplement it; the Hands-on and Quiz sections you complete on your own.
 
@@ -28,21 +28,21 @@
 
 ```
 src/
-├── main.ts                 # entry point — bootstrap ứng dụng
-├── app.module.ts           # root module — nơi khai báo và gắn kết mọi thứ
-├── app.controller.ts       # controller — nhận request HTTP
-├── app.service.ts          # service — chứa business logic
-└── app.controller.spec.ts  # unit test cho controller
+├── main.ts                 # entry point — bootstraps the application
+├── app.module.ts           # root module — where everything is declared and wired together
+├── app.controller.ts       # controller — receives HTTP requests
+├── app.service.ts          # service — holds business logic
+└── app.controller.spec.ts  # unit test for the controller
 ```
 
 Official documentation describes them exactly as follows:
 
-| File                     | Role                                                  |
-| ------------------------ | -------------------------------------------------------- |
-| `app.controller.ts`      | A basic controller with one route                      |
-| `app.controller.spec.ts` | Unit test for the controller                                 |
-| `app.module.ts`          | Root module of the application                                 |
-| `app.service.ts`         | A basic service with one method                        |
+| File                     | Role                                                              |
+| ------------------------ | ----------------------------------------------------------------- |
+| `app.controller.ts`      | A basic controller with one route                                 |
+| `app.controller.spec.ts` | Unit test for the controller                                      |
+| `app.module.ts`          | Root module of the application                                    |
+| `app.service.ts`         | A basic service with one method                                   |
 | `main.ts`                | Entry file — uses `NestFactory` to create an application instance |
 
 Right off the bat, note this: **the framework imposes structural separation on you from the very first file.** Express does not do this — with Express you have an empty `index.js` file and decide everything yourself. That freedom sounds nice, but the cost is that every Express project is organized differently, and new developers have to learn the structure from scratch every time.
@@ -68,7 +68,7 @@ Line by line:
 - **`NestFactory.create(AppModule)`** — takes the **root module** as input and returns an object that implements the `INestApplication` interface. Under the hood, Nest scans the entire module tree starting from `AppModule`, reads metadata from decorators, initializes all providers, and **wires dependencies** between them. This is the **IoC container** at work.
 - **Why `async`?** Because the initialization process may include asynchronous operations: connecting to a database, reading config from external sources, `useFactory` returning a Promise. Nest has to wait for all of these to finish before the application receives its first request.
 - **`app.listen(port)`** — opens the HTTP listener. Only at this step does the application start accepting requests.
-- **`void bootstrap()`** — `void` tells TypeScript that we intentionally do not `await` this Promise. See the explanation at [L00](../00-setup/README.md#một-sửa-đổi-nhỏ-trong-src-đáng-để-ý).
+- **`void bootstrap()`** — `void` tells TypeScript that we intentionally do not `await` this Promise. See the explanation at [L00](../00-setup/README.md#a-small-but-noteworthy-change-in-src).
 
 **A useful option to know:** by default, if an error occurs during application initialization, the app exits with exit code `1`. To make it **throw** the error instead of exiting (for example to handle it manually in tests):
 
@@ -82,9 +82,9 @@ const app = await NestFactory.create(AppModule, { abortOnError: false });
 
 Nest is **not** an HTTP framework. It is an architectural layer **built on top of** an HTTP framework. Two platforms are supported out of the box:
 
-| Platform           | Features                                                                                                                                     |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `platform-express` | Express — minimalist, battle-tested for years, large community, many libraries. **Default**, no action needed to enable.                     |
+| Platform           | Features                                                                                                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `platform-express` | Express — minimalist, battle-tested for years, large community, many libraries. **Default**, no action needed to enable.                   |
 | `platform-fastify` | Fastify — high performance, low overhead, focused on speed. See [/techniques/performance](https://docs.nestjs.com/techniques/performance). |
 
 This design choice exists so that **your application logic does not depend on the HTTP framework**. Your controllers, services, and modules know nothing about Express. Switching to Fastify is in principle just swapping the adapter, no need to rewrite business logic.
@@ -104,12 +104,12 @@ const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
 ### 4. How to run the application
 
-| Command                             | What it does                                                        | Use case                   |
-| -------------------------------- | ------------------------------------------------------------- | -------------------------- |
-| `pnpm start`                     | Compile once and run                                      | Quick checks             |
-| `pnpm start:dev`                 | `nest start --watch` — auto recompiles and restarts when files change | **Main dev loop**     |
+| Command                          | What it does                                                          | Use case                        |
+| -------------------------------- | --------------------------------------------------------------------- | ------------------------------- |
+| `pnpm start`                     | Compile once and run                                                  | Quick checks                    |
+| `pnpm start:dev`                 | `nest start --watch` — auto recompiles and restarts when files change | **Main dev loop**               |
 | `pnpm start:debug`               | Same as above, with `--debug` to attach a debugger                    | Setting breakpoints             |
-| `pnpm build` → `pnpm start:prod` | `nest build` outputs to `dist/`, then run `node dist/main`                 | Matches production run workflow |
+| `pnpm build` → `pnpm start:prod` | `nest build` outputs to `dist/`, then run `node dist/main`            | Matches production run workflow |
 
 The docs have a useful tip: use the **SWC builder** for faster builds (docs claim up to ~20x faster):
 
@@ -191,15 +191,15 @@ Note: the test **also builds a DI container**, just smaller — it only includes
 
 ## 🔗 Connecting to prior knowledge
 
-| Express                                          | NestJS                                            | What's the difference                                                                                                                              |
-| ------------------------------------------------ | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `const app = express()`                          | `const app = await NestFactory.create(AppModule)` | Nest is **async** because it has to initialize the entire dependency tree; Express is synchronous because it doesn't manage anything for you                                                 |
-| `app.listen(3000)`                               | `await app.listen(3000)`                          | Same purpose                                                                                                                        |
-| `app.get('/', handler)`                          | `@Get()` in `@Controller()`                    | Express: routes are registered via **function calls** at runtime. Nest: routes are declared via **metadata** on classes, Nest reads the metadata and registers them automatically |
-| Manual directory organization                               | `.module.ts` / `.controller.ts` / `.service.ts`   | Nest enforces structural separation → all Nest projects look the same, new developers can understand them immediately                                                        |
-| `const svc = require('./service')`               | `constructor(private readonly svc: Service)`      | Express: you manually fetch dependencies. Nest: dependencies are **provided to you** (Inversion of Control)                                            |
-| Switching Express → Fastify = rewrite the entire app             | Switching platform = swap the adapter                        | Nest separates logic from the HTTP framework by design                                                                                         |
-| Tests require `jest.mock('./service')` at the module level | `Test.createTestingModule({ providers: [mock] })` | Replace dependencies at the container level, no need to hack the module loader                                                                               |
+| Express                                                    | NestJS                                            | What's the difference                                                                                                                                                             |
+| ---------------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `const app = express()`                                    | `const app = await NestFactory.create(AppModule)` | Nest is **async** because it has to initialize the entire dependency tree; Express is synchronous because it doesn't manage anything for you                                      |
+| `app.listen(3000)`                                         | `await app.listen(3000)`                          | Same purpose                                                                                                                                                                      |
+| `app.get('/', handler)`                                    | `@Get()` in `@Controller()`                       | Express: routes are registered via **function calls** at runtime. Nest: routes are declared via **metadata** on classes, Nest reads the metadata and registers them automatically |
+| Manual directory organization                              | `.module.ts` / `.controller.ts` / `.service.ts`   | Nest enforces structural separation → all Nest projects look the same, new developers can understand them immediately                                                             |
+| `const svc = require('./service')`                         | `constructor(private readonly svc: Service)`      | Express: you manually fetch dependencies. Nest: dependencies are **provided to you** (Inversion of Control)                                                                       |
+| Switching Express → Fastify = rewrite the entire app       | Switching platform = swap the adapter             | Nest separates logic from the HTTP framework by design                                                                                                                            |
+| Tests require `jest.mock('./service')` at the module level | `Test.createTestingModule({ providers: [mock] })` | Replace dependencies at the container level, no need to hack the module loader                                                                                                    |
 
 **Food for thought:** in your Express + hexagonal architecture project, you have to manually "wire" dependencies at the entry point — you create repository instances yourself, pass them to use cases, pass use cases to handlers. `NestFactory.create(AppModule)` does **exactly this work**, but reads metadata from decorators to know what to wire to what. You already understand _why_ you need to wire dependencies; here we only change _how_ you wire them.
 
@@ -267,6 +267,7 @@ _(Fill in up to 5 lines after finishing the lesson)_
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -7,21 +7,21 @@
 
 ```
                     ┌─────────────────────────────┐
-                    │   LINEAR  (nguồn sự thật)   │
+                    │  LINEAR  (source of truth)  │
                     │  Initiative → Project →     │
                     │  Issue → Sub-issue          │
                     └──────┬───────────────┬──────┘
         GitHub integration │               │ Slack integration
-              (tự động)    │               │    (tự động)
+              (automatic)  │               │  (automatic)
                     ┌──────▼──────┐  ┌─────▼────────────┐
                     │   GITHUB    │  │ #nestjs-training │
-                    │ code · PR   │  │  thông báo issue │
-                    │ CI Actions  │  │  digest học tập  │
+                    │ code · PR   │  │  issue notices   │
+                    │ CI Actions  │  │  learning digest │
                     └──────┬──────┘  └──────────────────┘
                            │
               ┌────────────▼─────────────┐
-              │  docs/lessons/*.md       │  ← note tiếng Việt, review qua PR
-              │  NOTION hub              │  ← knowledge tổng hợp, tra cứu nhanh
+              │  docs/lessons/*.md       │  ← Vietnamese notes, reviewed via PR
+              │  NOTION hub              │  ← consolidated knowledge, quick lookup
               └──────────────────────────┘
 ```
 
@@ -100,18 +100,18 @@ Use **exactly** that name. The `nes-12` string is what allows Linear to automati
 ### Commit — Conventional Commits
 
 ```
-<type>(<scope>): <mô tả ngắn, thể mệnh lệnh>
+<type>(<scope>): <short imperative description>
 ```
 
-| Type       | Use when                             |
-| ---------- | ------------------------------------ |
-| `feat`     | Add new features to the API          |
-| `fix`      | Fix bugs                             |
-| `docs`     | Write/edit lesson notes, READMEs, ADRs |
-| `test`     | Add/edit tests                       |
+| Type       | Use when                                   |
+| ---------- | ------------------------------------------ |
+| `feat`     | Add new features to the API                |
+| `fix`      | Fix bugs                                   |
+| `docs`     | Write/edit lesson notes, READMEs, ADRs     |
+| `test`     | Add/edit tests                             |
 | `refactor` | Restructure code without changing behavior |
-| `chore`    | Configuration, dependencies, CI      |
-| `style`    | Formatting, no logic changes         |
+| `chore`    | Configuration, dependencies, CI            |
+| `style`    | Formatting, no logic changes               |
 
 Scope should be the lesson or module name: `docs(lesson-02): ...`, `feat(tasks): ...`
 
@@ -129,14 +129,14 @@ Scope should be the lesson or module name: `docs(lesson-02): ...`, `feat(tasks):
 
 ## Automated Quality Gates
 
-| Quality Gate                          | Runs where  | Blocks what                            |
-| ------------------------------------- | ----------- | -------------------------------------- |
-| `lint-staged` (pre-commit)            | Your machine | Unformatted / lint-error code          |
-| `commitlint` (commit-msg)             | Your machine | Commit messages that don't follow the convention |
-| GitHub Actions CI                     | On GitHub | Lint / test / build failures           |
-| Branch protection                     | On GitHub | Direct pushes to `main`, merging when CI is failing |
-| Coverage threshold (from Phase 5)     | CI | Coverage dropping below the threshold  |
-| Dependabot                            | On GitHub | Outdated dependencies (opens weekly PRs)  |
+| Quality Gate                      | Runs where   | Blocks what                                         |
+| --------------------------------- | ------------ | --------------------------------------------------- |
+| `lint-staged` (pre-commit)        | Your machine | Unformatted / lint-error code                       |
+| `commitlint` (commit-msg)         | Your machine | Commit messages that don't follow the convention    |
+| GitHub Actions CI                 | On GitHub    | Lint / test / build failures                        |
+| Branch protection                 | On GitHub    | Direct pushes to `main`, merging when CI is failing |
+| Coverage threshold (from Phase 5) | CI           | Coverage dropping below the threshold               |
+| Dependabot                        | On GitHub    | Outdated dependencies (opens weekly PRs)            |
 
 This order is intentional: **detect errors as early and as cheaply as possible**. A formatting error caught on your machine takes 2 seconds; caught in CI takes 3 minutes; caught in review takes half a day of another person's time.
 
@@ -154,7 +154,7 @@ pnpm format                    # prettier --write
 # Test
 pnpm test                      # unit
 pnpm test -- app.controller     # a file
-pnpm test -- -t "tên test"      # by name
+pnpm test -- -t "test name"      # by name
 pnpm test:cov                  # coverage
 pnpm test:e2e                  # e2e
 
@@ -181,6 +181,7 @@ docker compose up -d
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

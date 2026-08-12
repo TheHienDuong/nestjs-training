@@ -1,8 +1,10 @@
 ---
 name: sync-progress
-description: Synchronize learning progress after merging a lesson — update ROADMAP.md,
+description:
+  Synchronize learning progress after merging a lesson — update ROADMAP.md,
   push knowledge notes to the Notion hub, send learning digest to Slack
 ---
+
 # sync-progress
 
 Sync progress parts that **native integrations can't handle**.
@@ -63,18 +65,18 @@ Notion serves as a **fast, cross-lesson lookup tool**; full details and code sta
 Send to `#nestjs-training`:
 
 ```
-✅ LXX — <Tên lesson>  ·  NES-XX  ·  <link PR>
+✅ LXX — <Lesson name>  ·  NES-XX  ·  <PR link>
 
-🧠 Học được
-• <2-3 điểm chính>
+🧠 What I learned
+• <2-3 key points>
 
-🔗 Nối với kiến thức cũ
-• <một câu>
+🔗 Connection to prior knowledge
+• <one sentence>
 
-⚠️ Còn mơ hồ
-• <hoặc "không có">
+⚠️ Still unclear
+• <or "none">
 
-▶️ Tiếp theo: LYY — <tên>
+▶️ Next: LYY — <name>
 ```
 
 This digest **supplements** Linear's notifications, it doesn't replace them. Linear tells you _what_ is done; the digest tells you _what you learned_.
@@ -90,11 +92,12 @@ If you just finished Phase 3 and have never run `/graphify`: suggest building a 
 - **Do not** update Linear issue status (see the warning at the top of the file).
 - **Do not** send Slack messages before confirming the PR has actually been merged.
 - **Do not** edit lesson note content — only read it to create summaries.
-Keep digests short. A Slack channel full of text is one no one reads.
+  Keep digests short. A Slack channel full of text is one no one reads.
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

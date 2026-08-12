@@ -1,11 +1,11 @@
-# Dependabot — bot của GitHub tự theo dõi dependency và mở PR khi có bản mới.
+# Dependabot — GitHub's bot that automatically tracks dependencies and opens a PR when a new version is available.
 #
-# Vì sao một dự án học tập cũng nên bật:
-#   1. Dependency lỗi thời là nguồn lỗ hổng bảo mật phổ biến nhất trong Node.js.
-#   2. Bạn được tập một thói quen thật: nâng version -> đọc changelog -> chờ CI ->
-#      merge, thay vì để 2 năm sau phải nâng 40 package cùng lúc.
-#   3. Mỗi PR của Dependabot là một dịp thấy CI làm việc: nếu bản mới làm vỡ test,
-#      CI đỏ ngay trên PR đó và bạn biết ngay là do đâu.
+# Why a learning project should also enable it:
+#   1. Outdated dependencies are the most common source of security vulnerabilities in Node.js.
+#   2. You get to practice a real habit: bump version -> read the changelog -> wait for CI ->
+#      merge, instead of having to bump 40 packages at once two years later.
+#   3. Every Dependabot PR is a chance to see CI at work: if a new version breaks a test,
+#      CI goes red right on that PR and you immediately know why.
 
 version: 2
 updates:
@@ -14,13 +14,13 @@ updates:
     schedule:
       interval: weekly
       day: monday
-    # Giới hạn 5 PR mở cùng lúc để không bị ngập.
+    # Limit to 5 open PRs at a time to avoid getting flooded.
     open-pull-requests-limit: 5
     commit-message:
       prefix: chore
       include: scope
-    # Gom các package cùng họ vào MỘT PR. Nâng @nestjs/* lẻ tẻ dễ gây lệch
-    # version giữa các package cùng bộ, và Nest yêu cầu chúng đi cùng nhau.
+    # Group packages from the same family into ONE PR. Bumping @nestjs/* individually easily causes
+    # version mismatches between packages in the same set, and Nest requires them to stay in sync.
     groups:
       nestjs:
         patterns:
@@ -40,7 +40,7 @@ updates:
     labels:
       - dependencies
 
-  # Giữ chính các GitHub Action trong workflow luôn mới.
+  # Keep the GitHub Actions used in the workflow up to date.
   - package-ecosystem: github-actions
     directory: '/'
     schedule:

@@ -1,11 +1,13 @@
 ---
 name: lesson-start
-description: Open a new lesson in the NestJS learning roadmap — read the Linear issue,
+description:
+  Open a new lesson in the NestJS learning roadmap — read the Linear issue,
   create a branch following the correct convention, scaffold lesson note from the
   template, move the issue to In Progress. Use when the user says "start lesson X",
   "learn lesson X", "/lesson-start LXX", or wants to continue the next lesson in the
   ROADMAP.
 ---
+
 # lesson-start
 
 Open a new lesson following the correct process, so all lessons look consistent and no step is ever missed.
@@ -45,20 +47,20 @@ Use Linear MCP to find the lesson's issue in the corresponding project.
 
 ```bash
 git checkout main && git pull origin main
-git checkout -b <branchName từ Linear>
+git checkout -b <branchName from Linear>
 ```
 
 The branch name **must** be taken directly from the `branchName` field in Linear. Do not improvise — the `nes-XX` string inside is what Linear uses for identification.
 
 ### 5. Scaffold the lesson note
 
-Copy `docs/templates/lesson-note.md` to `docs/lessons/XX-ten-lesson/README.md`.
+Copy `docs/templates/lesson-note.md` to `docs/lessons/XX-lesson-name/README.md`.
 
 Pre-fill: the title, metadata table (phase, Linear ID, branch, docs, today's date), and the **🎯 Objectives** section from the issue description. **Leave empty** the Theory / Hands-on / Quiz sections — these are filled in during the `/teach` and `/lesson-review` steps.
 
 ### 6. Generate SPEC.md for the coder agent
 
-Copy the full Linear issue description to `docs/lessons/XX-ten-lesson/SPEC.md`. This is the only file the Coder agent (codex, or any other tool acting as the Coder) reads to know what to do — it has no MCP access to Linear (see [ADR-0004](../../docs/adr/0004-mcp-single-writer-cho-coder-agent.md) and `docs/workflow/AGENT-MODEL.md`). Only Claude can edit this file; if the Linear issue is updated later, update `SPEC.md` at the same time.
+Copy the full Linear issue description to `docs/lessons/XX-lesson-name/SPEC.md`. This is the only file the Coder agent (codex, or any other tool acting as the Coder) reads to know what to do — it has no MCP access to Linear (see [ADR-0004](../../docs/adr/0004-mcp-single-writer-cho-coder-agent.md) and `docs/workflow/AGENT-MODEL.md`). Only Claude can edit this file; if the Linear issue is updated later, update `SPEC.md` at the same time.
 
 ### 7. Move the issue to In Progress
 
@@ -77,29 +79,29 @@ Reply concisely in Vietnamese:
 ## Linear issue description format
 
 ```markdown
-## 🎯 Mục tiêu học
+## 🎯 Learning objectives
 
-- <3-5 bullet đo được>
+- <3-5 measurable bullets>
 
-## 📚 Tài liệu chính thống
+## 📚 Official documentation
 
-- [<tên mục>](../../../../../.claude/skills/lesson-start/<link docs.nestjs.com đầy đủ>)
+- [<section name>](../../../../../.claude/skills/lesson-start/<full docs.nestjs.com link>)
 
-## 🔗 Liên hệ kiến thức cũ
+## 🔗 Connect to prior knowledge
 
-- Express/Prisma/hexagonal: <đối chiếu>
+- Express/Prisma/hexagonal: <comparison>
 
 ## 🛠 Hands-on
 
-<code gì, ở file nào, kiểm tra bằng cách nào>
+<what code, in which file, how to verify>
 
 ## ✅ Definition of Done
 
-- [ ] Lesson note đủ mục Liên hệ kiến thức cũ + Nguồn
-- [ ] Hands-on chạy được
-- [ ] Test pass
-- [ ] Vượt quiz ở bước review
-- [ ] PR có CI xanh và đã merge
+- [ ] Lesson note has complete Connect to prior knowledge + Sources sections
+- [ ] Hands-on runs successfully
+- [ ] Tests pass
+- [ ] Passed the quiz at the review step
+- [ ] PR has passing CI and has been merged
 ```
 
 ## Boundaries
@@ -112,6 +114,7 @@ Reply concisely in Vietnamese:
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,10 +1,10 @@
-# CI — chạy tự động mỗi lần push và mỗi pull request.
+# CI — runs automatically on every push and every pull request.
 #
-# Mục đích: chứng minh code chạy được trên MỘT MÁY SẠCH, không chỉ trên máy bạn.
-# "Trên máy tôi vẫn chạy" là câu nói đã gây ra vô số sự cố production.
+# Purpose: prove the code runs on A CLEAN MACHINE, not just on your machine.
+# "It still works on my machine" is the phrase that has caused countless production incidents.
 #
-# Job này cũng là "required status check" của branch protection:
-# CI đỏ thì nút Merge trên GitHub bị vô hiệu hoá.
+# This job is also the "required status check" for branch protection:
+# if CI is red, the Merge button on GitHub is disabled.
 
 name: CI
 
@@ -14,7 +14,7 @@ on:
   pull_request:
     branches: [main]
 
-# Push commit mới vào cùng một PR sẽ huỷ lần chạy cũ — đỡ tốn phút CI.
+# Pushing a new commit to the same PR cancels the previous run — saves CI minutes.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,8 +24,8 @@ jobs:
     name: Lint · Test · Build
     runs-on: ubuntu-latest
 
-    # Từ Phase 2 (khi có Prisma), bỏ comment khối dưới để cấp một PostgreSQL
-    # dùng riêng cho lần chạy CI này. Nó sống và chết cùng job.
+    # Starting from Phase 2 (once Prisma is added), uncomment the block below to provision a PostgreSQL
+    # instance dedicated to this CI run. It lives and dies together with the job.
     #
     # services:
     #   postgres:
@@ -45,31 +45,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      # Action này KHÔNG tự đoán version pnpm. Nó đọc field "packageManager"
-      # trong package.json ("pnpm@11.18.0"). Thiếu field đó là job fail ngay.
-      # Nhờ vậy máy bạn và CI dùng đúng một version pnpm — cùng lý do tồn tại
-      # của --frozen-lockfile ở bước dưới.
+      # This action does NOT guess the pnpm version on its own. It reads the "packageManager" field
+      # in package.json ("pnpm@11.18.0"). Missing that field makes the job fail immediately.
+      # This ensures your machine and CI use the exact same pnpm version — the same reason
+      # --frozen-lockfile exists in the step below.
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
 
-      # cache: 'pnpm' cache lại pnpm store -> lần chạy sau nhanh hơn nhiều.
+      # cache: 'pnpm' caches the pnpm store -> the next run is much faster.
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
 
-      # --frozen-lockfile: cài đúng theo pnpm-lock.yaml, không tự nâng version.
-      # Nếu lockfile lệch với package.json, job FAIL thay vì âm thầm cài khác.
+      # --frozen-lockfile: installs exactly per pnpm-lock.yaml, without auto-upgrading versions.
+      # If the lockfile is out of sync with package.json, the job FAILS instead of silently installing something else.
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # --max-warnings=0: cảnh báo cũng bị coi là lỗi trên CI.
-      # (Ở máy local `pnpm lint` có --fix nên tự sửa; ở CI thì chỉ kiểm tra.)
+      # --max-warnings=0: warnings are also treated as errors on CI.
+      # (Locally `pnpm lint` has --fix so it self-corrects; on CI it only checks.)
       - name: Lint
         run: pnpm exec eslint "{src,apps,libs,test}/**/*.ts" --max-warnings=0
 
-      - name: Kiểm tra format (Prettier)
+      - name: Check format (Prettier)
         run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"
 
       - name: Unit tests
@@ -78,7 +78,7 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # E2E cần database nên bật cùng lúc với services.postgres ở Phase 2.
+      # E2E needs a database, so enable it together with services.postgres in Phase 2.
       # - name: E2E tests
       #   run: pnpm test:e2e
       #   env:

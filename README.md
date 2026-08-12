@@ -6,13 +6,13 @@ Final course product: a **Task Management API** (User · Project · Task · Comm
 
 ## Where to start
 
-| What you want                               | Read                                                                  |
-| -------------------------------------- | -------------------------------------------------------------------- |
-| View the full learning roadmap               | [`docs/ROADMAP.md`](docs/ROADMAP.md)                                 |
-| Understand the workflow for each lesson     | [`docs/workflow/WORKFLOW.md`](docs/workflow/WORKFLOW.md)             |
-| Understand why the repo is structured this way | [`docs/lessons/00-setup/README.md`](docs/lessons/00-setup/README.md) |
-| View architecture decisions and their rationale  | [`docs/adr/`](docs/adr/README.md)                                    |
-| Understand how multiple AI agents collaborate      | [`docs/workflow/AGENT-MODEL.md`](docs/workflow/AGENT-MODEL.md)       |
+| What you want                                   | Read                                                                 |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| View the full learning roadmap                  | [`docs/ROADMAP.md`](docs/ROADMAP.md)                                 |
+| Understand the workflow for each lesson         | [`docs/workflow/WORKFLOW.md`](docs/workflow/WORKFLOW.md)             |
+| Understand why the repo is structured this way  | [`docs/lessons/00-setup/README.md`](docs/lessons/00-setup/README.md) |
+| View architecture decisions and their rationale | [`docs/adr/`](docs/adr/README.md)                                    |
+| Understand how multiple AI agents collaborate   | [`docs/workflow/AGENT-MODEL.md`](docs/workflow/AGENT-MODEL.md)       |
 
 ## Environment setup
 
@@ -42,19 +42,19 @@ pnpm db:up / db:down  # toggle postgres + redis
 ## Structure
 
 ```
-src/                       # code ứng dụng (main.ts, app.module.ts, feature modules)
-test/                      # e2e test (*.e2e-spec.ts)
+src/                       # application code (main.ts, app.module.ts, feature modules)
+test/                      # e2e tests (*.e2e-spec.ts)
 docs/
-  ROADMAP.md               # 8 phase, ~26 lesson, link docs chính thống
+  ROADMAP.md               # 8 phases, ~26 lessons, links to official docs
   workflow/                # WORKFLOW.md · AGENT-MODEL.md
   adr/                     # architecture decision records
-  lessons/XX-*/README.md   # note tiếng Việt từng lesson
-  templates/               # template lesson note · retro
+  lessons/XX-*/README.md   # Vietnamese notes for each lesson
+  templates/               # lesson note · retro templates
 .claude/skills/            # lesson-start · teach · lesson-review · sync-progress
 .github/workflows/ci.yml   # lint → format → test → build
 .husky/                    # pre-commit (lint-staged) · commit-msg (commitlint)
 docker-compose.yml         # postgres:16 · redis:7 · adminer (profile "tools")
-postman/                   # collection test API bằng tay
+postman/                   # collection for manual API testing
 ```
 
 ## Important rules
@@ -67,13 +67,13 @@ postman/                   # collection test API bằng tay
 
 ## Quality
 
-| Gate          | Location             | Blocks                         |
-| ----------------- | ----------------- | ------------------------------- |
-| `lint-staged`     | `pre-commit` hook | Unformatted code / lint errors     |
-| `commitlint`      | `commit-msg` hook | Non-standard commit messages        |
-| GitHub Actions    | every push & PR     | Lint · format · test · build    |
+| Gate              | Location          | Blocks                                    |
+| ----------------- | ----------------- | ----------------------------------------- |
+| `lint-staged`     | `pre-commit` hook | Unformatted code / lint errors            |
+| `commitlint`      | `commit-msg` hook | Non-standard commit messages              |
+| GitHub Actions    | every push & PR   | Lint · format · test · build              |
 | Branch protection | `main`            | Direct pushes, merging when CI is failing |
-| Dependabot        | weekly         | Outdated/ vulnerable dependencies |
+| Dependabot        | weekly            | Outdated/ vulnerable dependencies         |
 
 ## Notes
 
@@ -82,6 +82,7 @@ The repo has two remotes: `origin` (GitHub — the main working remote) and `git
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

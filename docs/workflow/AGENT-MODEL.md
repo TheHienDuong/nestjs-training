@@ -21,12 +21,12 @@ There are only **2 roles**, not a fixed list of tools. The "Coder" role is **fle
 
 ### 🎓 Claude Code — Mentor · PM · Reviewer (fixed)
 
-| Responsibilities                                                           | Does not do                          |
-| ------------------------------------------------------------------------- | -------------------------------------- |
-| Create and assign tasks on Linear, write full task descriptions          | Write hands-on code for you            |
-| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Merge pull requests for you |
-| Review PRs like a senior engineer, quiz to assess understanding           | Review code it generated itself         |
-| Write lesson notes, ADRs, sync with Notion/Slack                          |                                        |
+| Responsibilities                                                                           | Does not do                     |
+| ------------------------------------------------------------------------------------------ | ------------------------------- |
+| Create and assign tasks on Linear, write full task descriptions                            | Write hands-on code for you     |
+| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Merge pull requests for you     |
+| Review PRs like a senior engineer, quiz to assess understanding                            | Review code it generated itself |
+| Write lesson notes, ADRs, sync with Notion/Slack                                           |                                 |
 
 **Why this role is fixed to Claude:** its large context window allows it to hold your entire roadmap, all notes, and your full learning history at the same time — exactly what a teacher needs. The PM role also requires **a single** source of truth for status tracking (see the MCP section below) — fixing one agent in this role is a requirement to avoid conflicts, not a preference.
 
@@ -44,8 +44,8 @@ Rules — apply to **any tool** currently holding the Coder role, not just codex
 
 ```bash
 git checkout -b codex/nes-12-reference-solution
-codex "Đọc AGENTS.md trước. Implement theo spec trong docs/lessons/02-controllers/SPEC.md.
-       Chỉ sửa file trong src/. Không sửa docs/ và .github/."
+codex "Read AGENTS.md first. Implement per the spec in docs/lessons/02-controllers/SPEC.md.
+       Only edit files in src/. Do not edit docs/ or .github/."
 ```
 
 **Occasional use (not required):** when you want an additional perspective for comparison, assign the **same `SPEC.md`** to another tool (opencode, or any CLI agent you have available) on that tool's dedicated branch — the rules above apply exactly the same, no separate documentation needed for each tool. The goal is not to find a "better tool" but to realize: the same spec can generate multiple valid designs, and **you** are the one who decides which one to use.
@@ -60,10 +60,10 @@ codex "Đọc AGENTS.md trước. Implement theo spec trong docs/lessons/02-cont
 
 Reasons and considered alternatives: see [ADR-0004](../adr/0004-mcp-single-writer-cho-coder-agent.md). Summary: multiple agents writing to Linear/Notion/Slack creates real race conditions (overlapping issue status changes, duplicate Slack notifications, overwritten Notion entries) — this is exactly the "multiple sources of truth" problem that [ADR-0002](../adr/0002-linear-lam-nguon-su-that.md) avoided at the system layer, and now avoids at the agent layer.
 
-| Role                     | Connects to Linear/Notion/Slack/Postman? | How to receive spec                  |
-| ----------------------- | -------------------------------- | ------------------------------- |
-| Claude Code (PM)        | Yes — the only PM agent           | Reads issues directly via Linear MCP  |
-| Coder (any tool)        | No                            | Reads `docs/lessons/XX-*/SPEC.md` |
+| Role             | Connects to Linear/Notion/Slack/Postman? | How to receive spec                  |
+| ---------------- | ---------------------------------------- | ------------------------------------ |
+| Claude Code (PM) | Yes — the only PM agent                  | Reads issues directly via Linear MCP |
+| Coder (any tool) | No                                       | Reads `docs/lessons/XX-*/SPEC.md`    |
 
 ### What is SPEC.md
 
@@ -78,13 +78,13 @@ One single template, just rename the tool to whatever you are using that day. Al
 ```bash
 # Default: codex
 git checkout -b codex/nes-12-reference-solution
-codex "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
-       Implement theo spec. Chỉ sửa file trong src/ và test/."
+codex "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
+       Implement per the spec. Only modify files in src/ and test/."
 
 # To add a counterargument perspective: change the branch prefix + use a different tool call command, the rules are exactly the same
 git checkout -b opencode/nes-12-alt-solution
-opencode run "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
-              Implement theo spec. Chỉ sửa file trong src/ và test/."
+opencode run "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
+              Implement per the spec. Only modify files in src/ and test/."
 ```
 
 Then always open a separate PR for each branch for Claude Code to review — no direct merges, do not combine PRs with your hands-on branch.
@@ -95,24 +95,24 @@ Then always open a separate PR for each branch for Claude Code to review — no 
 
 Multiple agents can only collaborate when they all read the same context source:
 
-| Source           | Role                                                                                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Source          | Role                                                                                                                                                                          |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`AGENTS.md`** | Shared contract. All agents must read this before starting work. Open standard, supported by codex, opencode, and Claude.                                                     |
-| **`CLAUDE.md`** | Instructions specific to Claude Code (workflow, role boundaries).                                                                                            |
-| **`docs/`**     | Long-term context: roadmap, workflow, ADRs, lesson notes.                                                                                                 |
+| **`CLAUDE.md`** | Instructions specific to Claude Code (workflow, role boundaries).                                                                                                             |
+| **`docs/`**     | Long-term context: roadmap, workflow, ADRs, lesson notes.                                                                                                                     |
 | **serena MCP**  | Navigate code by **symbol** instead of reading entire files — find definitions, find reference locations. Saves context and is more accurate than grep as the codebase grows. |
-| **`/graphify`** | Build knowledge graph from notes + code. Enable after Phase 3, when you have enough notes for cross-document queries to be meaningful.                                  |
+| **`/graphify`** | Build knowledge graph from notes + code. Enable after Phase 3, when you have enough notes for cross-document queries to be meaningful.                                        |
 
 ## File Boundaries (prevent agents from stepping on each other's work)
 
-| Path                                       | Who can modify                                                        |
-| ----------------------------------------------- | ------------------------------------------------------------------ |
-| `src/**`, `test/**`                             | You (hands-on) · Coder agent (when explicitly assigned, on dedicated branch) |
-| `docs/lessons/**/SPEC.md`                       | Only Claude (snapshot from Linear) — Coder agents only read, no modifications  |
-| `docs/lessons/**`                               | Claude (draft) + you (add personal notes)                      |
-| `docs/adr/**`, `docs/workflow/**`               | Claude, with your approval via PR                                       |
-| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                             |
-| `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                       |
+| Path                                            | Who can modify                                                                |
+| ----------------------------------------------- | ----------------------------------------------------------------------------- |
+| `src/**`, `test/**`                             | You (hands-on) · Coder agent (when explicitly assigned, on dedicated branch)  |
+| `docs/lessons/**/SPEC.md`                       | Only Claude (snapshot from Linear) — Coder agents only read, no modifications |
+| `docs/lessons/**`                               | Claude (draft) + you (add personal notes)                                     |
+| `docs/adr/**`, `docs/workflow/**`               | Claude, with your approval via PR                                             |
+| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                                        |
+| `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                             |
 
 ## Agent Experiment Log
 
@@ -121,6 +121,7 @@ Every time you assign work to an agent, log one line to `docs/lessons/_agent-log
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

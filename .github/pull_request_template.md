@@ -1,33 +1,33 @@
 <!--
-Template này tự xuất hiện mỗi khi bạn mở PR.
-Vì sao cần: PR description là thứ người review (và chính bạn 6 tháng sau) đọc TRƯỚC khi đọc code.
-Một PR không có mô tả buộc người đọc phải tự suy ra ý định từ diff — rất dễ suy sai.
+This template appears automatically every time you open a PR.
+Why it's needed: the PR description is what the reviewer (and yourself 6 months later) reads BEFORE reading the code.
+A PR with no description forces the reader to guess the intent from the diff — which is very easy to get wrong.
 -->
 
 ## Lesson / Task
 
-<!-- BẮT BUỘC: dòng dưới đây là thứ khiến Linear tự chuyển issue sang Done khi PR merge.
-     Viết sai mã hoặc xoá dòng này -> mất tự động hoá, và sẽ không có thông báo lỗi nào. -->
+<!-- REQUIRED: the line below is what makes Linear automatically move the issue to Done when the PR merges.
+     Writing the wrong code or deleting this line -> automation breaks, with no error message at all. -->
 
 Fixes NES-XX
 
-## Tôi đã làm gì
+## What I did
 
-<!-- 2-4 gạch đầu dòng. Viết ở mức Ý ĐỊNH, không phải liệt kê lại diff.
-     Tốt:  "Thêm TasksService lưu dữ liệu in-memory để tách logic khỏi controller"
-     Kém:  "Thêm file tasks.service.ts, sửa tasks.controller.ts" -->
-
--
-
-## Học được gì
-
-<!-- Phần riêng của repo này. Điều gì mới hiểu ra, hoặc điều gì từng hiểu sai? -->
+<!-- 2-4 bullet points. Write at the level of INTENT, not a re-listing of the diff.
+     Good: "Added TasksService to store data in-memory to separate logic from the controller"
+     Poor: "Added file tasks.service.ts, edited tasks.controller.ts" -->
 
 -
 
-## Kiểm tra thế nào
+## What I learned
 
-<!-- Người khác phải lặp lại được. Ghi lệnh cụ thể. -->
+<!-- Section specific to this repo. What did you newly understand, or what did you used to misunderstand? -->
+
+-
+
+## How to test
+
+<!-- Someone else must be able to reproduce this. Write specific commands. -->
 
 ```bash
 pnpm install
@@ -37,14 +37,14 @@ pnpm start:dev
 
 ## Checklist
 
-- [ ] `pnpm lint` sạch
-- [ ] `pnpm test` pass
-- [ ] `pnpm build` thành công
-- [ ] Lesson note đã cập nhật (đủ mục **Liên hệ kiến thức cũ** và **Nguồn**)
-- [ ] Đã vượt quiz ở bước `/lesson-review`
-- [ ] Không commit secret / file `.env`
-- [ ] Đã tự đọc lại diff của chính mình một lượt
+- [ ] `pnpm lint` is clean
+- [ ] `pnpm test` passes
+- [ ] `pnpm build` succeeds
+- [ ] Lesson note updated (complete **Connect to prior knowledge** and **Sources** sections)
+- [ ] Passed the quiz at the `/lesson-review` step
+- [ ] No secrets / `.env` file committed
+- [ ] Re-read my own diff once, myself
 
-## Ghi chú cho người review
+## Notes for the reviewer
 
-<!-- Chỗ nào bạn không tự tin? Chỗ nào muốn được góp ý kỹ? Nói ra sẽ được review đúng chỗ cần. -->
+<!-- Which parts are you not confident about? Which parts do you want careful feedback on? Saying so gets you review focused where it's needed. -->

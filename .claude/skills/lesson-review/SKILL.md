@@ -1,11 +1,13 @@
 ---
 name: lesson-review
-description: Review the hands-on section of a lesson as a senior backend reviewer
+description:
+  Review the hands-on section of a lesson as a senior backend reviewer
   — check that the code is idiomatic according to NestJS standards, run lint and tests,
   grade the quiz to confirm the user truly understands, then record the results in
   the lesson notes. Use this when the user says "review my code", "I've finished the
   hands-on", "/lesson-review", or before opening a PR for a lesson.
 ---
+
 # Lesson Review
 
 Truly review the user's hands-on work like a real senior reviewer, and verify the user **understands** the material rather than just **can get it to run**.
@@ -74,10 +76,10 @@ Follow the priority order: correctness first, cleanliness second.
 Categorize by severity, and **always explain why**, not just list what needs to be fixed:
 
 ```
-🔴 Phải sửa      — bug hoặc sai nguyên tắc NestJS
-🟡 Nên sửa       — chạy được nhưng chưa idiomatic
-🟢 Gợi ý         — tuỳ chọn, để biết thêm
-👍 Làm tốt       — nêu cụ thể, không khen chung chung
+🔴 Must fix      — bug or violates a NestJS principle
+🟡 Should fix    — works but not idiomatic yet
+🟢 Suggestion    — optional, for further knowledge
+👍 Well done     — be specific, not generic praise
 ```
 
 For every 🔴 and 🟡: point to file:line, explain the reason, and include a link to documentation. **Do not write the fix code immediately** — describe the direction and let the user fix it themselves. Only provide sample code if the user still can't get it right after two attempts.
@@ -125,6 +127,7 @@ gh pr create --fill   # remember to include the line "Fixes NES-XX" in the descr
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

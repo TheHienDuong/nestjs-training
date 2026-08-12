@@ -36,20 +36,20 @@ A `TODO.md` file has three problems you only notice after a few weeks:
 
 Linear solves all three:
 
-| Linear Concept | In this project                                                |
-| ---------------- | -------------------------------------------------------------- |
-| **Initiative**   | The entire "NestJS Mastery" course                             |
-| **Project**      | A phase (Phase 1 — Foundations…)                              |
-| **Issue**        | A lesson, with full description + Definition of Done           |
-| **Sub-issue**    | The three steps in a lesson: Theory & notes · Hands-on · Review & quiz |
-| **Cycle**        | A study week — shows your actual **velocity**                 |
-| **Estimate**     | Estimated points → compared to actual to practice estimation  |
+| Linear Concept | In this project                                                        |
+| -------------- | ---------------------------------------------------------------------- |
+| **Initiative** | The entire "NestJS Mastery" course                                     |
+| **Project**    | A phase (Phase 1 — Foundations…)                                       |
+| **Issue**      | A lesson, with full description + Definition of Done                   |
+| **Sub-issue**  | The three steps in a lesson: Theory & notes · Hands-on · Review & quiz |
+| **Cycle**      | A study week — shows your actual **velocity**                          |
+| **Estimate**   | Estimated points → compared to actual to practice estimation           |
 
 **The best part, and also a key professional lesson:** task status moves **triggered by git events**, not by someone clicking a button.
 
 ```
-Tạo branch  hien/nes-12-controllers   →  issue NES-12 tự sang In Progress
-PR có dòng  "Fixes NES-12"  được merge →  issue NES-12 tự sang Done
+Create branch  hien/nes-12-controllers   →  issue NES-12 automatically moves to In Progress
+PR with the line  "Fixes NES-12"  gets merged →  issue NES-12 automatically moves to Done
 ```
 
 This is why **branch names and PR descriptions are data, not decorative text**. Name a branch wrong and the automation silently stops working — no error messages, and this is the hardest type of error to detect.
@@ -92,11 +92,11 @@ The commit is **rejected right on your machine**, before it even enters the git 
 Required format:
 
 ```
-<type>(<scope>): <mô tả>
+<type>(<scope>): <description>
 
 feat(tasks): add CRUD endpoints for tasks
-docs(lesson-02): note về controllers và routing
-fix(auth): xử lý trường hợp token hết hạn
+docs(lesson-02): note about controllers and routing
+fix(auth): handle expired token case
 ```
 
 Why the strict requirements:
@@ -109,12 +109,12 @@ Why block at the **local hook** instead of CI: if a message is already pushed an
 
 ### 4. Four quality gate layers — why not just one?
 
-| Tầng           | Công cụ                           | Chặn gì                            | Mất bao lâu |
-| -------------- | --------------------------------- | ---------------------------------- | ----------- |
-| 1. Khi commit  | `lint-staged` (hook `pre-commit`) | Code chưa format / lint lỗi        | ~2 giây     |
-| 2. Khi commit  | `commitlint` (hook `commit-msg`)  | Commit message sai chuẩn           | ~1 giây     |
-| 3. Khi push/PR | GitHub Actions CI                 | Lint, format, test, build fail     | ~2 phút     |
-| 4. Khi merge   | Branch protection                 | Push thẳng `main`, merge lúc CI đỏ | tức thì     |
+| Layer         | Tool                              | Blocks what                                  | Time cost  |
+| ------------- | --------------------------------- | -------------------------------------------- | ---------- |
+| 1. On commit  | `lint-staged` (hook `pre-commit`) | Unformatted code / lint errors               | ~2 seconds |
+| 2. On commit  | `commitlint` (hook `commit-msg`)  | Non-standard commit message                  | ~1 second  |
+| 3. On push/PR | GitHub Actions CI                 | Lint, format, test, build failures           | ~2 minutes |
+| 4. On merge   | Branch protection                 | Direct push to `main`, merge while CI is red | instant    |
 
 The underlying principle: **the earlier you catch an error, the cheaper it is.**
 
@@ -214,10 +214,10 @@ The healthcheck tells Docker the container is **ready to accept queries**, not j
 
 ### 7. `.env` and `.env.example` — two files, two purposes
 
-| File           | Có trong git? | Vai trò                                              |
-| -------------- | ------------- | ---------------------------------------------------- |
-| `.env.example` | ✅ có         | **Tài liệu** — liệt kê app cần biến nào, giá trị giả |
-| `.env`         | ❌ không      | **Bí mật** — giá trị thật, chỉ tồn tại trên máy bạn  |
+| File           | In git? | Role                                                                      |
+| -------------- | ------- | ------------------------------------------------------------------------- |
+| `.env.example` | ✅ yes  | **Documentation** — lists which variables the app needs, with fake values |
+| `.env`         | ❌ no   | **Secret** — real values, only ever exists on your machine                |
 
 ```bash
 cp .env.example .env   # then fill in the actual value
@@ -233,7 +233,6 @@ This is one of the most common security mistakes new devs make. There are even b
 
 Why we need them: the hardest question when returning to a codebase after 6 months is not _"what does this code do?"_ — you can tell that by reading the code. The hard question is _**"why was it done this way instead of that way?"**_
 
-
 Code only records the **outcome** of a decision. It does not document discarded options, constraints at the time, or accepted tradeoffs. Without an ADR, future developers (including your future self) will reverse a correct decision because they don't know the reasoning behind it.
 
 There's an added value for you here: **writing an ADR forces you to articulate the reason for your choice**. If you can't write an ADR for a decision, it's usually because you don't truly understand why you made that choice. This is one of the clearest differences between junior and senior developers — it's not about knowing more, but about **knowing exactly what tradeoffs you're making and what you're getting in return**.
@@ -244,11 +243,11 @@ There's an added value for you here: **writing an ADR forces you to articulate t
 
 This repo uses three agents with distinct roles:
 
-| Agent           | Role                                      |
-| --------------- | ---------------------------------------- |
-| **Claude Code** | Mentor · PM · Reviewer                   |
+| Agent           | Role                                         |
+| --------------- | -------------------------------------------- |
+| **Claude Code** | Mentor · PM · Reviewer                       |
 | **codex**       | Coder (handles issues labeled `agent:codex`) |
-| **opencode**    | Cross-check agent, starting from Phase 7              |
+| **opencode**    | Cross-check agent, starting from Phase 7     |
 
 Two core rules:
 
@@ -275,7 +274,7 @@ gh api "repos/nestjs/docs.nestjs.com/contents/content/controllers.md" \
 
 Some filenames **do not match** their URLs — know this in advance to avoid wasting time:
 
-| Web URL                       | Markdown file                                  |
+| Web URL                            | Markdown file                                  |
 | ---------------------------------- | ---------------------------------------------- |
 | `/middleware`                      | `content/middlewares.md`                       |
 | `/fundamentals/custom-providers`   | `content/fundamentals/dependency-injection.md` |
@@ -294,15 +293,15 @@ npm view @nestjs/config version
 
 ## 🔗 Connect to prior knowledge
 
-| In previous Express/Prisma projects                  | In this repo                                                     | What's different                                                                                      |
-| --------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Run `node index.js` or `nodemon`           | `pnpm start:dev` (`nest start --watch`)                        | Nest CLI handles TypeScript compilation + watch, no manual configuration required                                        |
-| `npm install`                                 | `pnpm install`                                                 | pnpm uses hard links so it's faster and saves disk space; the lockfile is different so **do not mix** the two package managers |
-| Install PostgreSQL directly on your machine              | `docker compose up -d`                                         | Fixed version, fully removable, matches the CI environment                                                  |
-| Commit directly to `main`                   | Branch → PR → CI → squash merge                                | There is a place for review; `main` is always in a working state                                                 |
-| Track pending work in your head                    | Linear issue with Definition of Done                             | Status updates automatically based on git events                                                                |
-| Use Prisma as a singleton imported everywhere | _(L07)_ `PrismaService` is a **provider** in the DI container | Nest manages the lifecycle — connects and disconnects at the appropriate times                                                  |
-| Hexagonal architecture: manually separate domain from infrastructure    | Nest has a built-in DI container                                       | Nest **comes with** built-in dependency inversion that you previously had to build yourself                                  |
+| In previous Express/Prisma projects                                  | In this repo                                                  | What's different                                                                                                               |
+| -------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Run `node index.js` or `nodemon`                                     | `pnpm start:dev` (`nest start --watch`)                       | Nest CLI handles TypeScript compilation + watch, no manual configuration required                                              |
+| `npm install`                                                        | `pnpm install`                                                | pnpm uses hard links so it's faster and saves disk space; the lockfile is different so **do not mix** the two package managers |
+| Install PostgreSQL directly on your machine                          | `docker compose up -d`                                        | Fixed version, fully removable, matches the CI environment                                                                     |
+| Commit directly to `main`                                            | Branch → PR → CI → squash merge                               | There is a place for review; `main` is always in a working state                                                               |
+| Track pending work in your head                                      | Linear issue with Definition of Done                          | Status updates automatically based on git events                                                                               |
+| Use Prisma as a singleton imported everywhere                        | _(L07)_ `PrismaService` is a **provider** in the DI container | Nest manages the lifecycle — connects and disconnects at the appropriate times                                                 |
+| Hexagonal architecture: manually separate domain from infrastructure | Nest has a built-in DI container                              | Nest **comes with** built-in dependency inversion that you previously had to build yourself                                    |
 
 **Food for thought:** when implementing hexagonal architecture with Express, you have to write the dependency injection logic yourself — create interfaces for ports, build adapters, wire everything up manually at the entry point. NestJS builds this system directly into the framework. By L25, you will refactor a module to follow the ports & adapters pattern and see very clearly: **what you used to build by hand is exactly what `@Module` + `@Injectable` do for you now.**
 
@@ -312,17 +311,17 @@ npm view @nestjs/config version
 
 ```
 docs/
-  ROADMAP.md              # 8 phase, 26 lesson, link docs từng lesson
-  workflow/WORKFLOW.md    # quy trình 6 bước, convention, Definition of Done
-  workflow/AGENT-MODEL.md # phân vai Claude / codex / opencode
-  adr/                    # 3 ADR + template
-  lessons/                # note tiếng Việt từng lesson (file này là L00)
-  templates/              # template lesson note + retro
+  ROADMAP.md              # 8 phases, 26 lessons, doc links per lesson
+  workflow/WORKFLOW.md    # 6-step process, conventions, Definition of Done
+  workflow/AGENT-MODEL.md # role split between Claude / codex / opencode
+  adr/                    # 3 ADRs + template
+  lessons/                # Vietnamese notes for each lesson (this file is L00)
+  templates/              # lesson note + retro templates
 .github/
   workflows/ci.yml        # lint → format → test → build
   pull_request_template.md
-  dependabot.yml          # bot tự mở PR nâng dependency mỗi tuần
-.claude/skills/           # 4 skill: lesson-start · teach · lesson-review · sync-progress
+  dependabot.yml          # bot that opens a dependency-bump PR weekly
+.claude/skills/           # 4 skills: lesson-start · teach · lesson-review · sync-progress
 .husky/
   pre-commit              # lint-staged
   commit-msg              # commitlint
@@ -330,8 +329,8 @@ commitlint.config.mjs
 docker-compose.yml        # postgres:16 + redis:7 (+ adminer, profile "tools")
 .env.example
 postman/README.md
-AGENTS.md                 # hợp đồng chung cho mọi AI agent
-CLAUDE.md                 # chỉ dẫn riêng cho Claude Code
+AGENTS.md                 # shared contract for all AI agents
+CLAUDE.md                 # instructions specific to Claude Code
 ```
 
 ### A small but noteworthy change in `src/`
@@ -381,7 +380,7 @@ curl http://localhost:3000    # → Hello World!
 echo "test" > /tmp/x && git add -A && git commit -m "update stuff"
 
 # Try a standard-compliant commit message -> it must be ACCEPTED
-git commit -m "chore: thử conventional commit"
+git commit -m "chore: try conventional commit"
 ```
 
 **4. Run exactly what CI will run** — before pushing, so you don't have to wait to see failures (red builds)
@@ -437,7 +436,7 @@ Answer in your own words, don't copy from the section above.
 1. **Task status should be updated via git events, not manual clicks.** That's why branch names and PR descriptions are data, not decorative text.
 2. **Catching errors early is always cheaper** — that's the entire reason hooks, CI, and branch protection exist.
 3. **A secret that gets committed is a compromised secret.** You can't fix this by committing a deletion; you have to revoke it and generate a new one.
-4. **ADRs document the *why*, which code can never capture.** Being able to write an ADR is a sign that you truly understand your own decision.
+4. **ADRs document the _why_, which code can never capture.** Being able to write an ADR is a sign that you truly understand your own decision.
 5. **AI should not do hands-on work for you, and it should not review its own code.** Both rules exist to protect value: one protects learning value, the other protects review value.
 
 ---
@@ -457,6 +456,7 @@ Answer in your own words, don't copy from the section above.
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
