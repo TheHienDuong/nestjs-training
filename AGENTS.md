@@ -14,6 +14,17 @@
 1. **Không viết code hands-on thay người học** trừ khi được giao rõ ràng (issue có nhãn `agent:codex` hoặc nhãn tương ứng cho tool khác đang giữ vai Coder, hoặc user yêu cầu trực tiếp). Mặc định: gợi ý, chỉ chỗ sai, đặt câu hỏi — không đưa code hoàn chỉnh.
 2. **Không agent nào tự review code của chính nó.** Code do agent sinh ra phải qua PR để một agent khác (hoặc user) review. Lý do trong `docs/workflow/AGENT-MODEL.md`.
 
+## Bilingual Policy (quy tắc 2 phiên bản)
+
+Repo có **2 phiên bản**: branch `main` là tiếng Việt, branch `example/nestjs-training` là bản mirror tiếng Anh.
+
+- Mọi tài liệu trong repo có 2 phiên bản: `main` = tiếng Việt, `example/nestjs-training` = tiếng Anh.
+- Khi thay đổi bất kỳ docs/config nào: **phải cập nhật cả 2 bản**, nội dung tương đương, không lệch.
+- Code (`src/`, `test/`) giống hệt 2 bản — chỉ docs/config khác ngôn ngữ.
+- GitLab (`gitlab` remote) **chỉ nhận bản tiếng Anh** từ `example/nestjs-training`.
+- Commit trên GitLab: author = `hienduong-agility`, **không** kèm `Co-authored-by` trailer, message viết tiếng Anh.
+- Kiểm tra trước khi coi là xong: 2 bản không lệch (diff rỗng), bản EN không còn ký tự tiếng Việt.
+
 ## Phân vai
 
 Hai **vai** cố định, không phải hai danh sách tool cố định — tool nào lấp vai "Coder" cũng theo đúng một khuôn:

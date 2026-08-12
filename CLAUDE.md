@@ -60,6 +60,10 @@ Mọi giải thích và lesson note viết **tiếng Việt**. Giữ nguyên thu
 
 **pnpm** (lockfile `pnpm-lock.yaml`). Không dùng npm hay yarn.
 
+## Bilingual Policy
+
+Repo có 2 phiên bản: `main` = tiếng Việt, `example/nestjs-training` = tiếng Anh (mirror). Khi thay đổi bất kỳ docs/config nào, phải cập nhật cả 2 bản, nội dung tương đương. Code (`src/`, `test/`) giống hệt 2 bản — chỉ docs/config khác ngôn ngữ. GitLab chỉ nhận bản tiếng Anh từ `example/nestjs-training`, author = `hienduong-agility`, không kèm trailer. Chi tiết: [docs/bilingual-policy.md](docs/bilingual-policy.md).
+
 ## Lệnh thường dùng
 
 ```bash

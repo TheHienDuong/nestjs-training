@@ -117,13 +117,19 @@ Scope nên là tên lesson hoặc module: `docs(lesson-02): ...`, `feat(tasks): 
 
 `commitlint` chạy ở git hook `commit-msg` — sai format là commit bị **chặn ngay tại máy**, không đợi tới CI.
 
-### Definition of Done — một lesson chỉ được coi là xong khi đủ 5 điều
+### Bilingual (2 phiên bản)
+
+Lesson note viết tiếng Việt trên `main`, tạo bản EN tương ứng trên branch `example/nestjs-training`. Sau mỗi milestone, sync bản EN lên GitLab (author `hienduong-agility`).
+
+### Definition of Done — một lesson chỉ được coi là xong khi đủ 7 điều
 
 - [ ] Lesson note viết xong, có đủ mục **Liên hệ kiến thức cũ** và **Nguồn**
 - [ ] Hands-on chạy được (`pnpm start:dev` + gọi thử API bằng Postman)
 - [ ] Test cho phần vừa viết pass (`pnpm test`)
 - [ ] Vượt quiz ở bước review — hiểu _vì sao_, không chỉ _làm sao_
 - [ ] PR có CI xanh và đã được merge vào `main`
+- [ ] 2 bản vi/en không lệch nội dung
+- [ ] Bản EN sạch, không còn ký tự tiếng Việt
 
 ---
 

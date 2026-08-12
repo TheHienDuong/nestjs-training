@@ -117,3 +117,5 @@ Nhiều agent chỉ hợp tác được khi cùng đọc một nguồn ngữ c�
 ## Nhật ký thử nghiệm agent
 
 Mỗi lần giao việc cho một agent, ghi lại một dòng vào `docs/lessons/_agent-log.md`: task gì, agent nào, kết quả tốt/xấu ở điểm nào. Sau khóa học bạn sẽ có dữ liệu thật để trả lời câu hỏi rất thực tế trong nghề: **việc nào nên giao cho AI, việc nào không.**
+
+Mọi agent khi thay đổi docs phải cập nhật cả 2 bản vi/en (`main` tiếng Việt, `example/nestjs-training` tiếng Anh) — xem [bilingual-policy.md](../bilingual-policy.md). Riêng GitLab chỉ nhận bản EN từ `example/nestjs-training`, không nhận bản tiếng Việt.
