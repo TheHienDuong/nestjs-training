@@ -4,9 +4,9 @@
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Phase**      | 1 — Foundations                                                                                                                                       |
 | **Linear**     | NES-2                                                                                                                                                 |
-| **Branch**     | `hien/nes-2-...` _(lấy từ Linear)_                                                                                                                    |
+| **Branch**     | `duongthehien2001/nes-2-l01-cau-truc-project-bootstrap`                                                                                               |
 | **Docs chính** | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism) |
-| **Ngày học**   | _(điền khi bắt đầu)_                                                                                                                                  |
+| **Ngày học**   | 2026-08-12                                                                                                                                            |
 
 > 📝 **Đây là bản nháp** — phần Lý thuyết đã soạn sẵn để bạn đọc trước. Chạy `/teach first-steps` khi bắt đầu lesson để đi sâu và bổ sung; phần Hands-on và Quiz bạn tự làm.
 
