@@ -1,8 +1,10 @@
-# Git hook commit-msg — kiểm tra nội dung commit message.
+# Git hook commit-msg — validates the commit message content.
 #
-# commitlint đối chiếu message với chuẩn Conventional Commits.
-# Sai format -> commit bị TỪ CHỐI ngay tại máy, chưa kịp vào lịch sử git.
+# commitlint checks the message against the Conventional Commits standard.
+# Wrong format -> the commit is REJECTED right on your machine, before it ever
+# reaches git history.
 #
-# Vì sao chặn cứng: lịch sử git là tài liệu. Sửa message sau khi đã push
-# đòi hỏi rewrite history — đắt hơn nhiều so với viết đúng ngay lần đầu.
+# Why block it hard: git history is documentation. Fixing a message after it
+# has been pushed requires rewriting history — far more expensive than writing
+# it correctly the first time.
 pnpm exec commitlint --edit "$1"

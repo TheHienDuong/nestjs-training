@@ -1,16 +1,16 @@
-# Prettier là "một nguồn chân lý duy nhất" về format trong repo này:
-# nó định dạng cả .ts, .json, .md, .yml — nên không ai phải tranh luận về style.
-# Danh sách dưới đây là những thứ Prettier KHÔNG được chạm vào.
+# Prettier is the "single source of truth" for formatting in this repo:
+# it formats .ts, .json, .md, .yml alike — so nobody has to argue about style.
+# The list below is what Prettier must NOT touch.
 
-# File sinh tự động — format lại sẽ tạo diff rác và có thể làm hỏng file.
+# Auto-generated files — reformatting creates noise diffs and can break the file.
 pnpm-lock.yaml
 dist/
 coverage/
 node_modules/
 
-# Prisma tự format schema bằng `prisma format` (từ Lesson 07).
+# Prisma formats the schema itself with `prisma format` (from Lesson 07).
 prisma/migrations/
 
-# Thư mục do tool sinh ra
+# Tool-generated directories
 .serena/
 graphify-out/
