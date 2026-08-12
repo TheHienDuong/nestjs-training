@@ -8,11 +8,11 @@ Do not delete any section: each section has its own pedagogical purpose, noted i
 
 |                |                            |
 | -------------- | -------------------------- |
-| **Phase**      | X — <phase name>            |
+| **Phase**      | X — <phase name>           |
 | **Linear**     | NES-XX                     |
 | **Branch**     | `hien/nes-XX-...`          |
-| **Main Docs** | <link docs.nestjs.com/...> |
-| **Study Date**   | YYYY-MM-DD                 |
+| **Main Docs**  | <link docs.nestjs.com/...> |
+| **Study Date** | YYYY-MM-DD                 |
 
 ---
 
@@ -49,8 +49,8 @@ Do not delete any section: each section has its own pedagogical purpose, noted i
      Always cross-reference with: Express, Prisma, hexagonal architecture. -->
 
 | Knowledge you already have | Equivalent in NestJS | Differences |
-| ------------------------ | -------------------- | ----------- |
-| Express: ...    | Nest: ...              | ...             |
+| -------------------------- | -------------------- | ----------- |
+| Express: ...               | Nest: ...            | ...         |
 
 **Misconceptions I used to have:** <write this down as soon as you notice — this is the section you will revisit the most>
 
@@ -126,6 +126,7 @@ curl ...
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

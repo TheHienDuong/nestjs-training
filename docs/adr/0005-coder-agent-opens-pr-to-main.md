@@ -22,11 +22,11 @@ ADR-0003, decision #5: _"Agent branches (`codex/...`) merge into the **lesson br
 
 ## Considered Options
 
-| Option                                    | Pros                                                                | Cons                                                                                | Reason not selected                      |
-| -------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------- |
-| Merge into lesson branch (ADR-0003 #5)        | Reference solution is placed right next to learner code               | Pollutes lesson history; unclear which "lesson branch" to use when multiple tools are present; off-track review | Conflicts with ADR-0004                 |
-| **Separate PR to main** _(selected)_            | Single review point; clean main history; applicable to all tools | Each reference solution requires an additional PR                                              | —                                      |
-| Direct commit to lesson branch, no review | Fastest                                                        | Violates the principle that "no agent reviews its own code"                                        | Loses the core value of high-quality learning |
+| Option                                    | Pros                                                             | Cons                                                                                                            | Reason not selected                           |
+| ----------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Merge into lesson branch (ADR-0003 #5)    | Reference solution is placed right next to learner code          | Pollutes lesson history; unclear which "lesson branch" to use when multiple tools are present; off-track review | Conflicts with ADR-0004                       |
+| **Separate PR to main** _(selected)_      | Single review point; clean main history; applicable to all tools | Each reference solution requires an additional PR                                                               | —                                             |
+| Direct commit to lesson branch, no review | Fastest                                                          | Violates the principle that "no agent reviews its own code"                                                     | Loses the core value of high-quality learning |
 
 ## Consequences
 
@@ -46,6 +46,7 @@ ADR-0003, decision #5: _"Agent branches (`codex/...`) merge into the **lesson br
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -9,11 +9,11 @@ The only rule: HONESTY. A rose-tinted retrospective is a useless retrospective.
 
 # Retrospective — Phase X: <phase name>
 
-|                         |                                     |
-| ----------------------- | ----------------------------------- |
-| **Timeframe**           | YYYY-MM-DD → YYYY-MM-DD             |
-| **Lessons**             | LXX → LYY                           |
-| **Estimate vs actual**  | estimated __ points / actual __ points |
+|                        |                                        |
+| ---------------------- | -------------------------------------- |
+| **Timeframe**          | YYYY-MM-DD → YYYY-MM-DD                |
+| **Lessons**            | LXX → LYY                              |
+| **Estimate vs actual** | estimated __ points / actual __ points |
 
 ## 😀 What went well (Keep)
 
@@ -39,8 +39,8 @@ The only rule: HONESTY. A rose-tinted retrospective is a useless retrospective.
 <!-- Estimation is a skill you can practice, and the only way to practice is to measure it repeatedly. -->
 
 | Lesson | Estimate | Actual | Why the deviation |
-| ------ | -------- | ------- | ------- |
-| LXX    |          |         |         |
+| ------ | -------- | ------ | ----------------- |
+| LXX    |          |        |                   |
 
 ## 🧩 What concepts are still unclear?
 
@@ -57,6 +57,7 @@ The only rule: HONESTY. A rose-tinted retrospective is a useless retrospective.
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

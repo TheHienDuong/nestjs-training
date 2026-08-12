@@ -26,12 +26,12 @@ The repo also has specific technical requirements: Linear needs one PR per issue
 
 ## Considered Alternatives
 
-| Alternative                            | Pros                                                                                                             | Cons                                                                                          | Reason for not selecting                             |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| **Trunk-based + squash** _(selected)_ | `main` is always runnable; clean history — `git log` shows the correct learning path; short branches mean no large merge conflicts | Lose detailed commits within the lesson after squash                                            | —                                             |
-| **Git Flow**                         | Standard for software with multiple parallel releases                                                              | Too many branches for a single contributor; `develop` + `main` don't solve any problems here             | Overhead doesn't bring any benefits                |
-| **Commit directly to `main`**          | Fastest                                                                                                     | No PR → no review → completely lose step 4 of the workflow; Linear can't automatically transition status | Lose the most valuable part of the learning process |
-| **Merge commit instead of squash**      | Retains all detailed commits                                                                                    | `main` history is cluttered with "wip", "fix typo" commits                                                    | Prioritize `main` being readable as documentation          |
+| Alternative                           | Pros                                                                                                                               | Cons                                                                                                     | Reason for not selecting                            |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| **Trunk-based + squash** _(selected)_ | `main` is always runnable; clean history — `git log` shows the correct learning path; short branches mean no large merge conflicts | Lose detailed commits within the lesson after squash                                                     | —                                                   |
+| **Git Flow**                          | Standard for software with multiple parallel releases                                                                              | Too many branches for a single contributor; `develop` + `main` don't solve any problems here             | Overhead doesn't bring any benefits                 |
+| **Commit directly to `main`**         | Fastest                                                                                                                            | No PR → no review → completely lose step 4 of the workflow; Linear can't automatically transition status | Lose the most valuable part of the learning process |
+| **Merge commit instead of squash**    | Retains all detailed commits                                                                                                       | `main` history is cluttered with "wip", "fix typo" commits                                               | Prioritize `main` being readable as documentation   |
 
 ## Consequences
 
@@ -54,6 +54,7 @@ The repo also has specific technical requirements: Linear needs one PR per issue
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

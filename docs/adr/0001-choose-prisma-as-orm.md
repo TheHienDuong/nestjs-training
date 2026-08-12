@@ -19,11 +19,11 @@ Use **Prisma + PostgreSQL** as the primary data layer. Lesson notes will include
 
 ## Considered Options
 
-| Option              | Pros                                                                                                                                                          | Cons                                                                                                                  | Reason for not selecting                               |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| **Prisma** _(selected)_ | Reuse existing knowledge → clearly separate "what's new in Nest" and "what's new in the ORM"; good type safety; clear migration workflow; has official recipe | Not the default example in Nest docs; is a pre-generated client so it's hard to see Nest's Repository pattern | —                                               |
-| **TypeORM**            | Closest to NestJS docs; `@InjectRepository` teaches how DI works with data; used by many Vietnamese companies | Learning a new ORM and new framework at the same time → hard to tell where errors come from; decorator-based entities are easy to confuse with Nest decorators | Learning two new variables at the same time slows down the learning process |
-| **Both in parallel**   | Widest coverage                                                                                                                                           | Double the workload, easy to abandon                                                                                           | Not suitable for beginners             |
+| Option                  | Pros                                                                                                                                                          | Cons                                                                                                                                                           | Reason for not selecting                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Prisma** _(selected)_ | Reuse existing knowledge → clearly separate "what's new in Nest" and "what's new in the ORM"; good type safety; clear migration workflow; has official recipe | Not the default example in Nest docs; is a pre-generated client so it's hard to see Nest's Repository pattern                                                  | —                                                                           |
+| **TypeORM**             | Closest to NestJS docs; `@InjectRepository` teaches how DI works with data; used by many Vietnamese companies                                                 | Learning a new ORM and new framework at the same time → hard to tell where errors come from; decorator-based entities are easy to confuse with Nest decorators | Learning two new variables at the same time slows down the learning process |
+| **Both in parallel**    | Widest coverage                                                                                                                                               | Double the workload, easy to abandon                                                                                                                           | Not suitable for beginners                                                  |
 
 ## Consequences
 
@@ -46,6 +46,7 @@ Use **Prisma + PostgreSQL** as the primary data layer. Lesson notes will include
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
