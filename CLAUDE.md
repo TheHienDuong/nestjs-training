@@ -62,6 +62,10 @@ All explanations and lesson notes are written in **Vietnamese**. Keep English te
 
 **pnpm** (lockfile `pnpm-lock.yaml` ). Do not use npm or yarn.
 
+## Bilingual Policy
+
+The repo has 2 versions: `main` = Vietnamese, `example/nestjs-training` = English (mirror). When changing any docs/config, update both versions with equivalent content. Code (`src/`, `test/`) is identical across the 2 versions — only docs/config differ by language. GitLab only accepts the English version from `example/nestjs-training`, author = `hienduong-agility`, no trailer. Details: [docs/bilingual-policy.md](docs/bilingual-policy.md).
+
 ## Common commands
 
 ````bash

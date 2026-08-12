@@ -117,13 +117,19 @@ Scope should be the lesson or module name: `docs(lesson-02): ...`, `feat(tasks):
 
 `commitlint` runs on the `commit-msg` git hook — incorrect format will block the commit **right on your machine**, no need to wait for CI.
 
-### Definition of Done — a lesson is only considered complete when all 5 criteria are met
+### Bilingual (2 versions)
+
+Lesson notes are written in Vietnamese on `main`, then an English version is created on branch `example/nestjs-training`. After each milestone, sync the EN version to GitLab (author `hienduong-agility`).
+
+### Definition of Done — a lesson is only considered complete when all 7 criteria are met
 
 - [ ] Lesson note is fully written, with complete **Prior Knowledge Connections** and **Sources** sections
 - [ ] Hands-on runs successfully (`pnpm start:dev` + test the API via Postman)
 - [ ] Tests for the newly written code pass (`pnpm test`)
 - [ ] Pass the quiz from the review step — understand _why_, not just _how_
 - [ ] PR has passing CI and has been merged into `main`
+- [ ] The 2 versions (vi/en) do not drift in content
+- [ ] The EN version is clean, no Vietnamese characters left
 
 ---
 
