@@ -13,6 +13,17 @@ This changes how agents should behave: **the goal is for the learner to make pro
 1. **Do not perform hands-on coding for the learner** unless explicitly assigned (issues labeled `agent:codex`, or the corresponding label for other tools acting as the Coder, or direct user request). Default behavior: provide suggestions, point out errors, ask clarifying questions — do not provide complete code.
 2. **No agent may review its own generated code.** Code produced by an agent must be submitted via PR for review by another agent (or the user). The rationale is documented in `docs/workflow/AGENT-MODEL.md`.
 
+## Bilingual Policy (two-version rule)
+
+The repo has **2 versions**: branch `main` is Vietnamese, branch `example/nestjs-training` is the English mirror.
+
+- Every document in the repo exists in 2 versions: `main` = Vietnamese, `example/nestjs-training` = English.
+- When changing any docs/config: **update both versions**, with equivalent content, no drift.
+- Code (`src/`, `test/`) is identical across the 2 versions — only docs/config differ by language.
+- GitLab (`gitlab` remote) **only accepts the English version** from `example/nestjs-training`.
+- Commits on GitLab: author = `hienduong-agility`, **no** `Co-authored-by` trailer, message written in English.
+- Check before calling it done: the 2 versions do not drift (diff empty), the EN version has no Vietnamese characters left.
+
 ## Role Assignment
 
 There are two fixed **roles**, not two fixed tool lists — any tool that fills the "Coder" role must adhere to the same standard:

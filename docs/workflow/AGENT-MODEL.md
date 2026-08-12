@@ -114,6 +114,8 @@ Multiple agents can only collaborate when they all read the same context source:
 | `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                                        |
 | `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                             |
 
+Any agent changing docs must update both vi/en versions (`main` in Vietnamese, `example/nestjs-training` in English) — see [bilingual-policy.md](../bilingual-policy.md). GitLab only accepts the EN version from `example/nestjs-training`, never the Vietnamese one.
+
 ## Agent Experiment Log
 
 Every time you assign work to an agent, log one line to `docs/lessons/_agent-log.md`: what the task was, which agent was used, and what the good/bad results were. After the course, you will have real data to answer the very practical industry question: **what tasks should be delegated to AI, and what shouldn't.**
