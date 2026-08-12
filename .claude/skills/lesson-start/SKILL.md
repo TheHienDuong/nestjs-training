@@ -85,7 +85,7 @@ Reply concisely in Vietnamese:
 
 ## 📚 Official documentation
 
-- [<section name>](../../../../../.claude/skills/lesson-start/<full docs.nestjs.com link>)
+- [<section name>](<full docs.nestjs.com link>)
 
 ## 🔗 Connect to prior knowledge
 
