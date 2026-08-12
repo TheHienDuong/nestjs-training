@@ -1,9 +1,11 @@
-# Dependabot — GitHub's bot that automatically monitors dependencies and opens PRs when new versions are available.
+# Dependabot — bot của GitHub tự theo dõi dependency và mở PR khi có bản mới.
 #
-# Why even a learning project should enable it:
-#   1. Outdated dependencies are the most common source of security vulnerabilities in Node.js.
-#   2. You get to build a real habit: bump version -> read changelog -> wait for CI -> merge, instead of having to upgrade 40 packages all at once 2 years later.
-#   3. Every Dependabot PR is a chance to see CI in action: if the new version breaks tests, CI will fail right on that PR and you'll immediately know why.
+# Vì sao một dự án học tập cũng nên bật:
+#   1. Dependency lỗi thời là nguồn lỗ hổng bảo mật phổ biến nhất trong Node.js.
+#   2. Bạn được tập một thói quen thật: nâng version -> đọc changelog -> chờ CI ->
+#      merge, thay vì để 2 năm sau phải nâng 40 package cùng lúc.
+#   3. Mỗi PR của Dependabot là một dịp thấy CI làm việc: nếu bản mới làm vỡ test,
+#      CI đỏ ngay trên PR đó và bạn biết ngay là do đâu.
 
 version: 2
 updates:
@@ -12,12 +14,13 @@ updates:
     schedule:
       interval: weekly
       day: monday
-    # Limit to 5 open PRs at a time to avoid being overwhelmed.
+    # Giới hạn 5 PR mở cùng lúc để không bị ngập.
     open-pull-requests-limit: 5
     commit-message:
       prefix: chore
       include: scope
-    # Group packages from the same family into a SINGLE PR. Upgrading @nestjs/* individually easily causes version mismatches between packages in the same suite, and Nest requires them to be upgraded together.
+    # Gom các package cùng họ vào MỘT PR. Nâng @nestjs/* lẻ tẻ dễ gây lệch
+    # version giữa các package cùng bộ, và Nest yêu cầu chúng đi cùng nhau.
     groups:
       nestjs:
         patterns:
@@ -37,8 +40,9 @@ updates:
     labels:
       - dependencies
 
-  # Keep the GitHub Actions in workflows up to date.
-  - package-ecosystem: github-actions    directory: '/'
+  # Giữ chính các GitHub Action trong workflow luôn mới.
+  - package-ecosystem: github-actions
+    directory: '/'
     schedule:
       interval: monthly
     commit-message:

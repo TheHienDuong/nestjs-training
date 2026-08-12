@@ -1,25 +1,25 @@
 <!--
-LESSON NOTE TEMPLATE — copy this entire file when opening a new lesson.
-The /lesson-start skill will automatically handle copying and filling in the opening section.
-Do not delete any sections: each section has its own pedagogical purpose, noted in the comments.
+TEMPLATE LESSON NOTE — copy this entire file when opening a new lesson.
+The /lesson-start skill will automatically handle copying and filling in the initial section.
+Do not delete any section: each section has its own pedagogical purpose, noted in the comments.
 -->
 
-# LXX — <Lesson Name>
+# LXX — <Lesson name>
 
 |                |                            |
 | -------------- | -------------------------- |
 | **Phase**      | X — <phase name>            |
 | **Linear**     | NES-XX                     |
 | **Branch**     | `hien/nes-XX-...`          |
-| **Main Docs**  | <link docs.nestjs.com/...> |
-| **Lesson Date**| YYYY-MM-DD                 |
+| **Main Docs** | <link docs.nestjs.com/...> |
+| **Study Date**   | YYYY-MM-DD                 |
 
 ---
 
 ## 🎯 Objectives
 
 <!-- 3-5 measurable bullet points. "Understand controllers" is not measurable.
-     "Be able to write a controller with 5 CRUD routes, and explain the difference between @Param and @Query" is measurable. -->
+     "Be able to write a controller with 5 CRUD routes, and explain @Param vs @Query" is measurable. -->
 
 - [ ] ...
 - [ ] ...
@@ -27,39 +27,39 @@ Do not delete any sections: each section has its own pedagogical purpose, noted 
 
 ## 📚 Theory
 
-<!-- Explain in English, in this order: PROBLEM first, SOLUTION after.
-     Each concept must include a link to the correct section of the original docs for reference.
+<!-- Explain in English, in order: PROBLEM first, SOLUTION after.
+     Each concept must have a link to the correct section of the original docs for reference.
      Avoid machine-translating docs — write as if you are teaching the person sitting next to you. -->
 
 ### Concept 1: ...
 
 **Problem it solves:** ...
 
-**How Nest does it:** ...
+**How Nest implements it:** ...
 
-**When you should NOT use it:** ...
+**When NOT to use it:** ...
 
 > 📖 Source: <link>
 
 ---
 
-## 🔗 Connection to Prior Knowledge
+## 🔗 Connect to Prior Knowledge
 
-<!-- The most important section of the entire note. Fast learning = anchoring new knowledge to what you already know.
+<!-- This is the most important section of the entire note. Fast learning = anchoring new knowledge to what you already know.
      Always cross-reference with: Express, Prisma, hexagonal architecture. -->
 
-| Existing Knowledge | Equivalent in NestJS | Differences |
-| ------------------ | -------------------- | ----------- || --------------- | ---------------------- | --------------- |
+| Knowledge you already have | Equivalent in NestJS | Differences |
+| ------------------------ | -------------------- | ----------- |
 | Express: ...    | Nest: ...              | ...             |
 
-**What I used to misunderstand:** <write it down as soon as you spot it — this is the section you will revisit the most>
+**Misconceptions I used to have:** <write this down as soon as you notice — this is the section you will revisit the most>
 
 ---
 
 ## 💻 Explained Examples
 
-<!-- Each example: runnable code + line-by-line explanation of key parts + source link.
-     Do not copy the original docs word for word: adapt them to the project's Task Management domain. -->
+<!-- Each example: RUNNABLE code + line-by-line explanation of important parts + source link.
+     Do not copy docs verbatim: adapt them to the Task Management domain of your project. -->
 
 ### Example 1: ...
 
@@ -71,13 +71,13 @@ Do not delete any sections: each section has its own pedagogical purpose, noted 
 
 - Line `...`: ...
 
-> 📖 Based on: <docs link or reference repo link>
+> 📖 Based on: <link to docs or reference repo>
 
 ---
 
 ## 🛠 Hands-on
 
-<!-- YOU code this part yourself. The agent will not do it for you. -->
+<!-- YOU code this section yourself. The Agent will not do it for you. -->
 
 **Requirements:**
 
@@ -90,7 +90,7 @@ pnpm start:dev
 curl ...
 ```
 
-**Where you might get stuck, how to troubleshoot:**
+**Where you might get stuck, and how to troubleshoot:**
 
 - ...
 
@@ -98,19 +98,19 @@ curl ...
 
 ## ✅ Review & Quiz
 
-<!-- Fill this in after the /lesson-review step. Answer in your own words, DO NOT copy the provided answers.
+<!-- Fill this in after the /lesson-review step. Answer in your own words, DO NOT copy the answers.
      If you can't answer on your own, the lesson is not complete — go back to the Theory section. -->
 
 1. **Question:** ...
    **Answer:** ...
 
-**Review of the previous lesson:** <a sentence connecting the knowledge from this lesson to the previous lesson>
+**Review the previous lesson:** <a sentence connecting the knowledge from this lesson to the previous one>
 
 ---
 
-## 🧠 Key Points to Remember
+## 🧠 Key Takeaways
 
-<!-- Maximum 5 lines. This is the section you will quickly review before an interview. -->
+<!-- Maximum 5 lines. This is the section you will review quickly before interviews. -->
 
 1. ...
 
@@ -118,7 +118,14 @@ curl ...
 
 ## 📎 Sources
 
-<!-- All links used. Official sources are listed first. -->
+<!-- All links used. Official sources go first. -->
 
 - [docs.nestjs.com/...](https://docs.nestjs.com/...)
 - [nestjs/nest — sample/...](https://github.com/nestjs/nest/tree/master/sample)
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**Disclaimer**:
+This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

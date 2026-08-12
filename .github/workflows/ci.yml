@@ -1,10 +1,10 @@
-# CI — runs automatically on every push and every pull request.
+# CI — chạy tự động mỗi lần push và mỗi pull request.
 #
-# Purpose: prove that the code runs on A CLEAN MACHINE, not just on your local machine.
-# "It works on my machine" is the phrase that has caused countless production incidents.
+# Mục đích: chứng minh code chạy được trên MỘT MÁY SẠCH, không chỉ trên máy bạn.
+# "Trên máy tôi vẫn chạy" là câu nói đã gây ra vô số sự cố production.
 #
-# This job is also the "required status check" for branch protection:
-# If CI is red, the Merge button on GitHub is disabled.
+# Job này cũng là "required status check" của branch protection:
+# CI đỏ thì nút Merge trên GitHub bị vô hiệu hoá.
 
 name: CI
 
@@ -14,7 +14,7 @@ on:
   pull_request:
     branches: [main]
 
-# Pushing a new commit to the same PR will cancel the previous run — saves CI minutes.
+# Push commit mới vào cùng một PR sẽ huỷ lần chạy cũ — đỡ tốn phút CI.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,8 +24,8 @@ jobs:
     name: Lint · Test · Build
     runs-on: ubuntu-latest
 
-    # From Phase 2 (when Prisma is added), uncomment the block below to provision a dedicated PostgreSQL
-    # instance for this CI run. It lives and dies with the job.
+    # Từ Phase 2 (khi có Prisma), bỏ comment khối dưới để cấp một PostgreSQL
+    # dùng riêng cho lần chạy CI này. Nó sống và chết cùng job.
     #
     # services:
     #   postgres:
@@ -45,27 +45,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      # This action does NOT auto-detect the pnpm version. It reads the "packageManager" field# in package.json ("pnpm@11.18.0"). If this field is missing, the job will fail immediately. This ensures your local machine and CI use the exact same pnpm version — which is also the reason the `--frozen-lockfile` flag exists in the step below.
+      # Action này KHÔNG tự đoán version pnpm. Nó đọc field "packageManager"
+      # trong package.json ("pnpm@11.18.0"). Thiếu field đó là job fail ngay.
+      # Nhờ vậy máy bạn và CI dùng đúng một version pnpm — cùng lý do tồn tại
+      # của --frozen-lockfile ở bước dưới.
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
 
-      # cache: 'pnpm' caches the pnpm store, so subsequent runs are much faster.
+      # cache: 'pnpm' cache lại pnpm store -> lần chạy sau nhanh hơn nhiều.
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
 
-      # --frozen-lockfile: installs dependencies exactly as specified in pnpm-lock.yaml, without automatically upgrading versions. If the lockfile is out of sync with package.json, the job will FAIL instead of silently installing different versions.
+      # --frozen-lockfile: cài đúng theo pnpm-lock.yaml, không tự nâng version.
+      # Nếu lockfile lệch với package.json, job FAIL thay vì âm thầm cài khác.
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # --max-warnings=0: warnings are also treated as errors on CI.
-      # (On your local machine `pnpm lint` has the --fix flag so it auto-fixes issues; on CI it only runs checks.)
+      # --max-warnings=0: cảnh báo cũng bị coi là lỗi trên CI.
+      # (Ở máy local `pnpm lint` có --fix nên tự sửa; ở CI thì chỉ kiểm tra.)
       - name: Lint
         run: pnpm exec eslint "{src,apps,libs,test}/**/*.ts" --max-warnings=0
 
-      - name: Check formatting (Prettier)
+      - name: Kiểm tra format (Prettier)
         run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"
 
       - name: Unit tests
@@ -74,7 +78,8 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # E2E tests require a database, so they are enabled at the same time as services.postgres in Phase 2.
+      # E2E cần database nên bật cùng lúc với services.postgres ở Phase 2.
       # - name: E2E tests
       #   run: pnpm test:e2e
-      #   env:#     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nestjs_training_test
+      #   env:
+      #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nestjs_training_test

@@ -1,42 +1,42 @@
 /**
-  * commitlint — checks commit messages against the Conventional Commits standard.
-  * Run through the .husky/commit-msg git hook
+ * commitlint — kiểm tra commit message theo chuẩn Conventional Commits.
+ * Chạy qua git hook .husky/commit-msg
  *
-  * Format:  <type>(<scope>): <description>
-  * Correct example: feat(tasks): add CRUD endpoints for tasks
-  * docs(lesson-02): notes on controllers and routing
+ * Định dạng:  <type>(<scope>): <mô tả>
+ * Ví dụ đúng: feat(tasks): add CRUD endpoints for tasks
+ *             docs(lesson-02): note về controllers và routing
  *             chore: bump @nestjs/core to 11.1.28
  *
-  * Why format constraints:
-  * - Git history should be readable like a changelog, not a list of "update", "fix bug" commits.
-  * - Type + scope tells you immediately what type a commit is without needing to open the diff.
-  * - Serves as a prerequisite for automatically generating CHANGELOG and semantic version at a later stage.
+ * Vì sao ràng buộc format:
+ *   - Lịch sử git đọc được như changelog, không phải một danh sách "update", "fix bug".
+ *   - Type + scope cho biết NGAY một commit thuộc loại gì mà không cần mở diff.
+ *   - Là tiền đề để về sau tự sinh CHANGELOG và semantic version.
  *
-  * View all conventions in docs/workflow/WORKFLOW.md
+ * Xem toàn bộ quy ước trong docs/workflow/WORKFLOW.md
  */
 export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
-    // Limit types to avoid inventing a new type every day.
+    // Giới hạn type để tránh mỗi hôm bịa một type mới.
     'type-enum': [
       2,
       'always',
       [
-        'feat', // Add features to the API
-        'fix', // bug fix
+        'feat', // thêm tính năng cho API
+        'fix', // sửa lỗi
         'docs', // lesson note, README, ADR
-        'test', // add/edit test
-        'refactor', // Change the structure, without changing the behavior.
+        'test', // thêm/sửa test
+        'refactor', // đổi cấu trúc, không đổi hành vi
         'chore', // config, dependency, CI
-        'style', // format, do not change logic
-        'perf', // performance optimization
-        'revert', // undo the previous commit
+        'style', // format, không đổi logic
+        'perf', // tối ưu hiệu năng
+        'revert', // hoàn tác commit trước
       ],
     ],
-    // Allow the subject to be longer than the default, as Vietnamese descriptions consume more characters.
+    // Cho phép subject dài hơn mặc định vì mô tả bằng tiếng Việt tốn ký tự hơn.
     'subject-max-length': [2, 'always', 100],
-    // Off: the original rule prohibits subjects from starting with uppercase letters, but for Vietnamese
-    // Usually capitalize the first word of a sentence, as well as proper nouns (Prisma, NestJS).
+    // Tắt: quy tắc gốc cấm subject bắt đầu bằng chữ hoa, nhưng tiếng Việt
+    // thường viết hoa đầu câu và tên riêng (Prisma, NestJS) cũng viết hoa.
     'subject-case': [0],
   },
 };

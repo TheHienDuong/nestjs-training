@@ -1,7 +1,7 @@
 {
   "name": "nestjs-training",
   "version": "0.0.1",
-  "description": "NestJS 11 learning project following official documentation, operated as a real-world project (Linear + GitHub + Slack + Notion)",
+  "description": "Dự án học NestJS 11 theo docs chính thống, vận hành như một dự án thật (Linear + GitHub + Slack + Notion)",
   "author": "Hien Duong",
   "private": true,
   "license": "UNLICENSED",
