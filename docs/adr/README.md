@@ -19,18 +19,21 @@ Với bạn, ADR còn có giá trị riêng: **viết ADR buộc bạn phải di
 
 - Đặt tên: `NNNN-mo-ta-ngan.md`, số tăng dần, không dùng lại số cũ
 - **ADR là bất biến (immutable):** đã merge thì không sửa nội dung. Đổi ý thì viết ADR mới và đánh dấu ADR cũ là `Superseded by ADR-NNNN`
+
+  > **Ngoại lệ 2026-08-13 (ADR-0004):** được amend tại chỗ theo quyết định user — ADR mới sinh 2 ngày (2026-08-11), chưa có agent nào phụ thuộc, amend giữ lịch sử rõ ràng hơn ADR thay thế. Từ nay trở đi, đổi ý về ADR đã merge PHẢI viết ADR mới `Superseded by ADR-NNNN`.
+
 - Trạng thái: `Proposed` → `Accepted` → `Deprecated` / `Superseded`
 - Ngắn thôi: một trang là đủ
 
 ## Danh sách
 
-| #                                                 | Quyết định                                                             | Trạng thái |
-| ------------------------------------------------- | ---------------------------------------------------------------------- | ---------- |
-| [0001](0001-chon-prisma-lam-orm.md)               | Chọn Prisma làm ORM thay vì TypeORM                                    | Accepted   |
-| [0002](0002-linear-lam-nguon-su-that.md)          | Linear là nguồn sự thật cho task, tích hợp native với GitHub/Slack     | Accepted   |
-| [0003](0003-trunk-based-mot-lesson-mot-pr.md)     | Trunk-based development: một lesson một PR                             | Accepted   |
-| [0004](0004-mcp-single-writer-cho-coder-agent.md) | Claude Code là single-writer MCP; coder agent chỉ nhận SPEC.md         | Accepted   |
-| [0005](0005-coder-agent-mo-pr-rieng-vao-main.md)  | Coder agent mở PR riêng vào main (thay thế quyết định #5 của ADR-0003) | Accepted   |
+| #                                                 | Quyết định                                                                                           | Trạng thái                    |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------- |
+| [0001](0001-chon-prisma-lam-orm.md)               | Chọn Prisma làm ORM thay vì TypeORM                                                                  | Accepted                      |
+| [0002](0002-linear-lam-nguon-su-that.md)          | Linear là nguồn sự thật cho task, tích hợp native với GitHub/Slack                                   | Accepted                      |
+| [0003](0003-trunk-based-mot-lesson-mot-pr.md)     | Trunk-based development: một lesson một PR                                                           | Accepted                      |
+| [0004](0004-mcp-single-writer-cho-coder-agent.md) | Claude Code là single-writer cho Notion/Slack/Postman; Linear mở cho coder agent; coder nhận SPEC.md | Accepted (amended 2026-08-13) |
+| [0005](0005-coder-agent-mo-pr-rieng-vao-main.md)  | Coder agent mở PR riêng vào main (thay thế quyết định #5 của ADR-0003)                               | Accepted                      |
 
 ## Template
 

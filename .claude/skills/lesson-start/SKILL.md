@@ -61,7 +61,7 @@ Copy nguyên description của issue Linear thành `docs/lessons/XX-ten-lesson/S
 
 Cập nhật state issue qua Linear MCP. (Nếu GitHub integration đã bật thì bước 4 cũng tự làm việc này — cập nhật lại vẫn vô hại vì cùng một giá trị.)
 
-Lưu ý: bước cập nhật Linear (bước 3, 6, 7) chỉ Claude Code làm được — Coder agent (dù là codex hay tool nào khác) không có kết nối MCP tới Linear (xem `docs/workflow/AGENT-MODEL.md`), nên không thể tự chạy skill này.
+Lưu ý: skill này là skill PM của Claude — chỉ Claude Code chạy. Coder agent (codex) hiện có Linear MCP để đọc/tạo/track task của chính mình (ADR-0004 amended), nhưng KHÔNG tự chạy skill `/lesson-start` này — nó thuộc vai PM/giảng dạy của Claude (xem `docs/workflow/AGENT-MODEL.md`).
 
 ### 8. Báo cáo cho user
 
