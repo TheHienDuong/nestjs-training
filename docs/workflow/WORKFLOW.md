@@ -66,7 +66,15 @@ To get a "reference solution" to compare after you finish coding on your own: ta
 
 ### Step 4 — Review · `/lesson-review`
 
-Claude reviews your code like a real senior reviewer: asks questions about design choices, points out non-idiomatic code, and quizzes you to confirm you understand (not just copy). Results are recorded in the _Review_ section of the lesson note.
+**Learning review** (teaching, not pre-merge code review): Claude quizzes and reviews with you like a senior mentor — asks questions about design choices, points out non-idiomatic code, and quizzes you to confirm you understand (not just copy). Results are recorded in the _Review_ section of the lesson note.
+
+### Code review & merge
+
+Separate from the learning review above — this is the approval gate before code enters `main`:
+
+1. **Copilot CLI** (GitHub) reviews automatically, once, right after the PR is opened.
+2. **User (lead reviewer)** reviews the code and decides whether to merge.
+3. **Only the user merges** — no agent merges, not even Claude Code.
 
 ### Step 5 — Pull Request
 
@@ -77,7 +85,7 @@ gh pr create --fill
 
 - The PR description **must include** the line `Fixes NES-XX` → after merging, Linear will automatically move the issue to **Done**
 - CI must be passing before merging (the `main` branch has protection enabled)
-- Merge using **Squash and merge** to keep the `main` history clean: 1 lesson = 1 commit
+- Merge using **Squash and merge** by the user (no agent merges) to keep the `main` history clean: 1 lesson = 1 commit
 
 ### Step 6 — Sync · `/sync-progress`
 
