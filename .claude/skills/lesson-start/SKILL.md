@@ -55,7 +55,7 @@ Copy `docs/templates/lesson-note.md` → `docs/lessons/XX-ten-lesson/README.md`.
 
 ### 6. Sinh SPEC.md cho coder agent
 
-Copy nguyên description của issue Linear thành `docs/lessons/XX-ten-lesson/SPEC.md`. Đây là file duy nhất mà Coder agent (codex, hoặc tool khác đang lấp vai Coder) đọc để biết làm gì — không có quyền MCP vào Linear (xem [ADR-0004](../../docs/adr/0004-mcp-single-writer-cho-coder-agent.md) và `docs/workflow/AGENT-MODEL.md`). Chỉ Claude được sửa file này; nếu issue Linear đổi sau đó, cập nhật lại `SPEC.md` cùng lúc.
+Copy nguyên description của issue Linear thành `docs/lessons/XX-ten-lesson/SPEC.md`. Đây là file mà Coder agent (codex, hoặc tool khác đang lấp vai Coder) đọc để biết làm gì — coder agent có quyền truy cập Linear MCP để đọc/tạo/track task của chính mình (ADR-0004 amended), nhưng SPEC.md vẫn là cơ chế bàn giao task học — chỉ Claude được sửa file này (xem [ADR-0004](../../docs/adr/0004-mcp-single-writer-cho-coder-agent.md) và `docs/workflow/AGENT-MODEL.md`); nếu issue Linear đổi sau đó, cập nhật lại `SPEC.md` cùng lúc.
 
 ### 7. Chuyển issue sang In Progress
 
