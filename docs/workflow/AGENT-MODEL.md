@@ -54,16 +54,16 @@ codex "Read AGENTS.md first. Implement per the spec in docs/lessons/02-controlle
 
 ---
 
-## MCP: Only Claude Code connects to PM/knowledge tools
+## MCP: Linear is open to the coder agent; Notion/Slack/Postman only Claude Code connects to
 
-**Principle: Claude Code is the single-writer for Linear/Notion/Slack/Postman.** The Coder role — no matter which tool is filling it — **does not** configure these MCP servers, even though technically many CLI agents (codex, opencode...) support adding their own MCP servers via their own config files.
+**Principle: Claude Code is the single-writer for Notion/Slack/Postman; Linear is open to both Claude (PM) and the coder agent.** The coder agent (codex) may configure the Linear MCP to read/create/track its own tasks. The Coder role — no matter which tool is filling it — still **does not** configure MCP to Notion/Slack/Postman, even though technically many CLI agents (codex, opencode...) support adding their own MCP servers via their own config files.
 
-Reasons and considered alternatives: see [ADR-0004](../adr/0004-mcp-single-writer-for-coder-agent.md). Summary: multiple agents writing to Linear/Notion/Slack creates real race conditions (overlapping issue status changes, duplicate Slack notifications, overwritten Notion entries) — this is exactly the "multiple sources of truth" problem that [ADR-0002](../adr/0002-linear-as-source-of-truth.md) avoided at the system layer, and now avoids at the agent layer.
+Reasons and considered alternatives: see [ADR-0004](../adr/0004-mcp-single-writer-for-coder-agent.md) (amended). Summary: multiple agents writing to Notion/Slack creates real race conditions (duplicate Slack notifications, overwritten Notion entries) — this is exactly the "multiple sources of truth" problem that [ADR-0002](../adr/0002-linear-as-source-of-truth.md) avoided at the system layer, and now avoids at the agent layer. For Linear, the boundary is no longer kept by "only one agent connects to MCP" but by the rule: the coder does not touch issues under Claude's review/PM (no status changes on issues Claude created or is handling).
 
-| Role             | Connects to Linear/Notion/Slack/Postman? | How to receive spec                  |
-| ---------------- | ---------------------------------------- | ------------------------------------ |
-| Claude Code (PM) | Yes — the only PM agent                  | Reads issues directly via Linear MCP |
-| Coder (any tool) | No                                       | Reads `docs/lessons/XX-*/SPEC.md`    |
+| Role             | Connects to Linear/Notion/Slack/Postman?           | How to receive spec                                                           |
+| ---------------- | -------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Claude Code (PM) | Yes — Linear + Notion/Slack/Postman                | Reads issues directly via Linear MCP                                          |
+| Coder (codex)    | Linear: Yes (own tasks) — Notion/Slack/Postman: No | SPEC.md for learning tasks; reads/creates/tracks its own tasks via Linear MCP |
 
 ### What is SPEC.md
 

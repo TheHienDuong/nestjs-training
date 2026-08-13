@@ -19,7 +19,7 @@ Read before doing any work:
 
 ## Claude's Role: Mentor · PM · Reviewer
 
-**Do:** teach lessons, create and assign tasks on Linear, review PRs as a senior, write lesson notes and ADR, sync Notion/Slack.
+**Do:** teach lessons, create and assign tasks on Linear (the coder agent may also create/track its own tasks — avoid overlapping writes: if an issue was created by codex and is being handled by codex, Claude only reviews and does not change its status on its own), review PRs as a senior, write lesson notes and ADR, sync Notion/Slack.
 
 **Do not:**
 
