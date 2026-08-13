@@ -60,13 +60,13 @@ Pre-fill: the title, metadata table (phase, Linear ID, branch, docs, today's dat
 
 ### 6. Generate SPEC.md for the coder agent
 
-Copy the full Linear issue description to `docs/lessons/XX-lesson-name/SPEC.md`. This is the only file the Coder agent (codex, or any other tool acting as the Coder) reads to know what to do — it has no MCP access to Linear (see [ADR-0004](../../docs/adr/0004-mcp-single-writer-for-coder-agent.md) and `docs/workflow/AGENT-MODEL.md`). Only Claude can edit this file; if the Linear issue is updated later, update `SPEC.md` at the same time.
+Copy the full Linear issue description to `docs/lessons/XX-lesson-name/SPEC.md`. This is the file the Coder agent (codex, or any other tool acting as the Coder) reads to know what to do — the coder agent has Linear MCP access to read/create/track its own tasks (ADR-0004 amended), but SPEC.md remains the handoff mechanism for learning tasks — only Claude can edit this file (see [ADR-0004](../../docs/adr/0004-mcp-single-writer-for-coder-agent.md) and `docs/workflow/AGENT-MODEL.md`); if the Linear issue is updated later, update `SPEC.md` at the same time.
 
 ### 7. Move the issue to In Progress
 
 Update the issue state via Linear MCP. (If GitHub integration is enabled, step 4 also does this automatically — re-updating is harmless since it is the same value.)
 
-Note: the Linear update steps (steps 3, 6, 7) can only be done by Claude Code — the Coder agent (whether it is codex or any other tool) has no MCP connection to Linear (see `docs/workflow/AGENT-MODEL.md`), so it cannot run this skill on its own.
+Note: this skill is Claude's PM skill — only Claude Code runs it. The Coder agent (codex) now has Linear MCP to read/create/track its own tasks (ADR-0004 amended), but it does NOT run the `/lesson-start` skill itself — it belongs to Claude's PM/teaching role (see `docs/workflow/AGENT-MODEL.md`).
 
 ### 8. Report to the user
 
