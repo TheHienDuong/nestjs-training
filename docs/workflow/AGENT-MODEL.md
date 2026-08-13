@@ -19,16 +19,24 @@ The second principle, which is especially important for learners:
 
 There are only **2 roles**, not a fixed list of tools. The "Coder" role is **flexible** — whichever tool fills this role follows the same standard, with no separate rules for each individual tool. You will mostly use codex; switching to or adding other tools only requires changing the name in the command, no need to relearn rules.
 
-### 🎓 Claude Code — Mentor · PM · Reviewer (fixed)
+### 🎓 Claude Code — Mentor · PM (fixed)
 
-| Responsibilities                                                                           | Does not do                     |
-| ------------------------------------------------------------------------------------------ | ------------------------------- |
-| Create and assign tasks on Linear, write full task descriptions                            | Write hands-on code for you     |
-| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Merge pull requests for you     |
-| Review PRs like a senior engineer, quiz to assess understanding                            | Review code it generated itself |
-| Write lesson notes, ADRs, sync with Notion/Slack                                           |                                 |
+| Responsibilities                                                                           | Does not do                                                |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Create and assign tasks on Linear, write full task descriptions                            | Write hands-on code for you                                |
+| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Review PR code before merge (Copilot CLI + user handle it) |
+| Quiz to assess understanding (learning review)                                             | Merge PRs for you — **only the user merges**               |
+| Write lesson notes, ADRs, create/update SPEC.md, sync with Notion/Slack                    | Review code it generated itself                            |
 
 **Why this role is fixed to Claude:** its large context window allows it to hold your entire roadmap, all notes, and your full learning history at the same time — exactly what a teacher needs. The PM role also requires **a single** source of truth for status tracking (see the MCP section below) — fixing one agent in this role is a requirement to avoid conflicts, not a preference.
+
+### 🔎 Copilot CLI — Layer-1 code reviewer (automated)
+
+Runs automatically, **once**, right after a PR is opened — no background, no daemon. Does not merge.
+
+### 🧑‍💻 User (Hien Duong, `@TheHienDuong`) — Lead reviewer + merge
+
+Reviews the code after Copilot CLI, makes the final call on whether to merge. **Only the user merges** — no agent merges, even when granted broad authority.
 
 ### ⚙️ Coder — flexible role, follows the same standard no matter which tool fills it
 
@@ -38,7 +46,7 @@ Rules — apply to **any tool** currently holding the Coder role, not just codex
 
 - Work on a **dedicated branch**, named `<tool name>/nes-XX-...` (`codex/...`, `opencode/...`, or any other tool name) — never commit directly to your personal `hien/...` lesson branch
 - Read `AGENTS.md` (shared contract) + `docs/lessons/XX-*/SPEC.md` (spec for the relevant lesson) before starting work
-- All output **must go through a PR** for Claude to review — no direct merges
+- All output **must go through a PR** — layer-1 review by Copilot CLI, lead review + merge by the user (no agent merges)
 
 **Primary tool:** codex — the default tool for the Coder role.
 

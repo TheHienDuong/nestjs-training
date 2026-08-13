@@ -8,16 +8,16 @@
 
 ADR-0003, decision #5: _"Agent branches (`codex/...`) merge into the **lesson branch**, not directly into `main`"_ — this design was correct at the time for a single fixed Coder (codex) serving as the "reference solution" for each lesson.
 
-[ADR-0004](0004-mcp-single-writer-for-coder-agent.md) (2026-08-11) switched to a **flexible Coder role model**: multiple tools (codex, opencode, Hermes...) can all take on the Coder role, each tool works on its own branch named after the tool itself, and all output must go through a PR for Claude Code (in the Reviewer role) to review. Under the new model, decision #5 of ADR-0003 is no longer appropriate:
+[ADR-0004](0004-mcp-single-writer-for-coder-agent.md) (2026-08-11) switched to a **flexible Coder role model**: multiple tools (codex, opencode, Hermes...) can all take on the Coder role, each tool works on its own branch named after the tool itself, and all output must go through a PR; layer-1 code review by Copilot CLI (automated), lead review + merge by the user. Under the new model, decision #5 of ADR-0003 is no longer appropriate:
 
 - **The lesson branch is where learners do hands-on practice.** Mixing Coder agent code into it pollutes the learning history and the comparison log `docs/lessons/_agent-log.md` (you can no longer tell which parts belong to the learner and which belong to the agent).
 - **There is no way to identify which "lesson branch" to use** when multiple tools are all taking on the Coder role (each tool has its own separate branch).
-- **We need a single, consistent review point** for all tools: separate PR → Claude Code (or user) review → squash merge into `main`.
+- **We need a single, consistent review point** for all tools: separate PR → Copilot CLI review (layer 1) → user lead review → **squash merge by the user**.
 
 ## Decision
 
 1. Coder agent branches (`codex/...`, `opencode/...`, etc.) always open **separate PRs directly to `main`**. The only exception is when a lesson requires a "reference solution" and the lesson's SPEC.md explicitly states the merge target — in that case, merge into the lesson branch as a documented exception.
-2. All Coder agent PRs must be reviewed by Claude Code or the user before merging — maintaining the principle that "no agent reviews its own code".
+2. All Coder agent PRs must go through automated review (Copilot CLI) + the user's lead review before merging — **only the user merges**. This maintains the principle that "no agent reviews its own code".
 3. Decision #5 of ADR-0003 is replaced by this ADR. Decisions 1–4 of ADR-0003 (trunk-based development, one lesson per PR, squash merge, branch protection) remain in effect.
 
 ## Considered Options
