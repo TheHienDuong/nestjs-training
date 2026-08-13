@@ -66,7 +66,15 @@ Muốn có "lời giải tham chiếu" để đối chiếu sau khi tự làm xo
 
 ### Bước 4 — Review · `/lesson-review`
 
-Claude review code của bạn như một senior reviewer thật: đặt câu hỏi về lựa chọn thiết kế, chỉ ra chỗ chưa idiomatic, và **quiz** để xác nhận bạn hiểu chứ không phải chép. Kết quả ghi vào phần _Ôn tập_ của lesson note.
+**Review học tập** (giảng dạy, không phải review code trước merge): Claude quiz và ôn tập với bạn như một senior mentor — đặt câu hỏi về lựa chọn thiết kế, chỉ ra chỗ chưa idiomatic, và xác nhận bạn hiểu chứ không phải chép. Kết quả ghi vào phần _Ôn tập_ của lesson note.
+
+### Review code & merge
+
+Tách bạch với review học tập ở trên — đây là cổng kiểm duyệt trước khi code vào `main`:
+
+1. **Copilot CLI** (GitHub) review tự động, 1 lần, ngay sau khi PR mở.
+2. **User (lead reviewer)** review lại code, quyết định merge hay không.
+3. **Chỉ user được merge** — không agent nào merge, kể cả Claude Code.
 
 ### Bước 5 — Pull Request
 
@@ -77,7 +85,7 @@ gh pr create --fill
 
 - PR description **bắt buộc** có dòng `Fixes NES-XX` → merge xong Linear tự chuyển **Done**
 - CI phải xanh mới merge được (branch `main` đã bật protection)
-- Merge bằng **Squash and merge** để lịch sử `main` sạch: 1 lesson = 1 commit
+- Merge bằng **Squash and merge** để lịch sử `main` sạch: 1 lesson = 1 commit — **merge chỉ do user thực hiện** (không agent nào merge)
 
 ### Bước 6 — Đồng bộ · `/sync-progress`
 

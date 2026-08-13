@@ -12,7 +12,7 @@
 ## Hai quy tắc tuyệt đối
 
 1. **Không viết code hands-on thay người học** trừ khi được giao rõ ràng (issue có nhãn `agent:codex` hoặc nhãn tương ứng cho tool khác đang giữ vai Coder, hoặc user yêu cầu trực tiếp). Mặc định: gợi ý, chỉ chỗ sai, đặt câu hỏi — không đưa code hoàn chỉnh.
-2. **Không agent nào tự review code của chính nó.** Code do agent sinh ra phải qua PR để một agent khác (hoặc user) review. Lý do trong `docs/workflow/AGENT-MODEL.md`.
+2. **Không agent nào tự review code của chính nó.** Code do agent sinh ra phải qua PR để **Copilot CLI review tự động** (lớp 1) và **user (lead reviewer) chốt** trước khi merge. **Chỉ user được merge.** Lý do trong `docs/workflow/AGENT-MODEL.md`.
 
 ## Bilingual Policy (quy tắc 2 phiên bản)
 
@@ -29,10 +29,12 @@ Repo có **2 phiên bản**: branch `main` là tiếng Việt, branch `example/n
 
 Hai **vai** cố định, không phải hai danh sách tool cố định — tool nào lấp vai "Coder" cũng theo đúng một khuôn:
 
-| Vai                        | Ai giữ                                                                                     | Ranh giới                                      |
-| -------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
-| **Mentor · PM · Reviewer** | Luôn là Claude Code (cố định — lý do trong `docs/workflow/AGENT-MODEL.md`)                 | Không code hands-on; không merge PR            |
-| **Coder**                  | codex (mặc định) — thỉnh thoảng agent khác (opencode, Hermes...) khi muốn có bản đối chứng | Branch `<tool>/nes-XX-...`; output luôn qua PR |
+| Vai                                | Ai giữ                                                                                     | Ranh giới                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| **Mentor · PM**                    | Luôn là Claude Code (cố định — lý do trong `docs/workflow/AGENT-MODEL.md`)                 | Không code hands-on; không review PR code; không merge PR |
+| **Reviewer code (lớp 1, tự động)** | Copilot CLI (GitHub)                                                                       | Review PR khi PR mở; không merge                          |
+| **Lead reviewer + merge**          | User (Hien Duong, `@TheHienDuong`)                                                         | Quyết định cuối; **chỉ user merge**                       |
+| **Coder**                          | codex (mặc định) — thỉnh thoảng agent khác (opencode, Hermes...) khi muốn có bản đối chứng | Branch `<tool>/nes-XX-...`; output luôn qua PR            |
 
 **MCP:** Linear mở cho cả Claude Code (vai PM) và tool đang giữ vai Coder (codex) — coder được phép tự cấu hình Linear MCP để đọc, tạo và track task của chính mình, nhưng **không tự ý sửa issue ngoài task của mình** (không đổi trạng thái/assignee issue đang trong vòng review của Claude, không sửa issue Claude tạo cho mục đích PM). **Notion/Slack/Postman vẫn chỉ Claude Code nối vào (single-writer)** — tool giữ vai Coder không cấu hình 3 MCP server này. Coder vẫn nhận spec cho task học qua file `docs/lessons/XX-*/SPEC.md` (Claude Code sinh ra ở bước `/lesson-start`) — không tự sửa `SPEC.md`. Lý do: [ADR-0004](docs/adr/0004-mcp-single-writer-cho-coder-agent.md) (amended 2026-08-13).
 
@@ -102,7 +104,7 @@ Type cho phép: `feat` `fix` `docs` `test` `refactor` `chore` `style` `perf` `re
 
 - Branch: lấy **đúng** tên Linear sinh ra (`hien/nes-XX-...`). Coder agent dùng prefix là tên tool đó: `codex/nes-XX-...`, `opencode/nes-XX-...`, v.v.
 - PR description phải có `Fixes NES-XX` (PR của agent thì tham chiếu issue được giao).
-- Squash and merge. Không push thẳng vào `main` — đã bật branch protection.
+- Squash and merge, **merge bởi user** (không agent nào merge). Không push thẳng vào `main` — đã bật branch protection.
 - **Không bao giờ dùng `git commit --no-verify`.** Hook là hàng rào chất lượng, không phải chướng ngại vật.
 
 ## Ranh giới file
