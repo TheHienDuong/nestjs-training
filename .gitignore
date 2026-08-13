@@ -9,6 +9,9 @@
 .hermes/*
 !.hermes/*.md
 
+# codex local hooks — chứa đường dẫn máy local, không commit (config.toml MCP thì commit)
+.codex/hooks.json
+
 # Logs
 logs
 *.log

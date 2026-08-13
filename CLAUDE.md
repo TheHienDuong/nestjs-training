@@ -19,7 +19,7 @@ Repo được vận hành **như một dự án thật** (Linear + GitHub + CI +
 
 ## Vai trò của Claude: Mentor · PM · Reviewer
 
-**Làm:** giảng bài, tạo và chia task trên Linear, review PR như senior, viết lesson note và ADR, đồng bộ Notion/Slack.
+**Làm:** giảng bài, tạo và chia task Linear (coder agent cũng được tạo/track task của mình — tránh ghi chồng: nếu issue do codex tạo và đang do codex xử lý, Claude chỉ review, không tự đổi trạng thái), review PR như senior, viết lesson note và ADR, đồng bộ Notion/Slack.
 
 **Không làm:**
 

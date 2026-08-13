@@ -54,16 +54,16 @@ codex "Đọc AGENTS.md trước. Implement theo spec trong docs/lessons/02-cont
 
 ---
 
-## MCP: chỉ Claude Code nối vào PM/knowledge tool
+## MCP: Linear mở cho coder agent, Notion/Slack/Postman chỉ Claude Code nối vào
 
-**Nguyên tắc: Claude Code là single-writer cho Linear/Notion/Slack/Postman.** Vai Coder — bất kể tool nào đang giữ vai đó — **không** cấu hình các MCP server này, dù về mặt kỹ thuật nhiều CLI agent (codex, opencode...) đều hỗ trợ tự thêm MCP server riêng qua file config của chính nó.
+**Nguyên tắc: Claude Code là single-writer cho Notion/Slack/Postman; Linear mở cho cả Claude (PM) và coder agent.** Coder agent (codex) được cấu hình Linear MCP để tự đọc/tạo/track task của chính mình. Vai Coder — bất kể tool nào đang giữ vai đó — vẫn **không** cấu hình MCP tới Notion/Slack/Postman, dù về mặt kỹ thuật nhiều CLI agent (codex, opencode...) đều hỗ trợ tự thêm MCP server riêng qua file config của chính nó.
 
-Lý do và các phương án đã cân nhắc: xem [ADR-0004](../adr/0004-mcp-single-writer-cho-coder-agent.md). Tóm tắt: nhiều agent cùng ghi vào Linear/Notion/Slack tạo race condition thật (đổi trạng thái issue chồng nhau, Slack nhận thông báo trùng, Notion bị ghi đè) — đúng vấn đề "nhiều nguồn sự thật" mà [ADR-0002](../adr/0002-linear-lam-nguon-su-that.md) đã né ở tầng hệ thống, giờ né tiếp ở tầng agent.
+Lý do và các phương án đã cân nhắc: xem [ADR-0004](../adr/0004-mcp-single-writer-cho-coder-agent.md) (đã amend). Tóm tắt: nhiều agent cùng ghi vào Notion/Slack tạo race condition thật (Slack nhận thông báo trùng, Notion bị ghi đè) — đúng vấn đề "nhiều nguồn sự thật" mà [ADR-0002](../adr/0002-linear-lam-nguon-su-that.md) đã né ở tầng hệ thống, giờ né tiếp ở tầng agent. Với Linear, ranh giới không còn giữ bằng "một agent duy nhất được nối MCP" mà bằng quy tắc: coder không đụng issue thuộc vòng review/PM của Claude (không tự đổi trạng thái issue do Claude tạo/đang xử lý).
 
-| Vai                     | Nối Linear/Notion/Slack/Postman? | Cách nhận spec                  |
-| ----------------------- | -------------------------------- | ------------------------------- |
-| Claude Code (PM)        | Có — agent PM duy nhất           | Đọc thẳng issue qua Linear MCP  |
-| Coder (bất kỳ tool nào) | Không                            | Đọc `docs/lessons/XX-*/SPEC.md` |
+| Vai              | Nối Linear/Notion/Slack/Postman?                         | Cách nhận spec                                                      |
+| ---------------- | -------------------------------------------------------- | ------------------------------------------------------------------- |
+| Claude Code (PM) | Có — Linear + Notion/Slack/Postman                       | Đọc thẳng issue qua Linear MCP                                      |
+| Coder (codex)    | Linear: Có (task của mình) — Notion/Slack/Postman: Không | SPEC.md cho task học; tự đọc/tạo/track task của mình qua Linear MCP |
 
 ### SPEC.md là gì
 

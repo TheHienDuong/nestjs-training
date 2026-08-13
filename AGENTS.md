@@ -34,7 +34,7 @@ Hai **vai** cố định, không phải hai danh sách tool cố định — too
 | **Mentor · PM · Reviewer** | Luôn là Claude Code (cố định — lý do trong `docs/workflow/AGENT-MODEL.md`)                 | Không code hands-on; không merge PR            |
 | **Coder**                  | codex (mặc định) — thỉnh thoảng agent khác (opencode, Hermes...) khi muốn có bản đối chứng | Branch `<tool>/nes-XX-...`; output luôn qua PR |
 
-**MCP:** chỉ Claude Code nối vào Linear/Notion/Slack/Postman. Bất kỳ tool nào giữ vai Coder **không** cấu hình các MCP server này — nhận spec qua file `docs/lessons/XX-*/SPEC.md` (Claude Code sinh ra ở bước `/lesson-start`), không tự truy vấn Linear. Lý do: [ADR-0004](docs/adr/0004-mcp-single-writer-cho-coder-agent.md).
+**MCP:** Linear mở cho cả Claude Code (vai PM) và tool đang giữ vai Coder (codex) — coder được phép tự cấu hình Linear MCP để đọc, tạo và track task của chính mình, nhưng **không tự ý sửa issue ngoài task của mình** (không đổi trạng thái/assignee issue đang trong vòng review của Claude, không sửa issue Claude tạo cho mục đích PM). **Notion/Slack/Postman vẫn chỉ Claude Code nối vào (single-writer)** — tool giữ vai Coder không cấu hình 3 MCP server này. Coder vẫn nhận spec cho task học qua file `docs/lessons/XX-*/SPEC.md` (Claude Code sinh ra ở bước `/lesson-start`) — không tự sửa `SPEC.md`. Lý do: [ADR-0004](docs/adr/0004-mcp-single-writer-cho-coder-agent.md) (amended 2026-08-13).
 
 ## Cấu trúc project
 
