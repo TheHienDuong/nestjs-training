@@ -95,7 +95,7 @@ opencode run "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
               Implement per the spec. Only modify files in src/ and test/."
 ```
 
-Then always open a separate PR for each branch for Claude Code to review — no direct merges, do not combine PRs with your hands-on branch.
+Then always open a separate PR for each branch — layer-1 review by Copilot CLI, lead review + merge by the user; no direct merges, do not combine PRs with your hands-on branch.
 
 ---
 

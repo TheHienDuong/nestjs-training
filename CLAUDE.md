@@ -94,11 +94,12 @@ Run `pnpm verify` before opening a PR so you don't have to wait for CI to find o
 
 ## Quality gates
 
-| Quality gate                     | Location                                              |
-| -------------------------------- | ----------------------------------------------------- |
-| `lint-staged`                    | git hook `pre-commit`                                 |     | `commitlint` (Conventional Commits) | git hook `commit-msg` |
-| CI: lint + format + test + build | GitHub Actions                                        |
-| Branch protection `main`         | GitHub — prohibits direct pushes, requires passing CI |
+| Quality gate                        | Location                                              |
+| ----------------------------------- | ----------------------------------------------------- |
+| `lint-staged`                       | git hook `pre-commit`                                 |
+| `commitlint` (Conventional Commits) | git hook `commit-msg`                                 |
+| CI: lint + format + test + build    | GitHub Actions                                        |
+| Branch protection `main`            | GitHub — prohibits direct pushes, requires passing CI |
 
 Commits with incorrect format are **blocked locally**. Never suggest using `--no-verify` to take shortcuts — that guardrail is part of the learning process.
 
