@@ -34,6 +34,7 @@ Với bạn, ADR còn có giá trị riêng: **viết ADR buộc bạn phải di
 | [0003](0003-trunk-based-mot-lesson-mot-pr.md)     | Trunk-based development: một lesson một PR                                                           | Accepted                      |
 | [0004](0004-mcp-single-writer-cho-coder-agent.md) | Claude Code là single-writer cho Notion/Slack/Postman; Linear mở cho coder agent; coder nhận SPEC.md | Accepted (amended 2026-08-13) |
 | [0005](0005-coder-agent-mo-pr-rieng-vao-main.md)  | Coder agent mở PR riêng vào main (thay thế quyết định #5 của ADR-0003)                               | Accepted                      |
+| [0006](0006-herdr-pty-pane-bridge.md)             | Dispatch qua Herdr PTY-pane bridge (Hermes điều khiển agent trong pane terminal)                     | Proposed                      |
 
 ## Template
 
