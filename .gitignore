@@ -5,6 +5,12 @@
 .serena
 .claude/*.json
 
+# Local development state
+/.cache/
+/.pnpm-store/
+/.venv/
+/.claude/*.bak-*
+
 # Hermes local working state — chỉ giữ các file .md (README, plan tham khảo) để commit
 .hermes/*
 !.hermes/*.md
