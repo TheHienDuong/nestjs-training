@@ -8,6 +8,7 @@ export interface Task {
   completed: boolean;
 }
 
+// Injectable cho phép Nest quản lý service và cung cấp nó qua constructor injection.
 @Injectable()
 export class TasksService {
   private readonly tasks: Task[] = [];
@@ -22,6 +23,7 @@ export class TasksService {
     return task;
   }
 
+  // Filter là business logic, vì vậy controller chỉ nhận input rồi ủy quyền cho service.
   findAll(completed?: string): Task[] {
     if (completed === undefined) {
       return this.tasks;
@@ -33,6 +35,7 @@ export class TasksService {
 
   findOne(id: number): Task {
     const task = this.tasks.find((item) => item.id === id);
+    // Exception này được Nest chuyển thành HTTP 404 khi không tìm thấy task.
     if (!task) {
       throw new NotFoundException(`Task ${id} not found`);
     }
