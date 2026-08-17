@@ -194,6 +194,74 @@ findAll(@Res({ passthrough: true }) res: Response) {
 
 > 📖 Nguồn: docs gốc [Controllers — Route wildcards](https://docs.nestjs.com/controllers#route-wildcards), [Redirection](https://docs.nestjs.com/controllers#redirection) (không có trong tóm tắt NotebookLM §1–§6, đối chiếu trực tiếp file gốc)
 
+### 9. Request lifecycle & vị trí của Pipe
+
+Thứ tự xử lý một request trong Nest: **Middleware → Guards → Interceptors (pre-controller) → Pipes → Route Handler**. Pipe luôn chạy **ngay trước** khi handler được gọi, sau khi Guard đã cho phép request đi qua và sau Interceptor phase pre-controller. Khi một pipe fail (ví dụ `ParseIntPipe` không parse được), nó ném exception (`BadRequestException`) đi thẳng vào **default Exception Filter** — handler **không bao giờ** được gọi.
+
+**So sánh response shape giữa `ParseIntPipe` và `ValidationPipe` khi fail** — cả hai đều ở giai đoạn Pipes, đều bị chặn trước controller, đều đi qua cùng Exception Filter, nhưng khác nhau ở phạm vi và hình dạng lỗi:
+
+|               | `ParseIntPipe` (parameter-scoped)                                               | `ValidationPipe` (global/controller/method-scoped)                                              |
+| ------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Phạm vi       | Một tham số đơn lẻ (`@Param`/`@Query`)                                          | Toàn bộ DTO (`@Body`), nhiều field cùng lúc                                                     |
+| Hình dạng lỗi | `message` là **một chuỗi** (`"Validation failed (numeric string is expected)"`) | `message` là **một mảng** — `class-validator` thu thập lỗi của mọi field không hợp lệ trong DTO |
+
+> 📖 Nguồn: NotebookLM vòng 2 (2026-08-17) §1 — `/tmp/l02-notebook-answer2.md`; đối chiếu docs gốc [Pipes — Built-in pipes](https://docs.nestjs.com/pipes#built-in-pipes), [Exception filters](https://docs.nestjs.com/exception-filters) (⚠️ tên gọi chính xác từng bước "Middleware → Guards → Interceptors → Pipes" chưa đối chiếu trực tiếp một trang docs duy nhất — cần verify thêm ở [/faq/request-lifecycle](https://docs.nestjs.com/faq/request-lifecycle) nếu có)
+
+### 10. Promise vs Observable — return value & error propagation
+
+Handler có thể trả `Promise` hoặc RxJS `Observable`; Nest xử lý khác nhau ở tầng thực thi nhưng **giống nhau** ở tầng lỗi:
+
+- **`Promise`**: Nest `await` handler, lấy giá trị resolve, serialize thành JSON.
+- **`Observable`**: Nest tự `subscribe`, đợi stream `complete`, lấy giá trị **cuối cùng** được emit.
+- **Error propagation**: dù là `Promise` bị reject hay `Observable` phát ra error, cả hai đều kết thúc ở cùng **Exception Filter** — nếu cùng loại exception (ví dụ `NotFoundException`), response lỗi trả về **giống hệt nhau**, không phân biệt handler dùng cơ chế async nào.
+
+```typescript
+@Get()
+async findAll(): Promise<Task[]> {
+  return this.tasksService.findAll(); // Nest await + serialize
+}
+
+@Get()
+findAllStream(): Observable<Task[]> {
+  return this.tasksService.findAllAsStream(); // Nest subscribe + lấy giá trị cuối
+}
+```
+
+> 📖 Nguồn: NotebookLM vòng 2 (2026-08-17) §4 — `/tmp/l02-notebook-answer2.md`; đối chiếu docs gốc [Controllers — Asynchronicity](https://docs.nestjs.com/controllers#asynchronicity)
+
+### 11. Custom pipe (`PipeTransform`) — khác built-in ở đâu
+
+Built-in pipe (`ParseIntPipe`) được bind bằng cách truyền thẳng class token — `@Param('id', ParseIntPipe)` — Nest tự khởi tạo instance. Custom pipe implement interface `PipeTransform`, đánh dấu `@Injectable()`, và có thể khởi tạo theo hai cách: `new MyPipe()` tại chỗ (không có DI), hoặc đăng ký như một provider để tận dụng dependency injection (ví dụ inject một Service để check tồn tại trong DB).
+
+```typescript
+import {
+  PipeTransform,
+  Injectable,
+  ArgumentMetadata,
+  BadRequestException,
+} from '@nestjs/common';
+
+@Injectable()
+export class ParseTaskStatusPipe implements PipeTransform {
+  transform(value: string, metadata: ArgumentMetadata) {
+    const allowed = ['todo', 'doing', 'done'];
+    if (!allowed.includes(value)) {
+      throw new BadRequestException(`"${value}" is not a valid task status`);
+    }
+    return value;
+  }
+}
+```
+
+Chữ ký `transform(value, metadata)`:
+
+- `value` — giá trị thô nhận được (trước khi transform).
+- `metadata: ArgumentMetadata` — gồm `type` (`'body' | 'query' | 'param' | 'custom'`), `metatype` (kiểu runtime của tham số — **chỉ có giá trị khi DTO là class**; nếu DTO khai bằng interface, `metatype` sẽ là `undefined`, củng cố lại lý do ở §6 vì sao DTO phải là class), và `data` (chuỗi truyền trong decorator, ví dụ `'id'` trong `@Param('id')`).
+
+Giá trị `return` từ `transform()` **thay thế** đối số truyền vào handler; nếu pipe `throw`, exception đi qua đúng Exception Filter như built-in pipe.
+
+> 📖 Nguồn: NotebookLM vòng 2 (2026-08-17) §7 — `/tmp/l02-notebook-answer2.md`; đối chiếu docs gốc [Pipes — Custom pipes](https://docs.nestjs.com/pipes#custom-pipes)
+
 ---
 
 ## 🔄 Liên hệ kiến thức cũ (Express ↔ Nest)
@@ -225,8 +293,11 @@ findAll(@Res({ passthrough: true }) res: Response) {
 8. `@HttpCode`/`@Header` xử lý status/header mà không cần rơi vào chế độ `@Res()` library-specific.
 9. `@Res()` không `passthrough: true` sẽ vô hiệu hóa Interceptor, `@HttpCode`, `@Header` cho route đó.
 10. "Thin controller": business logic luôn ủy thác cho Provider/Service, controller chỉ định tuyến + format I/O.
+11. Pipe luôn chạy **sau** Guards và Interceptors (pre-controller), ngay trước handler — request lifecycle: Middleware → Guards → Interceptors → Pipes → Handler.
+12. Với route `PATCH` cần partial update, dùng `PartialType()` từ `@nestjs/mapped-types` thay vì `skipMissingProperties: true` — tránh mass-assignment risk và giữ đúng Swagger schema.
+13. NestJS 11 bundle **Express v5** qua `@nestjs/platform-express` — wildcard cuối route (`*`) vẫn tương thích cả hai adapter, nhưng wildcard **giữa** route bắt buộc cú pháp named (`*splat`) trên Express 5 và **không** được Fastify hỗ trợ.
 
-> 📖 Nguồn: tổng hợp từ NotebookLM §1–§4 và docs gốc controllers/pipes đã trích ở trên
+> 📖 Nguồn: tổng hợp từ NotebookLM §1–§4 và docs gốc controllers/pipes đã trích ở trên; điểm 11–13 bổ sung từ NotebookLM vòng 2 (2026-08-17) §1, §2, §8 — `/tmp/l02-notebook-answer2.md`
 
 ---
 
@@ -297,7 +368,24 @@ Controller trong Nest là lớp giao tiếp biên, nối HTTP request với busi
 15. **Hỏi:** `@Redirect()` mặc định trả status code nào nếu không truyền `statusCode`?
     **Đáp án:** 302 (Found).
 
-> 📖 Nguồn: NotebookLM §5 (10 câu gốc, đã diễn giải + bổ sung câu 13–15 đối chiếu docs gốc controllers.md)
+**Vòng 2 (bổ sung 2026-08-17):**
+
+16. **Hỏi:** Khác nhau về **hình dạng** response lỗi giữa `ParseIntPipe` fail và `ValidationPipe` fail trên DTO là gì?
+    **Đáp án:** `ParseIntPipe` trả `message` là một **chuỗi** đơn (lỗi của 1 tham số); `ValidationPipe` trả `message` là một **mảng** — `class-validator` gom lỗi của mọi field không hợp lệ trong DTO.
+
+17. **Hỏi:** Cách chuẩn NestJS khuyến nghị để validate DTO cho route `PATCH` (partial update) là gì, và vì sao không nên chỉ dùng `skipMissingProperties: true`?
+    **Đáp án:** Dùng `PartialType()` từ `@nestjs/mapped-types` — kế thừa DTO gốc, tự động biến mọi field thành optional nhưng vẫn giữ validate định dạng khi field được gửi lên. `skipMissingProperties: true` có mass-assignment risk (bỏ qua validate cả field lẽ ra bắt buộc), sai lệch Swagger schema, và nếu bật global sẽ ảnh hưởng mọi `POST`/`PUT` khác.
+
+18. **Hỏi:** Khi hai route conflict (`@Get(':id')` khai trước `@Get('search')` trong cùng controller), Nest có cảnh báo lúc bootstrap không?
+    **Đáp án:** Không. Nest không log warning lúc bootstrap — lỗi chỉ lộ ra khi có request thật gọi tới `search` và bị route động `:id` "nuốt" mất; có thể phát hiện sớm hơn qua Nest Devtools (flow graph định tuyến).
+
+19. **Hỏi:** Trong DTO dùng cho `@Query()` gộp nhiều field filter, muốn ép kiểu `string` query param thành `number`/`boolean`, dùng decorator nào của `class-transformer`?
+    **Đáp án:** `@Type(() => Number)` hoặc `@Type(() => Boolean)`, kết hợp `ValidationPipe({ transform: true })` để `class-transformer` (`plainToClass`) thực thi việc ép kiểu.
+
+20. **Hỏi:** `@Res({ passthrough: true })` có nhược điểm gì liên quan tới cache khi viết controller?
+    **Đáp án:** Route dùng `@Res()` (kể cả có `passthrough: true`) **không** dùng được `CacheInterceptor` — nếu test hoặc kỳ vọng hành vi cache trên route đó sẽ sai.
+
+> 📖 Nguồn: NotebookLM §5 (10 câu gốc, đã diễn giải + bổ sung câu 13–15 đối chiếu docs gốc controllers.md); câu 16–20 từ NotebookLM vòng 2 (2026-08-17) §1, §2, §3, §5, §6 — `/tmp/l02-notebook-answer2.md`
 
 ---
 
@@ -308,8 +396,11 @@ Controller trong Nest là lớp giao tiếp biên, nối HTTP request với busi
 3. Nếu `TasksController` và `ProjectsController` có Service phụ thuộc vòng tròn lẫn nhau (circular dependency), Nest xử lý thế nào bằng `forwardRef()`, và đây có phải dấu hiệu cần tách lại boundary Module không? _(⚠️ nội dung này không nằm trong trang `/controllers`, xem [Circular dependency](https://docs.nestjs.com/fundamentals/circular-dependency) — đã verify: `forwardRef()` cho phép Nest tham chiếu class chưa được định nghĩa, dùng khi hai Service `@Inject(forwardRef(() => ...))` lẫn nhau)_
 4. Task Management API của dự án có cần API versioning (`@Version('2')`) ngay từ lesson này không, hay nên hoãn đến khi có breaking change thật sự? _(⚠️ nội dung này thuộc [Versioning](https://docs.nestjs.com/techniques/versioning) — `app.enableVersioning({ type: VersioningType.URI })`, không thuộc trang `/controllers`, đã verify tồn tại nhưng chưa học ở lesson nào)_
 5. Nếu sau này chuyển từ Express sang Fastify adapter, phần nào của `TasksController` (đã viết đúng chuẩn Standard mode) sẽ **không** cần sửa gì, và phần nào (nếu có dùng wildcard giữa route hoặc `@Res()`) sẽ phải viết lại?
+6. Route conflict giữa hai controller cùng prefix ở hai module khác nhau được Nest quyết định bằng thứ tự khai báo `imports` trong `AppModule` — nếu domain Task Management sau này có nhiều team cùng đóng góp module, làm sao phát hiện sớm loại conflict này trước khi nó gây lỗi ở production? Nest Devtools flow graph có đủ để đưa vào quy trình review PR không?
+7. `whitelist: true` + `forbidNonWhitelisted: true` trên `ValidationPipe` buộc mọi field trong DTO phải có ít nhất một decorator (kể cả chỉ `@IsOptional()`), nếu không sẽ bị loại hoặc trả 400 — với domain `Task` có nhiều optional filter, đánh đổi giữa an toàn (chặn param lạ) và sự tiện lợi (dễ quên thêm decorator cho field mới) nên nghiêng về phía nào?
+8. Nếu một field query cần vừa `@Type(() => Number)` để ép kiểu, vừa validate khoảng giá trị hợp lệ (ví dụ `limit` tối đa 100), thứ tự áp dụng `class-transformer` (`@Type`) và `class-validator` (`@Max`) bên trong cùng một `ValidationPipe({ transform: true })` có đảm bảo transform chạy trước validate không, hay cần tự viết custom pipe như ở §11 để kiểm soát thứ tự?
 
-> 📖 Nguồn: NotebookLM §6 (câu 1, 3 phỏng theo edge case gốc); câu 2, 4, 5 tự đặt dựa trên domain Task Management của dự án — đối chiếu docs gốc đã trích ở trên
+> 📖 Nguồn: NotebookLM §6 (câu 1, 3 phỏng theo edge case gốc); câu 2, 4, 5 tự đặt dựa trên domain Task Management của dự án — đối chiếu docs gốc đã trích ở trên; câu 6–8 bổ sung từ NotebookLM vòng 2 (2026-08-17) §3, §5, §7 — `/tmp/l02-notebook-answer2.md` (⚠️ câu 8 về thứ tự transform/validate nội bộ chưa có citation rõ ràng trong nguồn vòng 2 — cần verify thêm ở docs `class-validator`/`class-transformer` gốc)
 
 ---
 
@@ -321,8 +412,12 @@ Controller trong Nest là lớp giao tiếp biên, nối HTTP request với busi
 4. **Lạm dụng `@Res()` không `passthrough`:** mất toàn bộ Standard response features (Interceptor, `@HttpCode`, `@Header`, `CacheInterceptor`); nếu quên gọi `res.send()` → request treo vô thời hạn. **Cách tránh:** chỉ dùng `@Res()` khi thật sự cần full control, luôn cân nhắc `passthrough: true` trước.
 5. **DTO khai bằng `interface` thay vì `class`:** interface bị xóa lúc biên dịch → `ValidationPipe` không đọc được metatype → validate im lặng không chạy (không lỗi, không cảnh báo — nguy hiểm vì khó phát hiện). **Cách tránh:** luôn dùng `class` cho DTO, đây là quy ước bắt buộc chứ không phải tùy chọn.
 6. **Circular dependency giữa hai Module/Service phụ thuộc lẫn nhau:** IoC Container không phân giải được thứ tự khởi tạo → lỗi lúc bootstrap. **Cách tránh:** dùng `forwardRef()` ở cả hai chiều `@Inject()`, hoặc ưu tiên tái cấu trúc lại boundary Module nếu circular dependency là dấu hiệu thiết kế sai (xem Câu hỏi mở #3).
+7. **`skipMissingProperties: true` để "tiện" cho PATCH — mass-assignment risk:** bật cờ này trên `ValidationPipe` bỏ qua validate luôn cả những field lẽ ra bắt buộc phải có định dạng đúng, không chỉ field bị thiếu; nếu bật ở mức global, ảnh hưởng lan sang mọi `POST`/`PUT` khác chứ không riêng route PATCH. **Cách tránh:** dùng `PartialType()` từ `@nestjs/mapped-types` cho từng Update DTO thay vì bật cờ toàn cục.
+8. **Wildcard giữa tuyến route khi đổi adapter:** NestJS 11 bundle Express v5 — wildcard giữa route (`ab/*cd`) bắt buộc cú pháp named `ab{*splat}cd`; Fastify **không hỗ trợ** wildcard giữa route dưới bất kỳ hình thức nào. **Cách tránh:** tránh dùng wildcard giữa route nếu có khả năng đổi adapter; chỉ dùng wildcard ở cuối path (`abcd/*`) — cách này tương thích cả hai.
+9. **`@Res()` (kể cả `passthrough: true`) làm mất `CacheInterceptor`:** route có `@Res()` không dùng được cache tự động của Nest dù đã bật `passthrough`, dễ gây hiểu lầm "cache không hoạt động" khi debug. **Cách tránh:** nếu route cần cache, tránh dùng `@Res()`; nếu bắt buộc phải dùng (ví dụ set cookie động), triển khai cache thủ công hoặc chấp nhận không cache route đó.
+10. **Middleware wildcard kiểu cũ (`.*`) đã deprecated ở Nest 11:** cú pháp regex-style cũ không còn nhất quán giữa Express 5 và Fastify. **Cách tránh:** dùng `*splat` (named wildcard) thay cho `.*` trong khai báo middleware để code chạy đúng trên cả hai adapter.
 
-> 📖 Nguồn: NotebookLM §4 (pitfalls #1–#6); đối chiếu docs gốc [Controllers](https://docs.nestjs.com/controllers), [Pipes](https://docs.nestjs.com/pipes), [Circular dependency](https://docs.nestjs.com/fundamentals/circular-dependency)
+> 📖 Nguồn: NotebookLM §4 (pitfalls #1–#6); đối chiếu docs gốc [Controllers](https://docs.nestjs.com/controllers), [Pipes](https://docs.nestjs.com/pipes), [Circular dependency](https://docs.nestjs.com/fundamentals/circular-dependency); pitfalls #7–10 bổ sung từ NotebookLM vòng 2 (2026-08-17) §2, §8 — `/tmp/l02-notebook-answer2.md` (⚠️ pitfall #10 về middleware `.*` deprecated — nguồn vòng 2 khẳng định nhưng chưa đối chiếu trực tiếp changelog/docs `techniques/middleware` chính thức, cần verify thêm)
 
 ---
 
@@ -336,3 +431,7 @@ Controller trong Nest là lớp giao tiếp biên, nối HTTP request với busi
 - [docs.nestjs.com/fundamentals/circular-dependency](https://docs.nestjs.com/fundamentals/circular-dependency) — verify riêng cho Pitfalls #6 và Câu hỏi mở #3 (`forwardRef()`).
 - NestJS version dùng trong repo: `@nestjs/core@11.2.1` (khai trong `package.json`: `^11.0.1`).
 - `src/users/users.controller.ts`, `src/users/dto/create-user.dto.ts` — reference implementation hiện có trong repo (NES-2), dùng để đối chiếu pattern thật đang chạy trong dự án (⚠️ chưa dùng `class-validator` decorator, chỉ là DTO thuần — sẽ bổ sung ở lesson validation).
+- **NotebookLM vòng 2 (2026-08-17)** — `/tmp/l02-notebook-answer2.md`, dùng cho: Lý thuyết §9–§11 (request lifecycle & Pipe, Promise vs Observable, custom pipe), Key points #11–13, Quiz #16–20, Câu hỏi mở #6–8, Pitfalls #7–10.
+- [docs.nestjs.com/controllers#asynchronicity](https://docs.nestjs.com/controllers#asynchronicity) — verify riêng cho Lý thuyết §10 (Promise vs Observable).
+- [docs.nestjs.com/pipes#custom-pipes](https://docs.nestjs.com/pipes#custom-pipes) — verify riêng cho Lý thuyết §11 (custom `PipeTransform`).
+- [docs.nestjs.com/exception-filters](https://docs.nestjs.com/exception-filters) — verify riêng cho Lý thuyết §9 (Exception Filter bắt lỗi từ Pipe).
