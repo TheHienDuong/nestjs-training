@@ -53,8 +53,11 @@ không để module "mồ côi" không ai import.
 - **File chung** (`app.module.ts`, `package.json`, `docs/ROADMAP.md`,
   `docs/lessons/_agent-log.md`, `docs/templates/*`) — serialize hoặc để Hermes
   (orchestrator) hợp nhất, **không agent nào đụng song song**.
-- **Biết scope trước khi giao** — chạy `pnpm lesson <NN>` để biết lesson trước
-  đã sinh file gì, rồi gán scope rời cho từng agent trước khi dispatch.
+- **Biết scope trước khi giao** — trước khi dispatch lesson `<NN>`, chạy
+  `pnpm lesson <NN-1>` (lesson **đã hoàn tất, liền kề trước** — vd trước khi
+  giao L03 thì chạy `pnpm lesson 02`) để biết lesson đó đã sinh file gì, rồi
+  gán scope rời cho từng agent. `pnpm lesson <NN>` của lesson sắp giao báo lỗi
+  "Chưa có tag" vì tag chỉ tạo sau khi lesson đó merge.
 
 ## e) Header comment file reference
 
