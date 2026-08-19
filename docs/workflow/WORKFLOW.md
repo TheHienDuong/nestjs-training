@@ -1,6 +1,6 @@
 # 🔄 WORKFLOW — Quy trình làm việc của dự án
 
-> Đây là "sổ tay nội quy" của repo. Mọi lesson đều đi qua đúng 6 bước dưới đây.
+> Đây là "sổ tay nội quy" của repo. Mọi lesson đều đi qua đúng 7 bước dưới đây.
 > Mục đích kép: **học NestJS** và **học cách một team backend thật sự vận hành**.
 
 ## Bản đồ công cụ
@@ -29,7 +29,7 @@
 
 ---
 
-## Vòng đời một lesson (6 bước)
+## Vòng đời một lesson (7 bước)
 
 ### Bước 1 — Mở lesson · `/lesson-start`
 
@@ -90,6 +90,10 @@ gh pr create --fill
 ### Bước 6 — Đồng bộ · `/sync-progress`
 
 Cập nhật `docs/ROADMAP.md`, đẩy knowledge note lên Notion hub, gửi digest học tập vào `#nestjs-training`.
+
+### Bước 7 — Tag lesson · `pnpm lesson --tag <NN>`
+
+Sau khi PR đã merge vào `main`, chạy `pnpm lesson --tag <NN>` để tạo git tag `lesson/NN` đánh dấu đúng commit của lesson. Nhờ tag này, `pnpm lesson <NN>` sau đó hiển thị được file map chính xác và cho đọc code theo từng lesson.
 
 ---
 

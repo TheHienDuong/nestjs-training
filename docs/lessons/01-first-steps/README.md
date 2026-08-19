@@ -12,6 +12,26 @@
 
 ---
 
+## 🗂 File map lesson này
+
+| File                                    | Vai trò                        | Tạo ở lesson | Trạng thái |
+| --------------------------------------- | ------------------------------ | ------------ | ---------- |
+| `src/users/dto/create-user.dto.ts`      | Ref — DTO                      | L01          | Mới        |
+| `src/users/users.controller.spec.ts`    | Ref — unit test                | L01          | Mới        |
+| `src/users/users.controller.ts`         | Ref — controller               | L01          | Mới        |
+| `src/users/users.module.ts`             | Ref — module                   | L01          | Mới        |
+| `src/users/users.service.ts`            | Ref — service                  | L01          | Mới        |
+| `test/users.e2e-spec.ts`                | Ref — e2e test                 | L01          | Mới        |
+| `src/app.module.ts`                     | Ref — đăng ký UsersModule      | L00          | Sửa        |
+| `README.md`                             | Docs — mô tả dự án + hướng dẫn | L00          | Sửa        |
+| `docs/ROADMAP.md`                       | Docs — cập nhật tiến độ L01    | L00          | Sửa        |
+| `docs/lessons/_agent-log.md`            | Docs — ghi lần dispatch NES-2  | L00          | Sửa        |
+| `docs/lessons/01-first-steps/README.md` | Lesson note L01                | L01          | Mới        |
+
+> Bản đồ chính xác nhất + đọc code từng dòng (kèm số dòng): chạy `pnpm lesson 01`.
+
+---
+
 ## 🎯 Mục tiêu
 
 - [ ] Nói được vai trò của từng file trong 5 file `nest new` sinh ra

@@ -16,6 +16,17 @@ Skill /lesson-start sẽ tự làm việc copy + điền phần đầu.
 
 ---
 
+## 🗂 File map lesson này
+
+> Bản đồ chính xác nhất + đọc từng file code (kèm số dòng): chạy `pnpm lesson <NN>`.
+> Bảng này là bản tóm tắt để đọc nhanh; cập nhật khi lesson xong.
+
+| File | Vai trò (lý thuyết / ref / hands-on) | Tạo ở lesson | Trạng thái |
+| ---- | ------------------------------------ | ------------ | ---------- |
+| ...  | ...                                  | L00          | Mới / Sửa  |
+
+---
+
 ## 🎯 Mục tiêu
 
 <!-- 3-5 gạch đầu dòng ĐO ĐƯỢC. "Hiểu về controller" là không đo được.
