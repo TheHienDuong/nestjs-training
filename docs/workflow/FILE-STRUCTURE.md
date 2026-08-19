@@ -24,11 +24,15 @@ Dẫn chứng hiện có: `src/users/` (L01), `src/tasks/` (L02).
 
 ## b) Look-before-create (tránh lặp)
 
-Trước khi tạo file hoặc feature mới, **luôn grep `src/`** để biết feature đã tồn
-tại chưa:
+Trước khi tạo file hoặc feature mới, **luôn kiểm tra thư mục** để biết feature
+đã tồn tại chưa — **không dùng `grep` nội dung**: nếu file trong
+`src/<feature>/` không chứa đúng literal token, grep trả rỗng (false
+negative) khiến agent tưởng chưa có và tạo module trùng:
 
 ```bash
-grep -ril "<feature>" src/
+test -d "src/<feature>" && echo "đã tồn tại — hãy extend" || echo "chưa có — an toàn để tạo"
+# hoặc liệt kê thư mục feature có sẵn:
+find src -maxdepth 2 -type d -name "<feature>"
 ```
 
 - Lesson là **nâng cấp** feature có sẵn (vd L05 thêm DTO validation cho `tasks`)
