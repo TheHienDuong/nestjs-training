@@ -67,7 +67,7 @@ Repo có 2 phiên bản: `main` = tiếng Việt, `example/nestjs-training` = ti
 - ESLint dùng `typescript-eslint` `recommendedTypeChecked` + `eslint-plugin-prettier`. `no-explicit-any` bị **tắt** → ESLint sẽ không bắt `any`, reviewer phải bắt. `no-floating-promises` và `no-unsafe-argument` ở mức `warn`, nhưng **CI chạy `--max-warnings=0`** nên warning cũng làm CI đỏ.
 - Prettier là nguồn chân lý duy nhất về format cho `.ts`, `.json`, `.md`, `.yml`. Xem `.prettierignore` cho ngoại lệ.
 - File reference code mới phải có header comment dạng `// [NES-X · lesson NN] <vai trò file>`, ví dụ `// [NES-3 · lesson 02] Reference — controller, teaching comments inline`.
-- Một feature = một folder `src/<feature>/`, tạo đúng 1 lần. **Look-before-create**: grep `src/` trước khi tạo file/feature mới — nếu đã có thì extend, không sinh bản song song.
+- Một feature = một folder `src/<feature>/`, tạo đúng 1 lần. **Look-before-create**: kiểm tra thư mục `src/<feature>/` đã tồn tại chưa bằng `test -d`/`find` (xem [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md)) trước khi tạo file/feature mới; nếu đã có thì extend, không sinh bản song song.
 - Agent chạy song song: mỗi agent chỉ đụng module chủ quyền của mình; file chung (`app.module.ts`, `package.json`, `docs/ROADMAP.md`, `docs/lessons/_agent-log.md`, `docs/templates/*`) do Hermes hợp nhất — không đụng trùng. Chi tiết: [docs/workflow/FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md).
 
 ## Hàng rào chất lượng

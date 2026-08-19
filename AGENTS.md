@@ -79,7 +79,7 @@ pnpm db:up / db:down    # postgres + redis qua docker compose
 - Đặt tên theo chuẩn Nest: `TasksController` trong `tasks.controller.ts`, `TasksService` trong `tasks.service.ts`, `TasksModule` trong `tasks.module.ts`.
 - Prettier: single quote, trailing comma. Prettier quản lý format cho `.ts`, `.json`, `.md`, `.yml` — **đừng format tay**, chạy `pnpm format`.
 - File reference code mới phải có header comment dạng `// [NES-X · lesson NN] <vai trò file>`, ví dụ `// [NES-3 · lesson 02] Reference — controller, teaching comments inline`.
-- Một feature = một folder `src/<feature>/`, tạo đúng 1 lần. **Look-before-create**: grep `src/` trước khi tạo file/feature mới — nếu đã có thì extend, không sinh bản song song.
+- Một feature = một folder `src/<feature>/`, tạo đúng 1 lần. **Look-before-create**: kiểm tra thư mục `src/<feature>/` đã tồn tại chưa bằng `test -d`/`find` (xem [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md)) trước khi tạo file/feature mới; nếu đã có thì extend, không sinh bản song song.
 - Agent chạy song song: mỗi agent chỉ đụng module chủ quyền của mình; file chung (`app.module.ts`, `package.json`, `docs/ROADMAP.md`, `docs/lessons/_agent-log.md`, `docs/templates/*`) do Hermes hợp nhất — không đụng trùng. Chi tiết: [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md).
 - `tsconfig.json`: `strictNullChecks: true`, `noImplicitAny: false`. `no-explicit-any` bị tắt trong ESLint, nhưng vẫn **tránh `any`** — reviewer sẽ bắt.
 - **CI chạy `eslint --max-warnings=0`** → warning cũng làm CI đỏ, kể cả `no-floating-promises`.
