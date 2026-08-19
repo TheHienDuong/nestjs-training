@@ -64,6 +64,6 @@ Ví dụ: `// [NES-3 · lesson 02] Reference — controller, teaching comments i
 
 ## Tham chiếu
 
-- Quy trình 6 bước mỗi lesson: [WORKFLOW.md](WORKFLOW.md)
+- Quy trình 7 bước mỗi lesson: [WORKFLOW.md](WORKFLOW.md)
 - Phân vai agent: [AGENT-MODEL.md](AGENT-MODEL.md)
 - Ranh giới file theo đường dẫn: `AGENTS.md` § Ranh giới file
