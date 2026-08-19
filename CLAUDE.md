@@ -66,6 +66,7 @@ Repo có 2 phiên bản: `main` = tiếng Việt, `example/nestjs-training` = ti
 - Unit test `*.spec.ts` đặt cạnh file nguồn (`rootDir: src`). E2E test ở `test/*.e2e-spec.ts` dùng `test/jest-e2e.json`.
 - ESLint dùng `typescript-eslint` `recommendedTypeChecked` + `eslint-plugin-prettier`. `no-explicit-any` bị **tắt** → ESLint sẽ không bắt `any`, reviewer phải bắt. `no-floating-promises` và `no-unsafe-argument` ở mức `warn`, nhưng **CI chạy `--max-warnings=0`** nên warning cũng làm CI đỏ.
 - Prettier là nguồn chân lý duy nhất về format cho `.ts`, `.json`, `.md`, `.yml`. Xem `.prettierignore` cho ngoại lệ.
+- File reference code mới phải có header comment dạng `// [NES-X · lesson NN] <vai trò file>`, ví dụ `// [NES-3 · lesson 02] Reference — controller, teaching comments inline`.
 
 ## Hàng rào chất lượng
 

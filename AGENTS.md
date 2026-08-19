@@ -78,6 +78,7 @@ pnpm db:up / db:down    # postgres + redis qua docker compose
 - Phân lớp: `*.controller.ts` chỉ xử lý HTTP · `*.service.ts` giữ business logic · `*.module.ts` gắn kết. **Business logic không nằm trong controller.**
 - Đặt tên theo chuẩn Nest: `TasksController` trong `tasks.controller.ts`, `TasksService` trong `tasks.service.ts`, `TasksModule` trong `tasks.module.ts`.
 - Prettier: single quote, trailing comma. Prettier quản lý format cho `.ts`, `.json`, `.md`, `.yml` — **đừng format tay**, chạy `pnpm format`.
+- File reference code mới phải có header comment dạng `// [NES-X · lesson NN] <vai trò file>`, ví dụ `// [NES-3 · lesson 02] Reference — controller, teaching comments inline`.
 - `tsconfig.json`: `strictNullChecks: true`, `noImplicitAny: false`. `no-explicit-any` bị tắt trong ESLint, nhưng vẫn **tránh `any`** — reviewer sẽ bắt.
 - **CI chạy `eslint --max-warnings=0`** → warning cũng làm CI đỏ, kể cả `no-floating-promises`.
 
@@ -102,6 +103,7 @@ chore: bump @nestjs/core to 11.1.28
 
 Type cho phép: `feat` `fix` `docs` `test` `refactor` `chore` `style` `perf` `revert`.
 
+- Khi một lesson xong: chạy `pnpm lesson --tag <NN>` để tạo git tag `lesson/NN` đánh dấu commit của lesson.
 - Branch: lấy **đúng** tên Linear sinh ra (`hien/nes-XX-...`). Coder agent dùng prefix là tên tool đó: `codex/nes-XX-...`, `opencode/nes-XX-...`, v.v.
 - PR description phải có `Fixes NES-XX` (PR của agent thì tham chiếu issue được giao).
 - Squash and merge, **merge bởi user** (không agent nào merge). Không push thẳng vào `main` — đã bật branch protection.
