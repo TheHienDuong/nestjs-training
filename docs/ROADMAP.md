@@ -33,7 +33,7 @@ Mọi link `docs.nestjs.com/...` dưới đây đã được đối chiếu vớ
 
 | L   | Lesson                                                         | Trạng thái | Docs / Nguồn                                                                 |
 | --- | -------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------- |
-| L00 | Setup dự án, Linear/GitHub/Slack/CI/Docker, quy trình làm việc | 🟦         | [Lesson note](lessons/00-setup/README.md) · [WORKFLOW](workflow/WORKFLOW.md) |
+| L00 | Setup dự án, Linear/GitHub/Slack/CI/Docker, quy trình làm việc | ✅         | [Lesson note](lessons/00-setup/README.md) · [WORKFLOW](workflow/WORKFLOW.md) |
 
 ---
 
@@ -43,8 +43,8 @@ Mọi link `docs.nestjs.com/...` dưới đây đã được đối chiếu vớ
 
 | L   | Lesson                                                               | Trạng thái | Docs                                                                                                                                                                                                                                |
 | --- | -------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| L01 | Cấu trúc project & bootstrap (`main.ts`, platform adapter)           | 🟦         | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
-| L02 | Controllers & Routing (`@Get`, `@Post`, `@Param`, `@Body`, `@Query`) | ⬜         | [/controllers](https://docs.nestjs.com/controllers)                                                                                                                                                                                 |
+| L01 | Cấu trúc project & bootstrap (`main.ts`, platform adapter)           | ✅         | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
+| L02 | Controllers & Routing (`@Get`, `@Post`, `@Param`, `@Body`, `@Query`) | 🟦         | [/controllers](https://docs.nestjs.com/controllers)                                                                                                                                                                                 |
 | L03 | Providers & Dependency Injection                                     | ⬜         | [/providers](https://docs.nestjs.com/providers) · [/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers) · [/fundamentals/injection-scopes](https://docs.nestjs.com/fundamentals/injection-scopes) |
 | L04 | Modules + **Hands-on: CRUD Tasks (in-memory)**                       | ⬜         | [/modules](https://docs.nestjs.com/modules) · [/fundamentals/dynamic-modules](https://docs.nestjs.com/fundamentals/dynamic-modules)                                                                                                 |
 
