@@ -91,6 +91,7 @@ Run `pnpm verify` before opening a PR so you don't have to wait for CI to find o
 - `tsconfig.json`: uses `nodenext`, `strictNullChecks: true`, `noImplicitAny: false` (full `strict` mode is not enabled yet).
 - ESLint uses `typescript-eslint` `recommendedTypeChecked` + `eslint-plugin-prettier`. The `no-explicit-any` rule is **disabled** → ESLint will not flag `any` usage, so reviewers are responsible for catching it. `no-floating-promises` and `no-unsafe-argument` are set to `warn` level, but **CI runs with `--max-warnings=0`** so even warnings will cause CI to fail.
 - Prettier is the single source of truth for formatting `.ts`, `.json`, `.md`, `.yml` files. Check `.prettierignore` for exceptions.
+- One feature = one `src/<feature>/` folder, created exactly once. **Look-before-create**: check whether `src/<feature>/` already exists with `test -d`/`find` (see [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md)) before creating a new file/feature; if it already exists, extend it instead of creating a parallel copy.
 
 ## Quality gates
 
