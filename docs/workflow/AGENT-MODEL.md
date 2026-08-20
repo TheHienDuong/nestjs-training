@@ -19,24 +19,27 @@ The second principle, which is especially important for learners:
 
 There are only **2 roles**, not a fixed list of tools. The "Coder" role is **flexible** — whichever tool fills this role follows the same standard, with no separate rules for each individual tool. You will mostly use codex; switching to or adding other tools only requires changing the name in the command, no need to relearn rules.
 
-### 🎓 Claude Code — Mentor · PM (fixed)
+### 🎓 Claude Code — Mentor · PM · Local Reviewer (fixed)
 
 | Responsibilities                                                                           | Does not do                                                |
 | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
 | Create and assign tasks on Linear, write full task descriptions                            | Write hands-on code for you                                |
-| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Review PR code before merge (Copilot CLI + user handle it) |
+| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Review code it generated itself                            |
 | Quiz to assess understanding (learning review)                                             | Merge PRs for you — **only the user merges**               |
-| Write lesson notes, ADRs, create/update SPEC.md, sync with Notion/Slack                    | Review code it generated itself                            |
+| **Review the Coder agent's code before merge (local review)**                              | Write code/tests in `src/`, `test/` on behalf of the Coder agent |
+| Write lesson notes, ADRs, create/update SPEC.md, sync with Notion/Slack                    |                                                              |
+
+**Local review is Claude Code's responsibility** — when the Coder agent (codex) opens a PR, Claude Code reviews that code before the user decides whether to merge. The Coder agent **does not** review PRs itself (neither its own nor anyone else's) — per the core principle above: no agent writes code and reviews its own code at the same time, and the reviewer must not be the same as the author.
 
 **Why this role is fixed to Claude:** its large context window allows it to hold your entire roadmap, all notes, and your full learning history at the same time — exactly what a teacher needs. The PM role also requires **a single** source of truth for status tracking (see the MCP section below) — fixing one agent in this role is a requirement to avoid conflicts, not a preference.
 
-### 🔎 Copilot CLI — Layer-1 code reviewer (automated)
+### 🔎 Copilot CLI — Layer-1 code reviewer (automated on GitHub)
 
-Runs automatically, **once**, right after a PR is opened — no background, no daemon. Does not merge.
+Runs automatically, **once**, right after a PR is opened — no background, no daemon. Does not merge. This is the **automated review layer on GitHub**; the **local review** (reading/reviewing the Coder agent's code before merge) is the responsibility of **Claude Code** above.
 
 ### 🧑‍💻 User (Hien Duong, `@TheHienDuong`) — Lead reviewer + merge
 
-Reviews the code after Copilot CLI, makes the final call on whether to merge. **Only the user merges** — no agent merges, even when granted broad authority.
+Reviews the code after Claude Code's local review + Copilot CLI, makes the final call on whether to merge. **Only the user merges** — no agent merges, even when granted broad authority.
 
 ### ⚙️ Coder — flexible role, follows the same standard no matter which tool fills it
 
@@ -46,7 +49,8 @@ Rules — apply to **any tool** currently holding the Coder role, not just codex
 
 - Work on a **dedicated branch**, named `<tool name>/nes-XX-...` (`codex/...`, `opencode/...`, or any other tool name) — never commit directly to your personal `hien/...` lesson branch
 - Read `AGENTS.md` (shared contract) + `docs/lessons/XX-*/SPEC.md` (spec for the relevant lesson) before starting work
-- All output **must go through a PR** — layer-1 review by Copilot CLI, lead review + merge by the user (no agent merges)
+- All output **must go through a PR** — Claude Code local review → Copilot CLI review (layer 1, automated) → lead review by the user (no direct merges, no agent merges)
+- ⛔ **DOES NOT review code/PRs** — the Coder role is code-only; no reviewing (not even its own PR or anyone else's). The local reviewer is Claude Code, the final reviewer is the user.
 
 **Primary tool:** codex — the default tool for the Coder role.
 
@@ -95,7 +99,7 @@ opencode run "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
               Implement per the spec. Only modify files in src/ and test/."
 ```
 
-Then always open a separate PR for each branch — layer-1 review by Copilot CLI, lead review + merge by the user; no direct merges, do not combine PRs with your hands-on branch.
+Then always open a separate PR for each branch — Claude Code local review → Copilot CLI review (layer 1, automated) → lead review + merge by the user; no direct merges, do not combine PRs with your hands-on branch.
 
 ---
 

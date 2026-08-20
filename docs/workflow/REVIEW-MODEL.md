@@ -1,0 +1,86 @@
+# 🔎 REVIEW MODEL — Multi-Reviewer Load-Balancing Model
+
+> **For every agent:** this file defines **who reviews what** in the repo. Read together with `AGENT-MODEL.md` + `docs/bilingual-policy.md`. Core rule: **no agent writes code and reviews its own code at the same time**; the reviewer must not be the same as the author; the Coder (codex/opencode) only writes code, **does not review**.
+
+## Goals
+
+- **Distribute review load** according to each agent's strengths — no single agent carries everything.
+- **Save tokens:** the gatekeeper (Copilot) **only** approves large MRs; small PRs use a lighter reviewer matched to their type.
+- **Transparency:** every reviewer has a documented **rulebook**; the user can read each agent's rules to verify.
+- **Built-in failover:** when an agent hits its limit, someone else takes over — no blocked pipeline, no rubber-stamped merges.
+
+## 1. Review matrix — who is best at reviewing what
+
+| Agent                       | Role                                       | Best at                                                                                                        | Do not assign                        | Cost                       |
+| ---------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------- | --------------------------- |
+| **Copilot CLI**             | **Gatekeeper** (approves MRs into main)   | Thorough, line-by-line review of large PRs; regressions/contract breaks; deep repo context                      | Reviewing individual small PRs (wastes tokens) | High — **max 2 times/day** |
+| **Claude Code**             | **Local reviewer** (logic/docs) / splits PRs | Architecture, cross-file consistency, DI/service, docs/SPEC/ADR, security reasoning; memory keeps things consistent | Writing hands-on code; merging        | Medium                      |
+| **Codex**                   | **Code quality / Security / Action**      | DTO/validation, N+1, secrets, missing tests; fast scanning; weekend security sweep (user runs it)                 | Repo-level architecture               | Low                         |
+| **opencode** (counter-view) | **Second opinion**                        | Counterargument perspective, catching what the primary reviewer missed; backup when overloaded                   | Deep architecture-level review        | Low                         |
+| **Hermes**                  | **Orchestrator / Verifier**               | Coordination, routing to the right reviewer, running `pnpm verify`, verifying self-reports                        | Final review (verify + summarize only) | —                           |
+
+> ⚠️ **Do not use `agy`:** herdr does not support the `agy` integration, and the `coder-agy` profile has been archived. The counter-view role = **opencode** (herdr-supported).
+
+## 2. Pipeline (daily rhythm — SEQUENTIAL, respects the pane cap)
+
+```
+Large task → Claude SPLITS it into small PRs (each PR ≤ 20 FILES, 1 branch/PR)
+  → (sequential, reusing ephemeral panes, cap of 2-3 worker panes) light review by type:
+       Claude(logic/docs) | Codex(technical code) | opencode(counter-view)
+       + tests + action check (pnpm verify, CI scope ≤20)
+  → end of day / whenever the user feels ready → bundle into 2 "large MRs" (collector branch mr/<date>-<seq>)
+  → Gatekeeper does a thorough review (Copilot, max 2/day) → MR into main — only the user merges
+  → weekend: codex security sweep across the whole project (user runs it)
+```
+
+**Hard rules:**
+
+- **2 MRs/day is a CEILING, not a quota** — the user chooses the number (0-2) and the timing; overflow rolls to the next day in the order it was bundled.
+- One small PR **≤ 20 FILES** (guard: no single file >~400 lines).
+- The gatekeeper (Copilot) **only** reviews large MRs; small PRs **never** use Copilot.
+- Operate **sequentially**, reusing ephemeral panes — **do not open N panes in parallel** (cap of 2-3, ADR-0006).
+
+## 3. Budget & where state is stored
+
+| Reviewer | Budget/day                        | When the cap is hit           |
+| -------- | ---------------------------------- | ------------------------------ |
+| Copilot  | 2 reviews (2 large MRs)            | stop calling; MR delayed to next day |
+| Claude   | 3-4 small-PR reviews + PR splitting | hand off to Codex/opencode     |
+| Codex    | 4-5 reviews + weekend sweep         | hand off to opencode/Claude    |
+| opencode | flexible (cheap)                   | —                               |
+
+- Counters are stored in **hermes kanban** (the single task-state source) + the herdr-agent-state plugin. Do NOT write a separate registry/daemon.
+- **Resets at midnight Vietnam time.** Hermes reads the counter before every dispatch to pick the reviewer + enforce the ceiling.
+
+## 4. Failover matrix (by role)
+
+| Agent out    | Replacement                                                                                                 | Degrade                          | Recovery                 |
+| ------------ | -------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------------------- |
+| **Copilot**  | **Claude** (deep gatekeeper) → **codex** (thorough scan) → **manual user** (Hermes prepares a checklist + diff) | drop to 1 MR/day or delay 1 day    | reset → resume Copilot     |
+| **Claude**   | **codex** (logic+docs) → **opencode**                                                                          | small PRs wait / handoff           | reset → Claude takes back over |
+| **Codex**    | **opencode** → **claude**                                                                                       | weekend sweep is postponed         | rolled into next weekend   |
+| **opencode** | **Hermes verifies by hand**                                                                                     | drop the counter-view layer temporarily | —                     |
+
+Principle: never **block** the pipeline; an MR into main **requires at least 1 serious reviewer** (Copilot or Claude deep) — no rubber-stamped merges; log a queue when limits are hit, **do not spam prompts**.
+
+## 5. Real auto-review mechanisms (2 layers, no overlap)
+
+1. **Codex-action** (`codex-review.yml`): runs automatically on **every PR** via CI/GitHub = a free auto-review layer, matching the "Codex code-quality" role. The prompt is self-contained, reads AGENTS.md/CLAUDE.md, and uses P0/P1/P2 severity. **Do not touch this workflow.**
+2. **Copilot gatekeeper:** kept separate — **dispatched interactively via herdr** (profile `reviewer-copilot`), **applies ONLY to `mr/*` branches** (collectors) before merging into main. Does not conflict with the Codex action.
+
+## 6. Review rulebook per agent (visible to the user)
+
+Hermes' dispatch prompt for review = `[rulebook] + [diff] + [request for a verdict + P0/P1/P2 issues]`. **The verdict returned = an FS-sentinel JSON** (nonce + verdict + issues) — NOT text-matching (to avoid the false positive from ADR-0006).
+
+| Reviewer                          | Rulebook                                                                                                                                                    |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude** (logic/docs)           | Controllers only handle HTTP; business logic lives in services; constructor DI; error handling + transactions; cross-file consistency; SPEC/lesson accuracy; no over-engineering |
+| **Codex** (code-quality/security) | **Link to `AGENTS.md` → "Code Review Rules"** (single source of truth, do not copy)                                                                          |
+| **Copilot** (gatekeeper)          | Thorough full-diff review; regressions/contract breaks; merge-readiness + green CI; final security check before main                                        |
+| **opencode** (counter-view)       | Alternative designs; missed edge cases; a perspective different from the primary reviewer                                                                   |
+| **Hermes** (verify)               | RAW git diff + `pnpm verify` + cross-check against self-reports (don't trust the agent's word)                                                              |
+
+## 7. Final decision maker
+
+- **User (Hien Duong)** = lead reviewer + **only the user merges**. No agent merges.
+- Related ADR: [ADR-0007](../adr/0007-claude-reviewer-local-multi-reviewer.md) (Claude takes on the Reviewer local role).
