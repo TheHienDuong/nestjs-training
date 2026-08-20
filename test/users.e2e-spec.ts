@@ -26,17 +26,22 @@ describe('UsersController (e2e)', () => {
   it('/users (POST)', () => {
     return request(app.getHttpServer())
       .post('/users')
-      .send({ name: 'Hien', email: 'hien@example.com' })
+      .send({
+        name: 'Hien',
+        email: 'hien@example.com',
+        password: 'should-not-leak',
+      })
       .expect(201)
-      .expect((res) =>
+      .expect((res) => {
         expect(res.body).toEqual(
           expect.objectContaining({
             id: 1,
             name: 'Hien',
             email: 'hien@example.com',
           }),
-        ),
-      );
+        );
+        expect(res.body).not.toHaveProperty('password');
+      });
   });
 
   afterEach(async () => {
