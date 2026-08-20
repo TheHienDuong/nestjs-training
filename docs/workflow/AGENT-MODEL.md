@@ -19,20 +19,23 @@ Nguyên tắc thứ hai, quan trọng với người học:
 
 Chỉ **2 vai**, không phải một danh sách tool cố định. Vai "Coder" **linh hoạt** — tool nào lấp vai đó cũng theo đúng một khuôn, không cần luật riêng cho từng tool. Bạn dùng chủ yếu codex; thỉnh thoảng đổi hoặc thêm tool khác chỉ cần đổi tên trong lệnh, không phải học lại quy tắc.
 
-### 🎓 Claude Code — Mentor · PM (cố định)
+### 🎓 Claude Code — Mentor · PM · Reviewer local (cố định)
 
-| Làm                                                                | Không làm                                                 |
-| ------------------------------------------------------------------ | --------------------------------------------------------- |
-| Tạo & chia task trên Linear, viết description đầy đủ               | Viết code hands-on thay bạn                               |
-| Giảng bài, đọc docs mới nhất, cho ví dụ, liên hệ kiến thức cũ      | Review PR code trước merge (Copilot CLI + user đảm nhiệm) |
-| Quiz kiểm tra hiểu (review học tập)                                | Merge PR thay bạn — **chỉ user được merge**               |
-| Viết lesson note, ADR, sinh/cập nhật SPEC.md, đồng bộ Notion/Slack | Tự review code do chính nó sinh ra                        |
+| Làm                                                                | Không làm                                             |
+| ------------------------------------------------------------------ | ----------------------------------------------------- |
+| Tạo & chia task trên Linear, viết description đầy đủ               | Viết code hands-on thay bạn                           |
+| Giảng bài, đọc docs mới nhất, cho ví dụ, liên hệ kiến thức cũ      | Tự review code do chính nó sinh ra                    |
+| Quiz kiểm tra hiểu (review học tập)                                | Merge PR thay bạn — **chỉ user được merge**           |
+| **Review mã của Coder agent trước merge (review local)**           | Viết code/test trong `src/`, `test/` thay Coder agent |
+| Viết lesson note, ADR, sinh/cập nhật SPEC.md, đồng bộ Notion/Slack |                                                       |
+
+**Review local là trách nhiệm của Claude Code** — khi Coder agent (codex) mở PR, Claude Code review mã đó trước khi user quyết định merge. Coder agent **không** tự review PR (kể cả của chính nó hay của người khác) — đúng nguyên tắc gốc §đầu: không agent nào vừa viết vừa tự review code mình, và reviewer không được trùng với author.
 
 **Vì sao vai này cố định ở Claude:** context window lớn giúp nó nắm được cả roadmap + toàn bộ note + lịch sử học của bạn cùng lúc — đúng thứ một người thầy cần. Vai PM cũng cần **một** nơi ghi trạng thái duy nhất (xem mục MCP bên dưới) — cố định một agent giữ vai này là điều kiện để tránh xung đột, không phải sở thích.
 
-### 🔎 Copilot CLI — Reviewer code lớp 1 (tự động)
+### 🔎 Copilot CLI — Reviewer code lớp 1 (tự động trên GitHub)
 
-Chạy tự động, **1 lần**, ngay sau khi PR mở — không chạy ngầm, không daemon. Không merge.
+Chạy tự động, **1 lần**, ngay sau khi PR mở — không chạy ngầm, không daemon. Không merge. Đây là **lớp review tự động trên GitHub**; còn **review local** (đọc/review mã của Coder agent trước khi merge) là trách nhiệm của **Claude Code** ở trên.
 
 ### 🧑‍💻 User (Hien Duong, `@TheHienDuong`) — Lead reviewer + merge
 
@@ -46,7 +49,8 @@ Quy tắc — áp dụng cho **bất kỳ tool nào** đang giữ vai Coder, kh�
 
 - Làm trên **branch riêng**, đặt tên `<tên tool>/nes-XX-...` (`codex/...`, `opencode/...`, hay tên tool khác) — không bao giờ commit thẳng vào branch lesson `hien/...` của bạn
 - Đọc `AGENTS.md` (hợp đồng chung) + `docs/lessons/XX-*/SPEC.md` (spec của đúng lesson) trước khi làm
-- Output **luôn đi qua PR** — Copilot CLI review (lớp 1) rồi user lead review — không merge thẳng, không agent nào merge
+- Output **luôn đi qua PR** — Claude Code review local → Copilot CLI review (lớp 1, tự động) → user lead review — không merge thẳng, không agent nào merge
+- ⛔ **KHÔNG review code/PR** — vai Coder chỉ **code**; không review (kể cả PR mình vừa tạo hay PR của người khác). Reviewer local là Claude Code, reviewer cuối là user.
 
 **Dùng chủ yếu:** codex — công cụ mặc định cho vai Coder.
 
@@ -95,7 +99,7 @@ opencode run "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
               Implement theo spec. Chỉ sửa file trong src/ và test/."
 ```
 
-Sau đó luôn mở PR riêng cho mỗi branch — Copilot CLI review (lớp 1), user lead review + merge — không merge thẳng, không gộp chung PR với branch hands-on của bạn.
+Sau đó luôn mở PR riêng cho mỗi branch — Claude Code review local → Copilot CLI review (lớp 1, tự động) → user lead review + merge — không merge thẳng, không gộp chung PR với branch hands-on của bạn.
 
 ---
 
