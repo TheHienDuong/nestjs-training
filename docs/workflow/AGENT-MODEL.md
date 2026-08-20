@@ -21,13 +21,13 @@ There are only **2 roles**, not a fixed list of tools. The "Coder" role is **fle
 
 ### 🎓 Claude Code — Mentor · PM · Local Reviewer (fixed)
 
-| Responsibilities                                                                           | Does not do                                                |
-| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| Create and assign tasks on Linear, write full task descriptions                            | Write hands-on code for you                                |
-| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Review code it generated itself                            |
-| Quiz to assess understanding (learning review)                                             | Merge PRs for you — **only the user merges**               |
+| Responsibilities                                                                           | Does not do                                                      |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| Create and assign tasks on Linear, write full task descriptions                            | Write hands-on code for you                                      |
+| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Review code it generated itself                                  |
+| Quiz to assess understanding (learning review)                                             | Merge PRs for you — **only the user merges**                     |
 | **Review the Coder agent's code before merge (local review)**                              | Write code/tests in `src/`, `test/` on behalf of the Coder agent |
-| Write lesson notes, ADRs, create/update SPEC.md, sync with Notion/Slack                    |                                                              |
+| Write lesson notes, ADRs, create/update SPEC.md, sync with Notion/Slack                    |                                                                  |
 
 **Local review is Claude Code's responsibility** — when the Coder agent (codex) opens a PR, Claude Code reviews that code before the user decides whether to merge. The Coder agent **does not** review PRs itself (neither its own nor anyone else's) — per the core principle above: no agent writes code and reviews its own code at the same time, and the reviewer must not be the same as the author.
 

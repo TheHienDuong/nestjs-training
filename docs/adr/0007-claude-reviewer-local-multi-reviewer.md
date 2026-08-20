@@ -23,11 +23,11 @@ On 2026-08-19: the user decided to build a **multi-reviewer load-balancing model
 
 ## Alternatives considered
 
-| Option                                            | Pros                                                                       | Cons                                                                                    | Why not chosen                        |
-| -------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------- |
-| Keep Claude = Mentor · PM only (as of 2026-08-13) | Doesn't reverse the earlier decision                                       | Missing a local reviewer; Copilot/Codex/opencode carry everything → overload + token cost | Conflicts with the multi-reviewer goal   |
-| **Claude as Local Reviewer** _(chosen)_           | Balances the load; leverages memory + large context; a natural continuation of splitting the PRs | Adds workload to Claude; requires re-syncing the old rules                                | —                                         |
-| Codex as local reviewer                            | Strong at code quality                                                     | The Coder role would violate "no agent writes and reviews its own code"; already decided codex is code-only | Violates the core principle              |
+| Option                                            | Pros                                                                                             | Cons                                                                                                        | Why not chosen                         |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| Keep Claude = Mentor · PM only (as of 2026-08-13) | Doesn't reverse the earlier decision                                                             | Missing a local reviewer; Copilot/Codex/opencode carry everything → overload + token cost                   | Conflicts with the multi-reviewer goal |
+| **Claude as Local Reviewer** _(chosen)_           | Balances the load; leverages memory + large context; a natural continuation of splitting the PRs | Adds workload to Claude; requires re-syncing the old rules                                                  | —                                      |
+| Codex as local reviewer                           | Strong at code quality                                                                           | The Coder role would violate "no agent writes and reviews its own code"; already decided codex is code-only | Violates the core principle            |
 
 ## Consequences
 
