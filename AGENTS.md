@@ -1,6 +1,6 @@
 # AGENTS.md — General Contract for All AI Agents
 
-> All agents (Claude Code, codex, opencode, or any other agent) **must read this file before working** in the repo.
+> All agents (Claude Code, codex, agy, or any other agent) **must read this file before working** in the repo.
 > Claude Code has supplementary dedicated instructions in `CLAUDE.md` .
 
 ## Project Context
@@ -11,7 +11,7 @@ This changes how agents should behave: **the goal is for the learner to make pro
 ## Two Absolute Rules
 
 1. **Do not perform hands-on coding for the learner** unless explicitly assigned (issues labeled `agent:codex`, or the corresponding label for other tools acting as the Coder, or direct user request). Default behavior: provide suggestions, point out errors, ask clarifying questions — do not provide complete code.
-2. **No agent may review its own generated code.** Code produced by an agent must be submitted via PR for automated review by **Codex-action (layer 1, every PR — `codex-review.yml`)** and final sign-off by the **user (lead reviewer)** before merge; large MRs (`mr/*`) add a **Copilot gatekeeper** review (max 2/day). **Only the user merges.** The rationale is documented in `docs/workflow/REVIEW-MODEL.md` + `docs/workflow/AGENT-MODEL.md`.
+2. **No agent may review its own generated code.** Code produced by an agent must be submitted via PR for automated review by **the Codex GitHub App connector (layer 1, every PR — `chatgpt-codex-connector[bot]`)** and final sign-off by the **user (lead reviewer)** before merge; large MRs (`mr/*`) add a **Copilot gatekeeper** review (max 2/day). **Only the user merges.** The rationale is documented in `docs/workflow/REVIEW-MODEL.md` + `docs/workflow/AGENT-MODEL.md`.
 
 ## Bilingual Policy (two-version rule)
 
@@ -28,15 +28,18 @@ The repo has **2 versions**: branch `main` is Vietnamese, branch `example/nestjs
 
 There are two fixed **roles**, not two fixed tool lists — any tool that fills the "Coder" role must adhere to the same standard:
 
-| Role                                                    | Assigned To                                                                                            | Boundaries                                                      |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| **Mentor · PM**                                         | Always Claude Code (fixed — reason documented in `docs/workflow/AGENT-MODEL.md` )                      | No hands-on coding; does not review PR code; does not merge PRs |
-| **Reviewer code-quality (layer 1, automated EVERY PR)** | Codex-action (`codex-review.yml`, GitHub Actions)                                                      | Reviews on PR open/sync; does not merge                         |
-| **Gatekeeper (large MRs, max 2/day)**                   | Copilot CLI (GitHub, dispatched via herdr)                                                             | ONLY branch `mr/*`; small PRs do NOT use it                     |
-| **Lead reviewer + merge**                               | User (Hien Duong, `@TheHienDuong`)                                                                     | Final decision; **only the user merges**                        |
-| **Coder**                                               | codex (default) — occasionally other agents (opencode, Hermes...) when a comparative version is needed | Branch `<tool>/nes-XX-...` ; all output submitted via PR        |
+| Role                                                    | Assigned To                                                                       | Boundaries                                                            |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Mentor · PM**                                         | Always Claude Code (fixed — reason documented in `docs/workflow/AGENT-MODEL.md` ) | No hands-on coding; does not review PR code; does not merge PRs       |
+| **Reviewer code-quality (layer 1, automated EVERY PR)** | Codex GitHub App connector (`chatgpt-codex-connector[bot]`)                       | Reviews on PR open/sync; does not merge, no dedicated workflow needed |
+| **Gatekeeper (large MRs, max 2/day)**                   | Copilot CLI (GitHub, dispatched via herdr)                                        | ONLY branch `mr/*`; small PRs do NOT use it                           |
+| **Lead reviewer + merge**                               | User (Hien Duong, `@TheHienDuong`)                                                | Final decision; **only the user merges**                              |
+| **Coder**                                               | codex (only tool in this role)                                                    | Branch `codex/nes-XX-...` ; all output submitted via PR               |
+| **Counter-view**                                        | agy (2026-08-20, replaces opencode) — dispatched via herdr pane, NO wrap          | Branch `agy/nes-XX-...` ; not a Coder, not the primary reviewer       |
 
-> **Mandatory code-owner approval (2026-08-20):** `@hienduong-agilityio` must approve every PR before the merge button is enabled on GitHub (`.github/CODEOWNERS`, only Claude Code creates/edits this file). This is an additional gate — it does **not** change merge rights, still only the user (`@TheHienDuong`) presses merge. Full reviewer roles (Claude Local Reviewer, Codex-action automated, Copilot gatekeeper for large MRs): see `docs/workflow/REVIEW-MODEL.md`.
+> **Mandatory code-owner approval (2026-08-20):** `@hienduong-agilityio` must approve every PR before the merge button is enabled on GitHub (`.github/CODEOWNERS`, only Claude Code creates/edits this file). This is an additional gate — it does **not** change merge rights, still only the user (`@TheHienDuong`) presses merge. Full reviewer roles (Claude Local Reviewer, Codex GitHub App connector automated, Copilot gatekeeper for large MRs): see `docs/workflow/REVIEW-MODEL.md`.
+>
+> ⚠️ **`agy` = counter-view; `opencode` has been removed from the system (2026-08-20).** agy dispatches via a herdr pane (profile `coder-agy`, NO headroom wrap — runs bare), not a Coder, not the primary reviewer.
 
 **MCP:** Linear is open to both Claude Code (PM role) and the tool acting as the Coder (codex) — the coder may configure the Linear MCP itself to read, create, and track its own tasks, but **must not arbitrarily modify issues outside its own tasks** (no status/assignee changes on issues under Claude's review, no edits to issues Claude created for PM purposes). **Notion/Slack/Postman remain only Claude Code connects to (single-writer)** — the tool acting as the Coder does not configure these 3 MCP servers. The Coder still receives specs for learning tasks via the `docs/lessons/XX-*/SPEC.md` file (generated by Claude Code at the `/lesson-start` step) — it does not modify `SPEC.md` itself. Reason: [ADR-0004](docs/adr/0004-mcp-single-writer-for-coder-agent.md) (amended 2026-08-13).
 
@@ -88,8 +91,8 @@ pnpm db:up / db:down    # postgres + redis via docker compose
 
 ## Code Review Rules
 
-The single source of truth for review rules — every reviewer (Claude Code, Codex-action,
-Copilot, opencode) reads this section, and does not copy the rules into its own separate
+The single source of truth for review rules — every reviewer (Claude Code, Codex GitHub App connector,
+Copilot, agy) reads this section, and does not copy the rules into its own separate
 file (see `docs/workflow/REVIEW-MODEL.md` §6 — the rulebook table points here). Issue
 severity: **P0** (blocks merge), **P1** (should fix before merge), **P2** (suggestion,
 non-blocking).
@@ -130,7 +133,7 @@ chore: bump @nestjs/core to 11.1.28
 
 Allowed types: `feat` `fix` `docs` `test` `refactor` `chore` `style` `perf` `revert` .
 
-- Branches: use the exact name generated by Linear (`hien/nes-XX-...`). Coding agents use the prefix matching their tool name: `codex/nes-XX-...`, `opencode/nes-XX-...`, etc.
+- Branches: use the exact name generated by Linear (`hien/nes-XX-...`). Coding agents use the prefix matching their tool name: `codex/nes-XX-...`. The counter-view role (agy) uses `agy/nes-XX-...`.
 - PR descriptions must include `Fixes NES-XX` (for agent PRs, reference the assigned issue).
 - Use squash and merge. Do not push directly to `main` — branch protection is enabled.
 - **Never use `git commit --no-verify`.** These hooks are quality guardrails, not obstacles.

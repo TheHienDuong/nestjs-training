@@ -12,12 +12,12 @@ On 2026-08-19: the user decided to build a **multi-reviewer load-balancing model
 
 - **Local review** (reading + reviewing the Coder agent's code before merging via a dedicated PR) needs a role with **long context** (roadmap + all notes + full learning history) and **architectural reasoning** — exactly Claude Code's strength.
 - Claude is also the one who **splits large tasks into small PRs** (it has memory, knows what's already been done), so having it review those same PRs afterward is a natural continuation.
-- The Coder agent (codex/opencode) **must not review** — per the core principle "no agent writes code and reviews its own code at the same time" (AGENT-MODEL.md), and to avoid waste.
+- The Coder agent (codex) **must not review** — per the core principle "no agent writes code and reviews its own code at the same time" (AGENT-MODEL.md), and to avoid waste.
 
 ## Decision
 
-1. **Claude Code takes on the Local Reviewer role** — reviewing the Coder agent's (codex/opencode) code **before merge** in the small-PR flow, and acting as **failover #1 for the Copilot gatekeeper** (large-MR review) when Copilot hits its limit.
-2. **codex / opencode (Coder) DO NOT review code/PRs** — code only; no reviewing its own just-created PR or anyone else's. This rule applies to **`codex` in the interactive Coder role** (branch `codex/nes-XX-...`) — it does not apply to `Codex-action` (the automated CI bot, `codex-review.yml`), since that bot does not write code, it only analyzes diffs (see `docs/workflow/REVIEW-MODEL.md`).
+1. **Claude Code takes on the Local Reviewer role** — reviewing the Coder agent's (codex) code **before merge** in the small-PR flow, and acting as **failover #1 for the Copilot gatekeeper** (large-MR review) when Copilot hits its limit.
+2. **codex (Coder) DOES NOT review code/PRs** — code only; no reviewing its own just-created PR or anyone else's. This rule applies to **`codex` in the interactive Coder role** (branch `codex/nes-XX-...`) — it does not apply to the **Codex GitHub App connector** (`chatgpt-codex-connector[bot]`, an automated GitHub App), since that connector does not write code, it only analyzes diffs (see `docs/workflow/REVIEW-MODEL.md`). **agy** (the counter-view role, replacing `opencode` as of 2026-08-20) is also not the primary reviewer — see `docs/workflow/REVIEW-MODEL.md`.
 3. **Copilot CLI keeps the automated gatekeeper role** (layer-1 review, on GitHub) for large MRs; **the user remains the lead reviewer + only the user merges** (unchanged).
 4. The 2026-08-13 decision (PR #24) to have Claude drop the code-reviewer role is **superseded starting from this ADR**.
 
@@ -25,7 +25,7 @@ On 2026-08-19: the user decided to build a **multi-reviewer load-balancing model
 
 | Option                                            | Pros                                                                                             | Cons                                                                                                        | Why not chosen                         |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| Keep Claude = Mentor · PM only (as of 2026-08-13) | Doesn't reverse the earlier decision                                                             | Missing a local reviewer; Copilot/Codex/opencode carry everything → overload + token cost                   | Conflicts with the multi-reviewer goal |
+| Keep Claude = Mentor · PM only (as of 2026-08-13) | Doesn't reverse the earlier decision                                                             | Missing a local reviewer; Copilot/Codex/agy carry everything → overload + token cost                        | Conflicts with the multi-reviewer goal |
 | **Claude as Local Reviewer** _(chosen)_           | Balances the load; leverages memory + large context; a natural continuation of splitting the PRs | Adds workload to Claude; requires re-syncing the old rules                                                  | —                                      |
 | Codex as local reviewer                           | Strong at code quality                                                                           | The Coder role would violate "no agent writes and reviews its own code"; already decided codex is code-only | Violates the core principle            |
 

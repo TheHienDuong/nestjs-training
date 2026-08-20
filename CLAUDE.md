@@ -14,12 +14,12 @@ Read before doing any work:
 | ------------------------------ | --------------------------------------------------------------------------- |
 | `docs/ROADMAP.md`              | 8 phases, ~26 lessons, links to official documentation for each lesson      |
 | `docs/workflow/WORKFLOW.md`    | 6-step process per lesson, branch/commit/PR conventions, Definition of Done |
-| `docs/workflow/AGENT-MODEL.md` | Role separation between Claude / codex / opencode                           |
+| `docs/workflow/AGENT-MODEL.md` | Role separation between Claude / codex / agy                                |
 | `docs/adr/`                    | Architecture decisions and their rationale                                  |
 
 ## Claude's Role: Mentor · PM · Local Reviewer
 
-**Do:** teach lessons, create and assign tasks on Linear (the coder agent may also create/track its own tasks — avoid overlapping writes: if an issue was created by codex and is being handled by codex, Claude only reviews and does not change its status on its own), write lesson notes and ADR, create/update SPEC.md, sync Notion/Slack. **Local review** of the Coder agent's code (codex/opencode) before merge — see `docs/workflow/REVIEW-MODEL.md` for details (Codex-action is the automated code-quality layer on GitHub for every PR; Copilot CLI is the gatekeeper for large MRs only; lead review + merge = the user). Claude does not review PRs it authored itself (docs/ADR/infrastructure) — those route to Hermes manual verify + direct user lead review.
+**Do:** teach lessons, create and assign tasks on Linear (the coder agent may also create/track its own tasks — avoid overlapping writes: if an issue was created by codex and is being handled by codex, Claude only reviews and does not change its status on its own), write lesson notes and ADR, create/update SPEC.md, sync Notion/Slack. **Local review** of the Coder agent's code (codex) before merge — see `docs/workflow/REVIEW-MODEL.md` for details (the Codex GitHub App connector is the automated code-quality layer on GitHub for every PR; Copilot CLI is the gatekeeper for large MRs only; lead review + merge = the user). Claude does not review PRs it authored itself (docs/ADR/infrastructure) — those route to Hermes manual verify + direct user lead review.
 
 **Do not:**
 

@@ -35,9 +35,9 @@ There are only **2 roles**, not a fixed list of tools. The "Coder" role is **fle
 
 **Why this role is fixed to Claude:** its large context window allows it to hold your entire roadmap, all notes, and your full learning history at the same time — exactly what a teacher needs. The PM role also requires **a single** source of truth for status tracking (see the MCP section below) — fixing one agent in this role is a requirement to avoid conflicts, not a preference.
 
-### 🔎 Codex-action — Layer-1 code-quality reviewer (automated on EVERY PR)
+### 🔎 Codex GitHub App connector — Layer-1 code-quality reviewer (automated on EVERY PR)
 
-A GitHub Actions bot (`.github/workflows/codex-review.yml`), runs automatically when a PR is opened/synced/reopened — no background, no daemon, does not merge. This is the **automated review layer on GitHub for every PR** (including small PRs); the **local review** (reading/reviewing the Coder agent's code before merge) remains the responsibility of **Claude Code** above. `Codex-action` is a separate CI bot — **not** `codex` acting as the Coder, so it is not bound by the "Coder does not review" rule.
+A GitHub App connector (`chatgpt-codex-connector[bot]`, the same bot that comments on PRs on GitHub), runs automatically when a PR is opened/synced/reopened — no dedicated workflow needed, no background, no daemon, does not merge. This is the **automated review layer on GitHub for every PR** (including small PRs); the **local review** (reading/reviewing the Coder agent's code before merge) remains the responsibility of **Claude Code** above. The Codex GitHub App connector is a separate connector/bot — **not** `codex` acting as the Coder, so it is not bound by the "Coder does not review" rule.
 
 ### 🚪 Copilot CLI — Gatekeeper for large MRs (dispatched via herdr, NOT automatic)
 
@@ -45,7 +45,7 @@ Used only for the `mr/*` collector branch (max 2 times/day), dispatched interact
 
 ### 🧑‍💻 User (Hien Duong, `@TheHienDuong`) — Lead reviewer + merge
 
-Reviews the code after Claude Code's local review + Codex-action (and the Copilot gatekeeper if it's a large MR), makes the final call on whether to merge. **Only the user merges** — no agent merges, even when granted broad authority. The PR also needs mandatory approval from code owner `@hienduong-agilityio` (`.github/CODEOWNERS`, 2026-08-20) before the merge button is enabled.
+Reviews the code after Claude Code's local review + the Codex GitHub App connector (and the Copilot gatekeeper if it's a large MR), makes the final call on whether to merge. **Only the user merges** — no agent merges, even when granted broad authority. The PR also needs mandatory approval from code owner `@hienduong-agilityio` (`.github/CODEOWNERS`, 2026-08-20) before the merge button is enabled.
 
 ### ⚙️ Coder — flexible role, follows the same standard no matter which tool fills it
 
@@ -53,9 +53,9 @@ Receives issues labeled `agent:codex` (or the corresponding label if you assign 
 
 Rules — apply to **any tool** currently holding the Coder role, not just codex:
 
-- Work on a **dedicated branch**, named `<tool name>/nes-XX-...` (`codex/...`, `opencode/...`, or any other tool name) — never commit directly to your personal `hien/...` lesson branch
+- Work on a **dedicated branch**, named `<tool name>/nes-XX-...` (`codex/...`, or any other tool name) — never commit directly to your personal `hien/...` lesson branch
 - Read `AGENTS.md` (shared contract) + `docs/lessons/XX-*/SPEC.md` (spec for the relevant lesson) before starting work
-- All output **must go through a PR** — Claude Code local review → Codex-action review (layer 1, automated, every PR) → lead review by the user (no direct merges, no agent merges). Large MRs (`mr/*`) add a Copilot gatekeeper review before the user merges
+- All output **must go through a PR** — Claude Code local review → Codex GitHub App connector review (layer 1, automated, every PR) → lead review by the user (no direct merges, no agent merges). Large MRs (`mr/*`) add a Copilot gatekeeper review before the user merges
 - ⛔ **DOES NOT review code/PRs** — the Coder role is code-only; no reviewing (not even its own PR or anyone else's). The local reviewer is Claude Code, the final reviewer is the user.
 
 **Primary tool:** codex — the default tool for the Coder role.
@@ -66,15 +66,30 @@ codex "Read AGENTS.md first. Implement per the spec in docs/lessons/02-controlle
        Only edit files in src/. Do not edit docs/ or .github/."
 ```
 
-**Occasional use (not required):** when you want an additional perspective for comparison, assign the **same `SPEC.md`** to another tool (opencode, or any CLI agent you have available) on that tool's dedicated branch — the rules above apply exactly the same, no separate documentation needed for each tool. The goal is not to find a "better tool" but to realize: the same spec can generate multiple valid designs, and **you** are the one who decides which one to use.
-
 **Most useful way to use this when learning:** do the hands-on work yourself first, _finish it completely_ before looking at the Coder agent's "reference solution" and comparing. The difference between the two versions is the most valuable lesson in that lesson.
+
+### 🔀 agy — Counter-view (NOT a Coder, 2026-08-20)
+
+Replaces `opencode` (removed from the system). Use it when you want an additional perspective to compare against an existing PR/design — **not an official Coder role**, not required, not the primary reviewer. Dispatched via a **herdr pane** (profile `coder-agy`), **NO headroom wrap** — the CLI runs bare:
+
+```bash
+# Edit files for comparison (dedicated branch agy/nes-XX-...)
+git checkout -b agy/nes-12-alt-solution
+agy -p "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first. Implement per the spec." \
+  --model <model> --output-format text --mode accept-edits
+
+# Just want a perspective/plan, no code changes
+agy -p "Evaluate the design of PR #NN, point out missed edge cases" \
+  --model <model> --output-format text --mode plan
+```
+
+The goal is not to find a "better tool" but to realize: the same spec/PR can have multiple valid perspectives, and **you** are the one who decides which one to use.
 
 ---
 
 ## MCP: Linear is open to the coder agent; Notion/Slack/Postman only Claude Code connects to
 
-**Principle: Claude Code is the single-writer for Notion/Slack/Postman; Linear is open to both Claude (PM) and the coder agent.** The coder agent (codex) may configure the Linear MCP to read/create/track its own tasks. The Coder role — no matter which tool is filling it — still **does not** configure MCP to Notion/Slack/Postman, even though technically many CLI agents (codex, opencode...) support adding their own MCP servers via their own config files.
+**Principle: Claude Code is the single-writer for Notion/Slack/Postman; Linear is open to both Claude (PM) and the coder agent.** The coder agent (codex) may configure the Linear MCP to read/create/track its own tasks. The Coder role — no matter which tool is filling it — still **does not** configure MCP to Notion/Slack/Postman, even though technically many CLI agents (codex...) support adding their own MCP servers via their own config files.
 
 Reasons and considered alternatives: see [ADR-0004](../adr/0004-mcp-single-writer-for-coder-agent.md) (amended). Summary: multiple agents writing to Notion/Slack creates real race conditions (duplicate Slack notifications, overwritten Notion entries) — this is exactly the "multiple sources of truth" problem that [ADR-0002](../adr/0002-linear-as-source-of-truth.md) avoided at the system layer, and now avoids at the agent layer. For Linear, the boundary is no longer kept by "only one agent connects to MCP" but by the rule: the coder does not touch issues under Claude's review/PM (no status changes on issues Claude created or is handling).
 
@@ -99,13 +114,14 @@ git checkout -b codex/nes-12-reference-solution
 codex "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
        Implement per the spec. Only modify files in src/ and test/."
 
-# To add a counterargument perspective: change the branch prefix + use a different tool call command, the rules are exactly the same
-git checkout -b opencode/nes-12-alt-solution
-opencode run "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
-              Implement per the spec. Only modify files in src/ and test/."
+# To add a counter-view perspective: agy (not a Coder, no headroom wrap — see the agy section above)
+git checkout -b agy/nes-12-alt-solution
+agy -p "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
+        Implement per the spec. Only modify files in src/ and test/." \
+  --model <model> --output-format text --mode accept-edits
 ```
 
-Then always open a separate PR for each branch — Claude Code local review → Codex-action review (layer 1, automated, every PR) → lead review + merge by the user; no direct merges, do not combine PRs with your hands-on branch.
+Then always open a separate PR for each branch — Claude Code local review → Codex GitHub App connector review (layer 1, automated, every PR) → lead review + merge by the user; no direct merges, do not combine PRs with your hands-on branch.
 
 ---
 
@@ -115,7 +131,7 @@ Multiple agents can only collaborate when they all read the same context source:
 
 | Source          | Role                                                                                                                                                                          |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`AGENTS.md`** | Shared contract. All agents must read this before starting work. Open standard, supported by codex, opencode, and Claude.                                                     |
+| **`AGENTS.md`** | Shared contract. All agents must read this before starting work. Open standard, supported by codex, agy, and Claude.                                                          |
 | **`CLAUDE.md`** | Instructions specific to Claude Code (workflow, role boundaries).                                                                                                             |
 | **`docs/`**     | Long-term context: roadmap, workflow, ADRs, lesson notes.                                                                                                                     |
 | **serena MCP**  | Navigate code by **symbol** instead of reading entire files — find definitions, find reference locations. Saves context and is more accurate than grep as the codebase grows. |

@@ -12,18 +12,18 @@
 
 ## Decision
 
-1. **Small PRs still follow ADR-0005 exactly:** open a separate PR, target `main`, go through review (Claude local review → Codex-action automated → user lead review), and merge directly into `main` once the user approves. The target branch never changes to `mr/*`.
+1. **Small PRs still follow ADR-0005 exactly:** open a separate PR, target `main`, go through review (Claude local review → Codex GitHub App connector automated → user lead review), and merge directly into `main` once the user approves. The target branch never changes to `mr/*`.
 2. **`mr/*` is a POST-MERGE AUDIT bundling layer, not a pre-merge gate:** at the end of the day (or whenever the user feels it's needed), Hermes creates branch `mr/<date>-<seq>` **from commits already on `main`** (already merged per ADR-0005), so the Copilot gatekeeper can do one thorough, consolidated review pass before those changes are considered officially "released" (a post-merge quality gate — it does not block code from entering `main`).
 3. If the Copilot gatekeeper finds an issue during the `mr/*` audit, it is fixed with a new PR (following ADR-0005 as usual) — **never by directly reverting on `mr/*`**.
 4. `mr/*` is capped at 2 times/day (per `REVIEW-MODEL.md` §2/§3) — this is a ceiling on the number of audit passes, not a ceiling on how many small PRs may merge in a day.
 
 ## Alternatives considered
 
-| Option                                                                              | Pros                                                                       | Cons                                                                                                                | Why not chosen                                          |
-| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| Small PRs target `mr/*` directly (pre-merge gate)                                   | Copilot reviews before entering `main`, blocks issues early                | Violates ADR-0005 (the Coder must open PRs directly to `main`); reverses an already-Accepted decision unnecessarily | Violates an Accepted ADR                                |
-| **`mr/*` as a POST-merge audit (chosen)**                                           | Keeps ADR-0005 intact; Copilot still provides periodic consolidated review | Issues found during the audit must be fixed via a new PR, not blocked in real time                                  | —                                                       |
-| Drop the `mr/*` collector entirely, rely only on Codex-action + Claude local review | Simplest, no dedicated ADR needed                                          | Loses the consolidated/thorough review layer Copilot provides for large batches of changes                          | The user wants to keep Copilot as a periodic gatekeeper |
+| Option                                                                                                | Pros                                                                       | Cons                                                                                                                | Why not chosen                                          |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Small PRs target `mr/*` directly (pre-merge gate)                                                     | Copilot reviews before entering `main`, blocks issues early                | Violates ADR-0005 (the Coder must open PRs directly to `main`); reverses an already-Accepted decision unnecessarily | Violates an Accepted ADR                                |
+| **`mr/*` as a POST-merge audit (chosen)**                                                             | Keeps ADR-0005 intact; Copilot still provides periodic consolidated review | Issues found during the audit must be fixed via a new PR, not blocked in real time                                  | —                                                       |
+| Drop the `mr/*` collector entirely, rely only on the Codex GitHub App connector + Claude local review | Simplest, no dedicated ADR needed                                          | Loses the consolidated/thorough review layer Copilot provides for large batches of changes                          | The user wants to keep Copilot as a periodic gatekeeper |
 
 ## Consequences
 

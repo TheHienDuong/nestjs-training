@@ -73,7 +73,7 @@ To get a "reference solution" to compare after you finish coding on your own: ta
 Separate from the learning review above — this is the approval gate before code enters `main`:
 
 1. **Claude Code** does a local review of the Coder agent's code (before the PR is opened).
-2. **Codex-action** (`codex-review.yml`, GitHub Actions) reviews automatically right after the PR is opened/synced — runs on **every PR**, including small PRs. **Copilot CLI is NOT automatic** — it is only dispatched for large MRs (`mr/*`, max 2/day, see [REVIEW-MODEL.md](REVIEW-MODEL.md)).
+2. **Codex GitHub App connector** (`chatgpt-codex-connector[bot]`) reviews automatically right after the PR is opened/synced — runs on **every PR**, including small PRs, no dedicated workflow needed. **Copilot CLI is NOT automatic** — it is only dispatched for large MRs (`mr/*`, max 2/day, see [REVIEW-MODEL.md](REVIEW-MODEL.md)).
 3. **User (lead reviewer)** reviews the code and decides whether to merge — the PR also needs mandatory approval from code owner `@hienduong-agilityio` (`.github/CODEOWNERS`).
 4. **Only the user merges** — no agent merges, not even Claude Code.
 
