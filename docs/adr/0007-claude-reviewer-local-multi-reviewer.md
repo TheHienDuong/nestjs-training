@@ -17,7 +17,7 @@ On 2026-08-19: the user decided to build a **multi-reviewer load-balancing model
 ## Decision
 
 1. **Claude Code takes on the Local Reviewer role** — reviewing the Coder agent's (codex/opencode) code **before merge** in the small-PR flow, and acting as **failover #1 for the Copilot gatekeeper** (large-MR review) when Copilot hits its limit.
-2. **codex / opencode (Coder) DO NOT review code/PRs** — code only; no reviewing its own just-created PR or anyone else's.
+2. **codex / opencode (Coder) DO NOT review code/PRs** — code only; no reviewing its own just-created PR or anyone else's. This rule applies to **`codex` in the interactive Coder role** (branch `codex/nes-XX-...`) — it does not apply to `Codex-action` (the automated CI bot, `codex-review.yml`), since that bot does not write code, it only analyzes diffs (see `docs/workflow/REVIEW-MODEL.md`).
 3. **Copilot CLI keeps the automated gatekeeper role** (layer-1 review, on GitHub) for large MRs; **the user remains the lead reviewer + only the user merges** (unchanged).
 4. The 2026-08-13 decision (PR #24) to have Claude drop the code-reviewer role is **superseded starting from this ADR**.
 

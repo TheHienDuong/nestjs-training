@@ -11,7 +11,7 @@ This changes how agents should behave: **the goal is for the learner to make pro
 ## Two Absolute Rules
 
 1. **Do not perform hands-on coding for the learner** unless explicitly assigned (issues labeled `agent:codex`, or the corresponding label for other tools acting as the Coder, or direct user request). Default behavior: provide suggestions, point out errors, ask clarifying questions — do not provide complete code.
-2. **No agent may review its own generated code.** Code produced by an agent must be submitted via PR for automated review by **Copilot CLI (layer 1)** and final sign-off by the **user (lead reviewer)** before merge. **Only the user merges.** The rationale is documented in `docs/workflow/AGENT-MODEL.md`.
+2. **No agent may review its own generated code.** Code produced by an agent must be submitted via PR for automated review by **Codex-action (layer 1, every PR — `codex-review.yml`)** and final sign-off by the **user (lead reviewer)** before merge; large MRs (`mr/*`) add a **Copilot gatekeeper** review (max 2/day). **Only the user merges.** The rationale is documented in `docs/workflow/REVIEW-MODEL.md` + `docs/workflow/AGENT-MODEL.md`.
 
 ## Bilingual Policy (two-version rule)
 
@@ -28,12 +28,15 @@ The repo has **2 versions**: branch `main` is Vietnamese, branch `example/nestjs
 
 There are two fixed **roles**, not two fixed tool lists — any tool that fills the "Coder" role must adhere to the same standard:
 
-| Role                                   | Assigned To                                                                                            | Boundaries                                                      |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| **Mentor · PM**                        | Always Claude Code (fixed — reason documented in `docs/workflow/AGENT-MODEL.md` )                      | No hands-on coding; does not review PR code; does not merge PRs |
-| **Reviewer code (layer 1, automated)** | Copilot CLI (GitHub)                                                                                   | Reviews PRs when opened; does not merge                         |
-| **Lead reviewer + merge**              | User (Hien Duong, `@TheHienDuong`)                                                                     | Final decision; **only the user merges**                        |
-| **Coder**                              | codex (default) — occasionally other agents (opencode, Hermes...) when a comparative version is needed | Branch `<tool>/nes-XX-...` ; all output submitted via PR        |
+| Role                                                    | Assigned To                                                                                            | Boundaries                                                      |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| **Mentor · PM**                                         | Always Claude Code (fixed — reason documented in `docs/workflow/AGENT-MODEL.md` )                      | No hands-on coding; does not review PR code; does not merge PRs |
+| **Reviewer code-quality (layer 1, automated EVERY PR)** | Codex-action (`codex-review.yml`, GitHub Actions)                                                      | Reviews on PR open/sync; does not merge                         |
+| **Gatekeeper (large MRs, max 2/day)**                   | Copilot CLI (GitHub, dispatched via herdr)                                                             | ONLY branch `mr/*`; small PRs do NOT use it                     |
+| **Lead reviewer + merge**                               | User (Hien Duong, `@TheHienDuong`)                                                                     | Final decision; **only the user merges**                        |
+| **Coder**                                               | codex (default) — occasionally other agents (opencode, Hermes...) when a comparative version is needed | Branch `<tool>/nes-XX-...` ; all output submitted via PR        |
+
+> **Mandatory code-owner approval (2026-08-20):** `@hienduong-agilityio` must approve every PR before the merge button is enabled on GitHub (`.github/CODEOWNERS`, only Claude Code creates/edits this file). This is an additional gate — it does **not** change merge rights, still only the user (`@TheHienDuong`) presses merge. Full reviewer roles (Claude Local Reviewer, Codex-action automated, Copilot gatekeeper for large MRs): see `docs/workflow/REVIEW-MODEL.md`.
 
 **MCP:** Linear is open to both Claude Code (PM role) and the tool acting as the Coder (codex) — the coder may configure the Linear MCP itself to read, create, and track its own tasks, but **must not arbitrarily modify issues outside its own tasks** (no status/assignee changes on issues under Claude's review, no edits to issues Claude created for PM purposes). **Notion/Slack/Postman remain only Claude Code connects to (single-writer)** — the tool acting as the Coder does not configure these 3 MCP servers. The Coder still receives specs for learning tasks via the `docs/lessons/XX-*/SPEC.md` file (generated by Claude Code at the `/lesson-start` step) — it does not modify `SPEC.md` itself. Reason: [ADR-0004](docs/adr/0004-mcp-single-writer-for-coder-agent.md) (amended 2026-08-13).
 
@@ -82,6 +85,29 @@ pnpm db:up / db:down    # postgres + redis via docker compose
 - One feature = one `src/<feature>/` folder, created exactly once. **Look-before-create**: check whether `src/<feature>/` already exists with `test -d`/`find` (see [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md)) before creating a new file/feature; if it already exists, extend it instead of creating a parallel copy.
 - Prettier: use single quotes, trailing commas. Prettier manages formatting for `.ts`, `.json`, `.md`, `.yml` — **do not format manually**, run `pnpm format`.- `tsconfig.json`: `strictNullChecks: true`, `noImplicitAny: false`. The `no-explicit-any` rule is disabled in ESLint, but you should still **avoid `any`** — reviewers will flag it.
 - **CI runs `eslint --max-warnings=0`** → even warnings will fail the CI, including `no-floating-promises`.
+
+## Code Review Rules
+
+The single source of truth for review rules — every reviewer (Claude Code, Codex-action,
+Copilot, opencode) reads this section, and does not copy the rules into its own separate
+file (see `docs/workflow/REVIEW-MODEL.md` §6 — the rulebook table points here). Issue
+severity: **P0** (blocks merge), **P1** (should fix before merge), **P2** (suggestion,
+non-blocking).
+
+- **Controllers only handle HTTP** — no business logic, no direct DB queries. Business
+  logic must live in `*.service.ts`.
+- **DI via constructor injection** — no manual `new`, no importing global singletons.
+- **Error handling + transactions:** multi-step side effects need clear error handling;
+  multi-step operations need consistency (transactions) if a mid-step failure is possible.
+- **Cross-file consistency:** changing one file (e.g. a shared DTO/interface) requires
+  checking dependent files — do not let types/contracts drift between modules.
+- **No over-engineering:** this is a learning project, complexity must match the current
+  lesson — do not add abstractions for use cases that don't exist yet.
+- **Tests:** include error-case tests, not just the happy path (see the Testing section
+  below).
+- **Basic security:** never log secrets/tokens/passwords; never return
+  `password`/`refreshToken` in a response; validate input at the boundary (DTO +
+  `ValidationPipe`).
 
 ## Testing
 
