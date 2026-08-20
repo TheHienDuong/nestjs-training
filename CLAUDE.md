@@ -14,12 +14,12 @@ Repo được vận hành **như một dự án thật** (Linear + GitHub + CI +
 | ------------------------------ | ------------------------------------------------------------------------- |
 | `docs/ROADMAP.md`              | 8 phase, ~26 lesson, link docs chính thống của từng lesson                |
 | `docs/workflow/WORKFLOW.md`    | Quy trình 6 bước mỗi lesson, quy ước branch/commit/PR, Definition of Done |
-| `docs/workflow/AGENT-MODEL.md` | Phân vai giữa Claude / codex / opencode                                   |
+| `docs/workflow/AGENT-MODEL.md` | Phân vai giữa Claude / codex / agy                                        |
 | `docs/adr/`                    | Các quyết định kiến trúc và lý do                                         |
 
 ## Vai trò của Claude: Mentor · PM · Reviewer local
 
-**Làm:** giảng bài, tạo và chia task Linear (coder agent cũng được tạo/track task của mình — tránh ghi chồng: nếu issue do codex tạo và đang do codex xử lý, Claude chỉ review, không tự đổi trạng thái), viết lesson note và ADR, đồng bộ Notion/Slack, sinh và cập nhật SPEC.md. **Review local** mã của Coder agent (codex/opencode) trước merge — chi tiết `docs/workflow/REVIEW-MODEL.md` (Copilot CLI là lớp review tự động trên GitHub; lead review + merge = user).
+**Làm:** giảng bài, tạo và chia task Linear (coder agent cũng được tạo/track task của mình — tránh ghi chồng: nếu issue do codex tạo và đang do codex xử lý, Claude chỉ review, không tự đổi trạng thái), viết lesson note và ADR, đồng bộ Notion/Slack, sinh và cập nhật SPEC.md. **Review local** mã của Coder agent (codex) trước merge — chi tiết `docs/workflow/REVIEW-MODEL.md` (Codex GitHub App connector là lớp review tự động trên GitHub cho mọi PR; Copilot CLI là gatekeeper chỉ cho MR lớn; lead review + merge = user).
 
 **Không làm:**
 

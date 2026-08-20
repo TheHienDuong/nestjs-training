@@ -12,18 +12,18 @@
 
 ## Quyết định
 
-1. **PR nhỏ vẫn đi đúng ADR-0005:** mở PR riêng, target `main`, review (Claude local → Codex-action tự động → user lead review), merge thẳng vào `main` khi user duyệt. Không đổi target sang `mr/*`.
+1. **PR nhỏ vẫn đi đúng ADR-0005:** mở PR riêng, target `main`, review (Claude local → Codex GitHub App connector tự động → user lead review), merge thẳng vào `main` khi user duyệt. Không đổi target sang `mr/*`.
 2. **`mr/*` là lớp gom AUDIT sau đó, không phải lớp gate trước merge:** cuối ngày (hoặc khi user thấy cần), Hermes tạo branch `mr/<ngay>-<stt>` **từ các commit đã có sẵn trên `main`** (đã merge qua ADR-0005), để Copilot gatekeeper review kỹ một lượt tổng hợp trước khi coi các thay đổi đó là "đã phát hành" chính thức (post-merge quality gate, không chặn code vào `main`).
 3. Nếu Copilot gatekeeper phát hiện vấn đề ở bước audit `mr/*`, xử lý bằng PR fix mới (theo đúng ADR-0005) — **không revert bằng thao tác trực tiếp trên `mr/*`**.
 4. `mr/*` tối đa 2 lần/ngày (theo `REVIEW-MODEL.md` §2/§3) — đây là trần cho số lần audit, không phải trần cho số PR nhỏ được merge trong ngày.
 
 ## Các phương án đã cân nhắc
 
-| Phương án                                                            | Ưu                                                                    | Nhược                                                                                         | Vì sao không chọn                            |
-| -------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| PR nhỏ target thẳng `mr/*` (gate trước merge)                        | Copilot review trước khi vào `main`, chặn sớm                         | Vi phạm ADR-0005 (Coder phải mở PR thẳng `main`); đổi lại quyết định Accepted không cần thiết | Vi phạm ADR đã Accepted                      |
-| **`mr/*` là audit SAU merge (đã chọn)**                              | Giữ nguyên ADR-0005; Copilot vẫn có vai trò kiểm tra tổng hợp định kỳ | Vấn đề phát hiện ở audit phải fix bằng PR mới, không chặn được real-time                      | —                                            |
-| Bỏ hẳn collector `mr/*`, chỉ dùng Codex-action + Claude local review | Đơn giản nhất, không cần ADR riêng                                    | Mất lớp review tổng hợp/kỹ của Copilot cho các thay đổi lớn dồn lại                           | User muốn giữ Copilot làm gatekeeper định kỳ |
+| Phương án                                                                          | Ưu                                                                    | Nhược                                                                                         | Vì sao không chọn                            |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| PR nhỏ target thẳng `mr/*` (gate trước merge)                                      | Copilot review trước khi vào `main`, chặn sớm                         | Vi phạm ADR-0005 (Coder phải mở PR thẳng `main`); đổi lại quyết định Accepted không cần thiết | Vi phạm ADR đã Accepted                      |
+| **`mr/*` là audit SAU merge (đã chọn)**                                            | Giữ nguyên ADR-0005; Copilot vẫn có vai trò kiểm tra tổng hợp định kỳ | Vấn đề phát hiện ở audit phải fix bằng PR mới, không chặn được real-time                      | —                                            |
+| Bỏ hẳn collector `mr/*`, chỉ dùng Codex GitHub App connector + Claude local review | Đơn giản nhất, không cần ADR riêng                                    | Mất lớp review tổng hợp/kỹ của Copilot cho các thay đổi lớn dồn lại                           | User muốn giữ Copilot làm gatekeeper định kỳ |
 
 ## Hệ quả
 

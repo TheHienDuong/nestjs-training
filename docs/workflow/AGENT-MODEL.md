@@ -35,9 +35,9 @@ Chỉ **2 vai**, không phải một danh sách tool cố định. Vai "Coder" *
 
 **Vì sao vai này cố định ở Claude:** context window lớn giúp nó nắm được cả roadmap + toàn bộ note + lịch sử học của bạn cùng lúc — đúng thứ một người thầy cần. Vai PM cũng cần **một** nơi ghi trạng thái duy nhất (xem mục MCP bên dưới) — cố định một agent giữ vai này là điều kiện để tránh xung đột, không phải sở thích.
 
-### 🔎 Codex-action — Reviewer code-quality lớp 1 (tự động trên MỌI PR)
+### 🔎 Codex GitHub App connector — Reviewer code-quality lớp 1 (tự động trên MỌI PR)
 
-Bot GitHub Actions (`.github/workflows/codex-review.yml`), chạy tự động khi PR mở/sync/reopen — không chạy ngầm, không daemon, không merge. Đây là **lớp review tự động trên GitHub cho mọi PR** (bao gồm PR nhỏ); còn **review local** (đọc/review mã của Coder agent trước khi merge) là trách nhiệm của **Claude Code** ở trên. `Codex-action` là bot CI riêng biệt — **không phải** `codex` đang giữ vai Coder, nên không bị ràng buộc "Coder không review".
+GitHub App connector (`chatgpt-codex-connector[bot]`, chính bot đang comment lên PR trên GitHub), tự động khi PR mở/sync/reopen — không cần workflow CI riêng, không chạy ngầm, không daemon, không merge. Đây là **lớp review tự động trên GitHub cho mọi PR** (bao gồm PR nhỏ); còn **review local** (đọc/review mã của Coder agent trước khi merge) là trách nhiệm của **Claude Code** ở trên. **Codex GitHub App connector** là một connector/bot riêng biệt — **không phải** `codex` đang giữ vai Coder, nên không bị ràng buộc "Coder không review".
 
 ### 🚪 Copilot CLI — Gatekeeper cho MR lớn (dispatch qua herdr, KHÔNG tự động)
 
@@ -45,7 +45,7 @@ Chỉ dùng cho collector branch `mr/*` (tối đa 2 lần/ngày), dispatch tư�
 
 ### 🧑‍💻 User (Hien Duong, `@TheHienDuong`) — Lead reviewer + merge
 
-Review lại code sau Claude Code review local + Codex-action (và Copilot gatekeeper nếu là MR lớn), quyết định cuối cùng có merge hay không. **Chỉ user được merge** — không agent nào merge, kể cả khi được giao quyền rộng. PR còn cần approve bắt buộc của code owner `@hienduong-agilityio` (`.github/CODEOWNERS`, 2026-08-20) trước khi nút merge khả dụng.
+Review lại code sau Claude Code review local + Codex GitHub App connector (và Copilot gatekeeper nếu là MR lớn), quyết định cuối cùng có merge hay không. **Chỉ user được merge** — không agent nào merge, kể cả khi được giao quyền rộng. PR còn cần approve bắt buộc của code owner `@hienduong-agilityio` (`.github/CODEOWNERS`, 2026-08-20) trước khi nút merge khả dụng.
 
 ### ⚙️ Coder — vai linh hoạt, giao cho tool nào cũng theo cùng một khuôn
 
@@ -53,9 +53,9 @@ Nhận issue có nhãn `agent:codex` (hoặc nhãn tương ứng nếu bạn gia
 
 Quy tắc — áp dụng cho **bất kỳ tool nào** đang giữ vai Coder, không riêng codex:
 
-- Làm trên **branch riêng**, đặt tên `<tên tool>/nes-XX-...` (`codex/...`, `opencode/...`, hay tên tool khác) — không bao giờ commit thẳng vào branch lesson `hien/...` của bạn
+- Làm trên **branch riêng**, đặt tên `<tên tool>/nes-XX-...` (`codex/...`, hay tên tool khác) — không bao giờ commit thẳng vào branch lesson `hien/...` của bạn
 - Đọc `AGENTS.md` (hợp đồng chung) + `docs/lessons/XX-*/SPEC.md` (spec của đúng lesson) trước khi làm
-- Output **luôn đi qua PR** — Claude Code review local → Codex-action review (lớp 1, tự động, mọi PR) → user lead review — không merge thẳng, không agent nào merge. MR lớn (`mr/*`) có thêm Copilot gatekeeper trước khi user merge
+- Output **luôn đi qua PR** — Claude Code review local → Codex GitHub App connector review (lớp 1, tự động, mọi PR) → user lead review — không merge thẳng, không agent nào merge. MR lớn (`mr/*`) có thêm Copilot gatekeeper trước khi user merge
 - ⛔ **KHÔNG review code/PR** — vai Coder chỉ **code**; không review (kể cả PR mình vừa tạo hay PR của người khác). Reviewer local là Claude Code, reviewer cuối là user.
 
 **Dùng chủ yếu:** codex — công cụ mặc định cho vai Coder.
@@ -66,15 +66,30 @@ codex "Đọc AGENTS.md trước. Implement theo spec trong docs/lessons/02-cont
        Chỉ sửa file trong src/. Không sửa docs/ và .github/."
 ```
 
-**Dùng thỉnh thoảng (không bắt buộc):** khi muốn thêm một góc nhìn để đối chiếu, giao **cùng một `SPEC.md`** cho tool khác (opencode, hoặc bất kỳ CLI agent nào bạn có sẵn) trên branch riêng của tool đó — quy tắc ở trên áp dụng y hệt, không cần tài liệu riêng cho từng tool. Mục tiêu không phải tìm "tool nào giỏi hơn" mà nhận ra: cùng một spec có thể sinh nhiều thiết kế hợp lệ, và **bạn** là người quyết định chọn cái nào.
-
 **Cách dùng có ích nhất khi học:** bạn tự làm hands-on trước, _xong xuôi rồi_ mới xem "lời giải tham chiếu" của Coder agent và so sánh. Khác biệt giữa hai bản là bài học đắt giá nhất trong lesson đó.
+
+### 🔀 agy — Đối chứng (counter-view, KHÔNG phải Coder, 2026-08-20)
+
+Thay cho `opencode` (đã gỡ khỏi hệ thống). Dùng khi muốn thêm một góc nhìn để đối chiếu với PR/thiết kế hiện có — **không phải vai Coder chính thức**, không bắt buộc, không phải reviewer chính. Chạy qua **herdr pane** (profile `coder-agy`), **KHÔNG headroom wrap** — CLI chạy trần:
+
+```bash
+# Tự sửa file để đối chiếu (branch riêng agy/nes-XX-...)
+git checkout -b agy/nes-12-alt-solution
+agy -p "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước. Implement theo spec." \
+  --model <model> --output-format text --mode accept-edits
+
+# Chỉ cần góc nhìn/kế hoạch, không sửa code
+agy -p "Đánh giá thiết kế PR #NN, chỉ ra edge case bị bỏ sót" \
+  --model <model> --output-format text --mode plan
+```
+
+Mục tiêu không phải tìm "tool nào giỏi hơn" mà nhận ra: cùng một spec/PR có thể có nhiều góc nhìn hợp lệ, và **bạn** là người quyết định chọn cái nào.
 
 ---
 
 ## MCP: Linear mở cho coder agent, Notion/Slack/Postman chỉ Claude Code nối vào
 
-**Nguyên tắc: Claude Code là single-writer cho Notion/Slack/Postman; Linear mở cho cả Claude (PM) và coder agent.** Coder agent (codex) được cấu hình Linear MCP để tự đọc/tạo/track task của chính mình. Vai Coder — bất kể tool nào đang giữ vai đó — vẫn **không** cấu hình MCP tới Notion/Slack/Postman, dù về mặt kỹ thuật nhiều CLI agent (codex, opencode...) đều hỗ trợ tự thêm MCP server riêng qua file config của chính nó.
+**Nguyên tắc: Claude Code là single-writer cho Notion/Slack/Postman; Linear mở cho cả Claude (PM) và coder agent.** Coder agent (codex) được cấu hình Linear MCP để tự đọc/tạo/track task của chính mình. Vai Coder — bất kể tool nào đang giữ vai đó — vẫn **không** cấu hình MCP tới Notion/Slack/Postman, dù về mặt kỹ thuật nhiều CLI agent (codex...) đều hỗ trợ tự thêm MCP server riêng qua file config của chính nó.
 
 Lý do và các phương án đã cân nhắc: xem [ADR-0004](../adr/0004-mcp-single-writer-cho-coder-agent.md) (đã amend). Tóm tắt: nhiều agent cùng ghi vào Notion/Slack tạo race condition thật (Slack nhận thông báo trùng, Notion bị ghi đè) — đúng vấn đề "nhiều nguồn sự thật" mà [ADR-0002](../adr/0002-linear-lam-nguon-su-that.md) đã né ở tầng hệ thống, giờ né tiếp ở tầng agent. Với Linear, ranh giới không còn giữ bằng "một agent duy nhất được nối MCP" mà bằng quy tắc: coder không đụng issue thuộc vòng review/PM của Claude (không tự đổi trạng thái issue do Claude tạo/đang xử lý).
 
@@ -99,13 +114,14 @@ git checkout -b codex/nes-12-reference-solution
 codex "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
        Implement theo spec. Chỉ sửa file trong src/ và test/."
 
-# Muốn thêm góc nhìn đối chứng: đổi branch prefix + lệnh gọi tool khác, quy tắc y hệt
-git checkout -b opencode/nes-12-alt-solution
-opencode run "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
-              Implement theo spec. Chỉ sửa file trong src/ và test/."
+# Muốn thêm góc nhìn đối chứng: agy (không phải Coder, không headroom wrap — xem mục agy bên trên)
+git checkout -b agy/nes-12-alt-solution
+agy -p "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
+        Implement theo spec. Chỉ sửa file trong src/ và test/." \
+  --model <model> --output-format text --mode accept-edits
 ```
 
-Sau đó luôn mở PR riêng cho mỗi branch — Claude Code review local → Codex-action review (lớp 1, tự động, mọi PR) → user lead review + merge — không merge thẳng, không gộp chung PR với branch hands-on của bạn.
+Sau đó luôn mở PR riêng cho mỗi branch — Claude Code review local → Codex GitHub App connector review (lớp 1, tự động, mọi PR) → user lead review + merge — không merge thẳng, không gộp chung PR với branch hands-on của bạn.
 
 ---
 
@@ -115,7 +131,7 @@ Nhiều agent chỉ hợp tác được khi cùng đọc một nguồn ngữ c�
 
 | Nguồn           | Vai trò                                                                                                                                                 |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`AGENTS.md`** | Hợp đồng chung. Mọi agent phải đọc trước khi làm. Chuẩn mở, được codex/opencode/Claude cùng hỗ trợ.                                                     |
+| **`AGENTS.md`** | Hợp đồng chung. Mọi agent phải đọc trước khi làm. Chuẩn mở, được codex/agy/Claude cùng hỗ trợ.                                                          |
 | **`CLAUDE.md`** | Chỉ dẫn riêng cho Claude Code (workflow, ranh giới vai trò).                                                                                            |
 | **`docs/`**     | Ngữ cảnh dài hạn: roadmap, workflow, ADR, lesson notes.                                                                                                 |
 | **serena MCP**  | Điều hướng code theo **symbol** thay vì đọc cả file — tìm định nghĩa, tìm nơi tham chiếu. Tiết kiệm context và chính xác hơn grep khi codebase lớn dần. |
