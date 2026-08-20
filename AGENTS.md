@@ -79,6 +79,7 @@ pnpm db:up / db:down    # postgres + redis via docker compose
 - TypeScript + decorator + NestJS DI. Dependencies are injected via **constructor injection**; do not manually instantiate with `new`, do not import global singletons.
 - Layer separation: `*.controller.ts` handles only HTTP · `*.service.ts` holds business logic · `*.module.ts` handles wiring. **Business logic does not belong in controllers.**
 - Follow Nest naming conventions: `TasksController` in `tasks.controller.ts`, `TasksService` in `tasks.service.ts`, `TasksModule` in `tasks.module.ts`.
+- One feature = one `src/<feature>/` folder, created exactly once. **Look-before-create**: check whether `src/<feature>/` already exists with `test -d`/`find` (see [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md)) before creating a new file/feature; if it already exists, extend it instead of creating a parallel copy.
 - Prettier: use single quotes, trailing commas. Prettier manages formatting for `.ts`, `.json`, `.md`, `.yml` — **do not format manually**, run `pnpm format`.- `tsconfig.json`: `strictNullChecks: true`, `noImplicitAny: false`. The `no-explicit-any` rule is disabled in ESLint, but you should still **avoid `any`** — reviewers will flag it.
 - **CI runs `eslint --max-warnings=0`** → even warnings will fail the CI, including `no-floating-promises`.
 
