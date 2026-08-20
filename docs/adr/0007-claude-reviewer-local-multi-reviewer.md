@@ -17,7 +17,7 @@ Ngày 2026-08-19: user quyết định xây **mô hình multi-reviewer phân t�
 ## Quyết định
 
 1. **Claude Code đảm nhận vai Reviewer local** — review mã của Coder agent (codex/opencode) **trước merge** trong luồng PR nhỏ, và là **failover #1 cho Copilot gatekeeper** (review MR lớn) khi Copilot hết limit.
-2. **codex / opencode (Coder) KHÔNG review code/PR** — chỉ code; không tự review PR mình vừa tạo hay PR của người khác.
+2. **codex / opencode (Coder) KHÔNG review code/PR** — chỉ code; không tự review PR mình vừa tạo hay PR của người khác. Quy tắc này áp dụng cho **`codex` ở vai Coder tương tác** (branch `codex/nes-XX-...`) — không áp dụng cho `Codex-action` (bot CI tự động, `codex-review.yml`), vì bot này không code, chỉ phân tích diff (xem `docs/workflow/REVIEW-MODEL.md`).
 3. **Copilot CLI giữ vai gatekeeper tự động** (lớp review 1, trên GitHub) cho MR lớn; **user là lead reviewer + chỉ user merge** (giữ nguyên).
 4. Quyết định 2026-08-13 (PR #24) về việc Claude bỏ vai Reviewer code được **thay thế từ phần này**.
 

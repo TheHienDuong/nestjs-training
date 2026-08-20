@@ -72,9 +72,10 @@ Muốn có "lời giải tham chiếu" để đối chiếu sau khi tự làm xo
 
 Tách bạch với review học tập ở trên — đây là cổng kiểm duyệt trước khi code vào `main`:
 
-1. **Copilot CLI** (GitHub) review tự động, 1 lần, ngay sau khi PR mở.
-2. **User (lead reviewer)** review lại code, quyết định merge hay không.
-3. **Chỉ user được merge** — không agent nào merge, kể cả Claude Code.
+1. **Claude Code** review local mã của Coder agent (trước khi PR mở).
+2. **Codex-action** (`codex-review.yml`, GitHub Actions) review tự động, ngay sau khi PR mở/sync — chạy trên **mọi PR**, kể cả PR nhỏ. **Copilot CLI KHÔNG tự động** — chỉ dispatch cho MR lớn (`mr/*`, tối đa 2/ngày, xem [REVIEW-MODEL.md](REVIEW-MODEL.md)).
+3. **User (lead reviewer)** review lại code, quyết định merge hay không — PR cần thêm approve bắt buộc của code owner `@hienduong-agilityio` (`.github/CODEOWNERS`).
+4. **Chỉ user được merge** — không agent nào merge, kể cả Claude Code.
 
 ### Bước 5 — Pull Request
 

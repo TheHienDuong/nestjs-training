@@ -78,4 +78,5 @@ Commit sai format bị **chặn tại máy**. Đừng bao giờ gợi ý `--no-v
 - Branch lấy **đúng** tên Linear sinh ra (`hien/nes-XX-...`). Chuỗi `nes-XX` là thứ Linear dùng để tự chuyển trạng thái issue.
 - PR description **bắt buộc** có `Fixes NES-XX`.
 - Merge bằng **Squash and merge**: 1 lesson = 1 commit trên `main`.
+- **Code owner bắt buộc approve trước khi merge (2026-08-20):** `@hienduong-agilityio` (`.github/CODEOWNERS`) — gate bổ sung trên GitHub, không đổi quyền merge (vẫn chỉ user). `.github/CODEOWNERS` thuộc `.github/**` → chỉ Claude Code tạo/sửa, commit kèm trailer `Co-authored-by: Claude <noreply@anthropic.com>`.
 - Remote: `origin` = GitHub (nơi làm việc chính), `gitlab` = repo công ty. **Không đụng vào `gitlab`.**

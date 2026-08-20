@@ -1,0 +1,38 @@
+# Codex review — tự động chạy trên MỌI PR (lớp code-quality, "lớp 1").
+#
+# Đây là lớp review tự động, MIỄN PHÍ, khác với "Copilot CLI gatekeeper" (dispatch
+# tương tác qua herdr, chỉ cho branch mr/*, tối đa 2 lần/ngày — xem
+# docs/workflow/REVIEW-MODEL.md §5). Prompt self-contained, đọc AGENTS.md +
+# CLAUDE.md, verdict theo mức P0/P1/P2. KHÔNG động vào file này ngoài Hermes/Claude
+# (thuộc `.github/**`, xem docs/workflow/AGENT-MODEL.md — ranh giới file).
+
+name: Codex Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Push commit mới vào cùng PR huỷ lần review cũ — đỡ tốn quota Codex.
+concurrency:
+  group: codex-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: Codex code-quality review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Codex review
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/codex/prompts/review.md

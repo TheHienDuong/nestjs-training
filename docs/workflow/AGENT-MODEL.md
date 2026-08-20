@@ -31,15 +31,21 @@ Chỉ **2 vai**, không phải một danh sách tool cố định. Vai "Coder" *
 
 **Review local là trách nhiệm của Claude Code** — khi Coder agent (codex) mở PR, Claude Code review mã đó trước khi user quyết định merge. Coder agent **không** tự review PR (kể cả của chính nó hay của người khác) — đúng nguyên tắc gốc §đầu: không agent nào vừa viết vừa tự review code mình, và reviewer không được trùng với author.
 
+**Ngoại lệ khi Claude là author:** nếu PR (docs/ADR/hạ tầng) do chính Claude tạo, Claude **không** được review PR đó — route sang Hermes verify tay + user lead review trực tiếp (chi tiết: `docs/workflow/REVIEW-MODEL.md`).
+
 **Vì sao vai này cố định ở Claude:** context window lớn giúp nó nắm được cả roadmap + toàn bộ note + lịch sử học của bạn cùng lúc — đúng thứ một người thầy cần. Vai PM cũng cần **một** nơi ghi trạng thái duy nhất (xem mục MCP bên dưới) — cố định một agent giữ vai này là điều kiện để tránh xung đột, không phải sở thích.
 
-### 🔎 Copilot CLI — Reviewer code lớp 1 (tự động trên GitHub)
+### 🔎 Codex-action — Reviewer code-quality lớp 1 (tự động trên MỌI PR)
 
-Chạy tự động, **1 lần**, ngay sau khi PR mở — không chạy ngầm, không daemon. Không merge. Đây là **lớp review tự động trên GitHub**; còn **review local** (đọc/review mã của Coder agent trước khi merge) là trách nhiệm của **Claude Code** ở trên.
+Bot GitHub Actions (`.github/workflows/codex-review.yml`), chạy tự động khi PR mở/sync/reopen — không chạy ngầm, không daemon, không merge. Đây là **lớp review tự động trên GitHub cho mọi PR** (bao gồm PR nhỏ); còn **review local** (đọc/review mã của Coder agent trước khi merge) là trách nhiệm của **Claude Code** ở trên. `Codex-action` là bot CI riêng biệt — **không phải** `codex` đang giữ vai Coder, nên không bị ràng buộc "Coder không review".
+
+### 🚪 Copilot CLI — Gatekeeper cho MR lớn (dispatch qua herdr, KHÔNG tự động)
+
+Chỉ dùng cho collector branch `mr/*` (tối đa 2 lần/ngày), dispatch tương tác qua herdr — **không** chạy tự động trên mọi PR, **không** dùng cho PR nhỏ. Chi tiết: `docs/workflow/REVIEW-MODEL.md`.
 
 ### 🧑‍💻 User (Hien Duong, `@TheHienDuong`) — Lead reviewer + merge
 
-Review lại code sau Claude Code review local + Copilot CLI, quyết định cuối cùng có merge hay không. **Chỉ user được merge** — không agent nào merge, kể cả khi được giao quyền rộng.
+Review lại code sau Claude Code review local + Codex-action (và Copilot gatekeeper nếu là MR lớn), quyết định cuối cùng có merge hay không. **Chỉ user được merge** — không agent nào merge, kể cả khi được giao quyền rộng. PR còn cần approve bắt buộc của code owner `@hienduong-agilityio` (`.github/CODEOWNERS`, 2026-08-20) trước khi nút merge khả dụng.
 
 ### ⚙️ Coder — vai linh hoạt, giao cho tool nào cũng theo cùng một khuôn
 
@@ -49,7 +55,7 @@ Quy tắc — áp dụng cho **bất kỳ tool nào** đang giữ vai Coder, kh�
 
 - Làm trên **branch riêng**, đặt tên `<tên tool>/nes-XX-...` (`codex/...`, `opencode/...`, hay tên tool khác) — không bao giờ commit thẳng vào branch lesson `hien/...` của bạn
 - Đọc `AGENTS.md` (hợp đồng chung) + `docs/lessons/XX-*/SPEC.md` (spec của đúng lesson) trước khi làm
-- Output **luôn đi qua PR** — Claude Code review local → Copilot CLI review (lớp 1, tự động) → user lead review — không merge thẳng, không agent nào merge
+- Output **luôn đi qua PR** — Claude Code review local → Codex-action review (lớp 1, tự động, mọi PR) → user lead review — không merge thẳng, không agent nào merge. MR lớn (`mr/*`) có thêm Copilot gatekeeper trước khi user merge
 - ⛔ **KHÔNG review code/PR** — vai Coder chỉ **code**; không review (kể cả PR mình vừa tạo hay PR của người khác). Reviewer local là Claude Code, reviewer cuối là user.
 
 **Dùng chủ yếu:** codex — công cụ mặc định cho vai Coder.
@@ -99,7 +105,7 @@ opencode run "Đọc AGENTS.md và docs/lessons/02-controllers/SPEC.md trước.
               Implement theo spec. Chỉ sửa file trong src/ và test/."
 ```
 
-Sau đó luôn mở PR riêng cho mỗi branch — Claude Code review local → Copilot CLI review (lớp 1, tự động) → user lead review + merge — không merge thẳng, không gộp chung PR với branch hands-on của bạn.
+Sau đó luôn mở PR riêng cho mỗi branch — Claude Code review local → Codex-action review (lớp 1, tự động, mọi PR) → user lead review + merge — không merge thẳng, không gộp chung PR với branch hands-on của bạn.
 
 ---
 
@@ -125,6 +131,8 @@ Nhiều agent chỉ hợp tác được khi cùng đọc một nguồn ngữ c�
 | `docs/adr/**`, `docs/workflow/**`               | Claude, kèm bạn duyệt qua PR                                       |
 | `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                             |
 | `AGENTS.md`, `CLAUDE.md`                        | Claude, kèm bạn duyệt qua PR                                       |
+
+> `.github/CODEOWNERS` cũng thuộc `.github/**` → chỉ **Claude Code** tạo/sửa, commit kèm trailer `Co-authored-by: Claude <noreply@anthropic.com>`. Nếu Coder agent (codex) sinh ra thay đổi trong `.github/**`, phải tạo lại qua Claude Code trước khi merge — không nhận thẳng.
 
 ## Nhật ký thử nghiệm agent
 
