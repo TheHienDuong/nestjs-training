@@ -11,13 +11,13 @@
 
 ## 1. Review matrix — ai giỏi review gì
 
-| Agent                       | Vai                                  | Giỏi nhất về                                                                                          | Không giao                          | Chi phí                     |
-| --------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------- | ----------------------------------- | --------------------------- |
-| **Copilot CLI**             | **Gatekeeper** (chốt MR vào main)    | Review kỹ, line-by-line cả PR lớn; regression/contract; bám repo-context                              | Review PR nhỏ lẻ (tốn token)        | Cao — **tối đa 2 lần/ngày** |
-| **Claude Code**             | **Logic / Docs / tách PR**           | Kiến trúc, cross-file consistency, DI/service, docs/SPEC/ADR, suy luận security; memory giữ nhất quán | Viết code hands-on; merge           | TB                          |
-| **Codex**                   | **Code-quality / Security / Action** | DTO/validation, N+1, secret, test thiếu; scan nhanh; security cuối tuần (user tự chạy)                | Kiến trúc mức-repo                  | Thấp                        |
-| **opencode** (counter-view) | **Second opinion**                   | Góc đối chứng, bắt điều primary bỏ sót; dự phòng quá tải                                              | Review chuyên sâu mức kiến trúc     | Thấp                        |
-| **Hermes**                  | **Orchestrator / Verifier**          | Điều phối, route đúng reviewer, chạy `pnpm verify`, verify self-report                                | Review cuối (chỉ verify + tổng hợp) | —                           |
+| Agent                       | Vai                                       | Giỏi nhất về                                                                                          | Không giao                          | Chi phí                     |
+| --------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------- | --------------------------- |
+| **Copilot CLI**             | **Gatekeeper** (chốt MR vào main)         | Review kỹ, line-by-line cả PR lớn; regression/contract; bám repo-context                              | Review PR nhỏ lẻ (tốn token)        | Cao — **tối đa 2 lần/ngày** |
+| **Claude Code**             | **Reviewer local** (logic/docs) / tách PR | Kiến trúc, cross-file consistency, DI/service, docs/SPEC/ADR, suy luận security; memory giữ nhất quán | Viết code hands-on; merge           | Trung bình                  |
+| **Codex**                   | **Code-quality / Security / Action**      | DTO/validation, N+1, secret, test thiếu; scan nhanh; security cuối tuần (user tự chạy)                | Kiến trúc mức-repo                  | Thấp                        |
+| **opencode** (counter-view) | **Second opinion**                        | Góc đối chứng, bắt điều primary bỏ sót; dự phòng quá tải                                              | Review chuyên sâu mức kiến trúc     | Thấp                        |
+| **Hermes**                  | **Orchestrator / Verifier**               | Điều phối, route đúng reviewer, chạy `pnpm verify`, verify self-report                                | Review cuối (chỉ verify + tổng hợp) | —                           |
 
 > ⚠️ **Không dùng `agy`:** herdr không hỗ trợ integration `agy`, profile `coder-agy` đã archive. Vai đối chứng = **opencode** (herdr-supported).
 

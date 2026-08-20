@@ -39,7 +39,7 @@ Chạy tự động, **1 lần**, ngay sau khi PR mở — không chạy ngầm,
 
 ### 🧑‍💻 User (Hien Duong, `@TheHienDuong`) — Lead reviewer + merge
 
-Review lại code sau Copilot CLI, quyết định cuối cùng có merge hay không. **Chỉ user được merge** — không agent nào merge, kể cả khi được giao quyền rộng.
+Review lại code sau Claude Code review local + Copilot CLI, quyết định cuối cùng có merge hay không. **Chỉ user được merge** — không agent nào merge, kể cả khi được giao quyền rộng.
 
 ### ⚙️ Coder — vai linh hoạt, giao cho tool nào cũng theo cùng một khuôn
 

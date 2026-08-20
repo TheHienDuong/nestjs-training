@@ -25,7 +25,7 @@ Ngày 2026-08-19: user quyết định xây **mô hình multi-reviewer phân t�
 
 | Phương án                                        | Ưu                                                                      | Nhược                                                                             | Vì sao không chọn                 |
 | ------------------------------------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------- |
-| Giữ nguyên Claude = Mentor · PM (như 2026-08-13) | Không phải đảo quyết định cũ                                            | Thiếu người review local; Copilot/Codex/Agy ôm hết → đè nặng + tốn token          | Mâu thuẫn mục tiêu multi-reviewer |
+| Giữ nguyên Claude = Mentor · PM (như 2026-08-13) | Không phải đảo quyết định cũ                                            | Thiếu người review local; Copilot/Codex/opencode ôm hết → đè nặng + tốn token     | Mâu thuẫn mục tiêu multi-reviewer |
 | **Claude làm Reviewer local** _(đã chọn)_        | Phân tải đều; tận dụng memory + context lớn; liền mạch với việc tách PR | Thêm một phần workload cho Claude; phải đồng bộ lại các rule cũ                   | —                                 |
 | Codex làm reviewer local                         | Code-quality mạnh                                                       | Vai Coder ngược nguyên tắc "không vừa viết vừa tự review"; đã chốt codex chỉ code | Vi phạm nguyên tắc gốc            |
 
