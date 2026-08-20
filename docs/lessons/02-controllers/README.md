@@ -1,29 +1,29 @@
 # L02 — Controllers & Routing
 
-|                |                                                     |
-| -------------- | --------------------------------------------------- |
-| **Phase**      | 1 — Foundations                                     |
-| **Linear**     | NES-3                                               |
-| **Branch**     | `duongthehien2001/nes-3-l02-controllers-routing`    |
-| **Main docs**  | [/controllers](https://docs.nestjs.com/controllers) |
+|                  |                                                     |
+| ---------------- | --------------------------------------------------- |
+| **Phase**        | 1 — Foundations                                     |
+| **Linear**       | NES-3                                               |
+| **Branch**       | `duongthehien2001/nes-3-l02-controllers-routing`    |
+| **Main docs**    | [/controllers](https://docs.nestjs.com/controllers) |
 | **Date studied** | 2026-08-17                                          |
 
 ---
 
 ## 🗂 File map for this lesson
 
-| File                                    | Role                              | Created in lesson | Status  |
-| --------------------------------------- | ------------------------------------ | ------------ | ----------- |
-| `src/tasks/dto/create-task.dto.ts`      | Ref — DTO                            | L02          | New         |
-| `src/tasks/dto/update-task.dto.ts`      | Ref — DTO                            | L02          | New         |
-| `src/tasks/tasks.controller.spec.ts`    | Ref — unit test                      | L02          | New         |
-| `src/tasks/tasks.controller.ts`         | Ref — controller (teaching comments) | L02          | New         |
-| `src/tasks/tasks.module.ts`             | Ref — module                         | L02          | New         |
-| `src/tasks/tasks.service.ts`            | Ref — service                        | L02          | New         |
-| `test/tasks.e2e-spec.ts`                | Ref — e2e test                       | L02          | New         |
-| `src/app.module.ts`                     | Ref — registers TasksModule            | L00          | Modified (2nd time) |
-| `docs/lessons/02-controllers/README.md` | Lesson note L02                      | L02          | New         |
-| `docs/lessons/02-controllers/SPEC.md`   | Spec from Linear                       | L02          | New         |
+| File                                    | Role                                 | Created in lesson | Status              |
+| --------------------------------------- | ------------------------------------ | ----------------- | ------------------- |
+| `src/tasks/dto/create-task.dto.ts`      | Ref — DTO                            | L02               | New                 |
+| `src/tasks/dto/update-task.dto.ts`      | Ref — DTO                            | L02               | New                 |
+| `src/tasks/tasks.controller.spec.ts`    | Ref — unit test                      | L02               | New                 |
+| `src/tasks/tasks.controller.ts`         | Ref — controller (teaching comments) | L02               | New                 |
+| `src/tasks/tasks.module.ts`             | Ref — module                         | L02               | New                 |
+| `src/tasks/tasks.service.ts`            | Ref — service                        | L02               | New                 |
+| `test/tasks.e2e-spec.ts`                | Ref — e2e test                       | L02               | New                 |
+| `src/app.module.ts`                     | Ref — registers TasksModule          | L00               | Modified (2nd time) |
+| `docs/lessons/02-controllers/README.md` | Lesson note L02                      | L02               | New                 |
+| `docs/lessons/02-controllers/SPEC.md`   | Spec from Linear                     | L02               | New                 |
 
 > The most accurate map + line-by-line code reading (with line numbers): run `pnpm lesson 02`.
 > Note: `pnpm lesson 02` pulls from the diff tag → may include 2 governance files mixed in (#31/#32) — this table is the canonical source per the PR #33/#34 diff.
@@ -220,9 +220,9 @@ The order in which Nest processes a request: **Middleware → Guards → Interce
 
 **Comparing the response shape between `ParseIntPipe` and `ValidationPipe` on failure** — both happen at the Pipes stage, both get blocked before the controller, both go through the same Exception Filter, but they differ in scope and error shape:
 
-|               | `ParseIntPipe` (parameter-scoped)                                               | `ValidationPipe` (global/controller/method-scoped)                                              |
-| ------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Scope       | A single parameter (`@Param`/`@Query`)                                          | The entire DTO (`@Body`), multiple fields at once                                                     |
+|             | `ParseIntPipe` (parameter-scoped)                                                     | `ValidationPipe` (global/controller/method-scoped)                                                |
+| ----------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Scope       | A single parameter (`@Param`/`@Query`)                                                | The entire DTO (`@Body`), multiple fields at once                                                 |
 | Error shape | `message` is **a single string** (`"Validation failed (numeric string is expected)"`) | `message` is **an array** — `class-validator` collects errors from every invalid field in the DTO |
 
 > 📖 Source: NotebookLM round 2 (2026-08-17) §1 — `/tmp/l02-notebook-answer2.md`; cross-checked against the original docs [Pipes — Built-in pipes](https://docs.nestjs.com/pipes#built-in-pipes), [Exception filters](https://docs.nestjs.com/exception-filters) (⚠️ the exact step names "Middleware → Guards → Interceptors → Pipes" haven't been cross-checked directly against a single docs page — needs further verification at [/faq/request-lifecycle](https://docs.nestjs.com/faq/request-lifecycle) if available)
@@ -286,16 +286,16 @@ The `return` value from `transform()` **replaces** the argument passed into the 
 
 ## 🔄 Connecting to prior knowledge (Express ↔ Nest)
 
-| Criteria       | Express                                       | Nest (Standard mode)                                                   | What's different                                                                                |
-| -------------- | ---------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| Registering a route  | `router.get('/tasks/:id', (req, res) => ...)` | `@Get(':id')` trong class `@Controller('tasks')`                       | The route is attached to a class + decorator; Nest builds the routing map itself at bootstrap via `reflect-metadata` |
-| Route params   | `req.params.id`                               | `@Param('id') id: string`                                              | A pipe (`ParseIntPipe`) can be attached right at the declaration site to transform + validate                 |
-| Query params   | `req.query.filter`                            | `@Query('filter') filter: string`                                      | `@Param` = required identifier, `@Query` = optional filter/sort/pagination                      |
-| Body           | `req.body`                                    | `@Body() dto: CreateTaskDto`                                           | The body must be described by a DTO **class** (not an interface) so the pipe can read the runtime metatype         |
-| Status code    | `res.status(204).send()`                      | `@HttpCode(204)`                                                       | No need to inject `res`; Standard response is preserved (Interceptor, automatic serialization)             |
-| Custom header  | `res.set('Cache-Control', 'no-store')`        | `@Header('Cache-Control', 'no-store')`                                 | The header is declared statically right on the decorator                                                           |
-| Redirect       | `res.redirect('https://nestjs.com')`          | `@Redirect('https://nestjs.com', 302)`                                 | Can be overridden dynamically by returning an `HttpRedirectResponse` object                            |
-| Response types | `res.send()`/`res.json()` manually            | Auto-serializes JSON; supports `Promise`/RxJS `Observable` returns directly | Whether the handler is `async` or returns an `Observable`, Nest resolves/subscribes to it automatically                       |
+| Criteria            | Express                                       | Nest (Standard mode)                                                        | What's different                                                                                                     |
+| ------------------- | --------------------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Registering a route | `router.get('/tasks/:id', (req, res) => ...)` | `@Get(':id')` trong class `@Controller('tasks')`                            | The route is attached to a class + decorator; Nest builds the routing map itself at bootstrap via `reflect-metadata` |
+| Route params        | `req.params.id`                               | `@Param('id') id: string`                                                   | A pipe (`ParseIntPipe`) can be attached right at the declaration site to transform + validate                        |
+| Query params        | `req.query.filter`                            | `@Query('filter') filter: string`                                           | `@Param` = required identifier, `@Query` = optional filter/sort/pagination                                           |
+| Body                | `req.body`                                    | `@Body() dto: CreateTaskDto`                                                | The body must be described by a DTO **class** (not an interface) so the pipe can read the runtime metatype           |
+| Status code         | `res.status(204).send()`                      | `@HttpCode(204)`                                                            | No need to inject `res`; Standard response is preserved (Interceptor, automatic serialization)                       |
+| Custom header       | `res.set('Cache-Control', 'no-store')`        | `@Header('Cache-Control', 'no-store')`                                      | The header is declared statically right on the decorator                                                             |
+| Redirect            | `res.redirect('https://nestjs.com')`          | `@Redirect('https://nestjs.com', 302)`                                      | Can be overridden dynamically by returning an `HttpRedirectResponse` object                                          |
+| Response types      | `res.send()`/`res.json()` manually            | Auto-serializes JSON; supports `Promise`/RxJS `Observable` returns directly | Whether the handler is `async` or returns an `Observable`, Nest resolves/subscribes to it automatically              |
 
 > 📖 Source: NotebookLM §3 (original table, with the "What's different" column added)
 
@@ -325,13 +325,13 @@ The `return` value from `transform()` **replaces** the argument passed into the 
 
 A Controller in Nest is the boundary interface layer, connecting HTTP requests to business logic that lives in a Provider — not a place to hold that logic. Routes are determined statically at bootstrap via decorators (`@Controller` + method decorator); Nest leverages `reflect-metadata` to build the routing map instead of manually registering functions like Express does. Data-extraction decorators (`@Param`, `@Query`, `@Body`) directly replace `req.params`/`req.query`/`req.body`, along with the ability to attach a pipe to transform + validate right at the declaration point — this is a core strength over plain Express. Hiding `req`/`res` by default keeps the code platform-agnostic; `@Res()` should only be used when full control is truly needed, and `passthrough: true` should always be considered so Standard features (Interceptor, `@HttpCode`, `@Header`) aren't lost.
 
-| Aspect       | Key point to remember                                                                |
-| --------------- | ----------------------------------------------------------------------------------- |
-| Architecture       | Controller = interface layer, thin; logic belongs to the Provider                         |
-| Routing         | prefix + method path, static before dynamic, metadata read at bootstrap              |
-| Input decorators | `@Param` (identifier, required) / `@Query` (filter, optional) / `@Body` (DTO class)  |
-| Pipes            | `ParseIntPipe` = transform + validate; `ValidationPipe` needs to be enabled globally for DTOs      |
-| Output control  | `@HttpCode`/`@Header` keep Standard mode; `@Res()` needs `passthrough` if you want to keep it |
+| Aspect           | Key point to remember                                                                         |
+| ---------------- | --------------------------------------------------------------------------------------------- |
+| Architecture     | Controller = interface layer, thin; logic belongs to the Provider                             |
+| Routing          | prefix + method path, static before dynamic, metadata read at bootstrap                       |
+| Input decorators | `@Param` (identifier, required) / `@Query` (filter, optional) / `@Body` (DTO class)           |
+| Pipes            | `ParseIntPipe` = transform + validate; `ValidationPipe` needs to be enabled globally for DTOs |
+| Output control   | `@HttpCode`/`@Header` keep Standard mode; `@Res()` needs `passthrough` if you want to keep it |
 
 > 📖 Source: compiled from NotebookLM §1–§4 + original docs [/controllers](https://docs.nestjs.com/controllers)
 
