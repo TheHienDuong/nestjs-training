@@ -36,6 +36,7 @@ Với bạn, ADR còn có giá trị riêng: **viết ADR buộc bạn phải di
 | [0005](0005-coder-agent-mo-pr-rieng-vao-main.md)     | Coder agent mở PR riêng vào main (thay thế quyết định #5 của ADR-0003)                                      | Accepted                      |
 | [0006](0006-herdr-pty-pane-bridge.md)                | Dispatch qua Herdr PTY-pane bridge (Hermes điều khiển agent trong pane terminal)                            | Proposed                      |
 | [0007](0007-claude-reviewer-local-multi-reviewer.md) | Claude Code nhận lại vai Reviewer local trong mô hình multi-reviewer (thay đổi quyết định 2026-08-13/PR#24) | Proposed                      |
+| [0008](0008-review-collector-mr.md)                  | Collector branch `mr/*` là lớp audit SAU merge, không thay thế ADR-0005                                     | Proposed                      |
 
 ## Template
 
