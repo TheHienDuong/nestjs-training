@@ -1,6 +1,6 @@
 <!--
 SPEC.md — task handoff source for the Coder agent (NES-3, L02).
-Only Claude may edit this file (see docs/adr/0004-mcp-single-writer-cho-coder-agent.md
+Only Claude may edit this file (see docs/adr/0004-mcp-single-writer-for-coder-agent.md
 and docs/workflow/AGENT-MODEL.md). Content is copied verbatim from the Linear NES-3
 issue description. If the Linear issue changes later, update this file at the same time.
 -->

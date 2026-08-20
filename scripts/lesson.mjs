@@ -111,7 +111,7 @@ function printList() {
     console.log(`  lesson ${nn} — ${slug.padEnd(16)} ${status}`);
   }
   console.log('');
-  console.log('Xem file map:  node scripts/lesson.mjs <NN>');
+  console.log('View file map:  node scripts/lesson.mjs <NN>');
   console.log('Read 1 file:   node scripts/lesson.mjs <NN> <path>');
   console.log('Tag:            node scripts/lesson.mjs --tag <NN>');
 }
@@ -207,13 +207,13 @@ function createTag(nn) {
   git(['tag', tag]);
   const info = git(['log', '-1', '--format=%h %s', tag]);
   console.log(`✅ Created tag ${tag} → ${info}`);
-  console.log(`   Xem file map: node scripts/lesson.mjs ${nn}`);
+  console.log(`   View file map: node scripts/lesson.mjs ${nn}`);
 }
 
 function printNote(nn, slugs) {
   const note = notePath(nn, slugs);
   if (!note) {
-    console.error(`❌ Lesson note not found cho lesson ${nn} (docs/lessons/${nn}-*/README.md).`);
+    console.error(`❌ Lesson note not found for lesson ${nn} (docs/lessons/${nn}-*/README.md).`);
     process.exit(1);
   }
   console.log(path.join(ROOT, note));
