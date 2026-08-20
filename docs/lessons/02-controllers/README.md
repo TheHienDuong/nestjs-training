@@ -10,6 +10,26 @@
 
 ---
 
+## 🗂 File map lesson này
+
+| File                                    | Vai trò                              | Tạo ở lesson | Trạng thái  |
+| --------------------------------------- | ------------------------------------ | ------------ | ----------- |
+| `src/tasks/dto/create-task.dto.ts`      | Ref — DTO                            | L02          | Mới         |
+| `src/tasks/dto/update-task.dto.ts`      | Ref — DTO                            | L02          | Mới         |
+| `src/tasks/tasks.controller.spec.ts`    | Ref — unit test                      | L02          | Mới         |
+| `src/tasks/tasks.controller.ts`         | Ref — controller (teaching comments) | L02          | Mới         |
+| `src/tasks/tasks.module.ts`             | Ref — module                         | L02          | Mới         |
+| `src/tasks/tasks.service.ts`            | Ref — service                        | L02          | Mới         |
+| `test/tasks.e2e-spec.ts`                | Ref — e2e test                       | L02          | Mới         |
+| `src/app.module.ts`                     | Ref — đăng ký TasksModule            | L00          | Sửa (lần 2) |
+| `docs/lessons/02-controllers/README.md` | Lesson note L02                      | L02          | Mới         |
+| `docs/lessons/02-controllers/SPEC.md`   | Spec từ Linear                       | L02          | Mới         |
+
+> Bản đồ chính xác nhất + đọc code từng dòng (kèm số dòng): chạy `pnpm lesson 02`.
+> Lưu ý: `pnpm lesson 02` lấy theo diff tag → có thể kèm 2 file governance lẫn (#31/#32) — bảng này là nguồn chuẩn theo diff PR #33/#34.
+
+---
+
 ## 🎯 Mục tiêu
 
 - [ ] Tự viết được `TasksController` với route GET/POST/PATCH/DELETE, gắn đúng vào `TasksModule`
