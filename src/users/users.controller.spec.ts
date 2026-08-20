@@ -28,4 +28,16 @@ describe('UsersController', () => {
     expect(user.name).toBe('Hien');
     expect(user.email).toBe('hien@example.com');
   });
+
+  it('should ignore undeclared DTO properties', () => {
+    const payload = {
+      name: 'Hien',
+      email: 'hien@example.com',
+      password: 'should-not-leak',
+    };
+
+    const user = controller.create(payload);
+
+    expect(user).not.toHaveProperty('password');
+  });
 });
