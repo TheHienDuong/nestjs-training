@@ -127,24 +127,24 @@ function printFileMap(nn, slugs) {
     process.exit(1);
   }
   const prev = prevTag(parseInt(nn, 10));
-  const created = git(['diff', '--diff-filter=A', '--name-only', `${prev}..${tag}`])
+  const created = git(['diff', '--find-renames', '--diff-filter=A', '--name-only', `${prev}..${tag}`])
     .split('\n')
     .filter(Boolean);
-  const modified = git(['diff', '--diff-filter=M', '--name-only', `${prev}..${tag}`])
+  const modified = git(['diff', '--find-renames', '--diff-filter=M', '--name-only', `${prev}..${tag}`])
     .split('\n')
     .filter(Boolean);
   // --name-status giữ lại cả hai đường dẫn của rename (old và new), thay vì chỉ tên mới.
-  const renamed = git(['diff', '--diff-filter=R', '--name-status', `${prev}..${tag}`])
+  const renamed = git(['diff', '--find-renames', '--diff-filter=R', '--name-status', `${prev}..${tag}`])
     .split('\n')
     .filter(Boolean)
     .map((line) => {
       const [, oldPath, newPath] = line.split('\t');
       return { oldPath, newPath };
     });
-  const deleted = git(['diff', '--diff-filter=D', '--name-only', `${prev}..${tag}`])
+  const deleted = git(['diff', '--find-renames', '--diff-filter=D', '--name-only', `${prev}..${tag}`])
     .split('\n')
     .filter(Boolean);
-  const stat = git(['diff', '--stat', `${prev}..${tag}`]);
+  const stat = git(['diff', '--find-renames', '--stat', `${prev}..${tag}`]);
 
   console.log(`🗂  File map lesson ${lessonTitle(nn, slugs)}`);
   console.log(`   (diff ${prev} → ${tag})`);
@@ -204,7 +204,7 @@ function printDiff(a, b, slugs) {
   const tb = `lesson/${pad(b)}`;
   console.log(`🔀 Diff ${lessonTitle(pad(a), slugs)} → ${lessonTitle(pad(b), slugs)}`);
   console.log('');
-  const stat = git(['diff', '--stat', `${ta}..${tb}`]);
+  const stat = git(['diff', '--find-renames', '--stat', `${ta}..${tb}`]);
   console.log(stat || '   (không có khác biệt)');
 }
 
@@ -226,7 +226,7 @@ function createTag(nn) {
     process.exit(1);
   }
   // Tag trỏ trực tiếp vào HEAD, nên mọi thay đổi chưa commit phải được xử lý trước.
-  const dirty = git(['status', '--porcelain']);
+  const dirty = git(['status', '--porcelain', '--untracked-files=all']);
   if (dirty) {
     console.error('❌ Working tree còn thay đổi chưa commit; hãy commit hoặc stash trước khi tạo tag.');
     process.exit(1);
