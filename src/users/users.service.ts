@@ -12,7 +12,6 @@ export class UsersService {
   private readonly users: User[] = [];
 
   create(createUserDto: CreateUserDto): User {
-    // DTO là input từ bên ngoài; chỉ copy các field đã được User khai báo để không lưu hoặc trả về property lạ.
     const user: User = {
       id: this.users.length + 1,
       name: createUserDto.name,
