@@ -23,8 +23,6 @@ import process from 'node:process';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const LESSONS_DIR = path.join(ROOT, 'docs', 'lessons');
-// Empty tree là mốc Git không chứa file nào; lesson đầu phải diff từ mốc này.
-const EMPTY_TREE = '4b825dc642cb6eb9a060e54bf8d69288fbee4904';
 
 /** Chạy lệnh git, trả stdout (trim). Exit code khác 0 → throw. */
 function git(args, { silent = false } = {}) {
@@ -41,6 +39,20 @@ function git(args, { silent = false } = {}) {
     }
     throw err;
   }
+}
+
+/**
+ * Empty tree là mốc Git không chứa file nào; lesson đầu phải diff từ mốc này.
+ * Không hardcode hash SHA-1 (`4b825dc...`) vì repo dùng `--object-format=sha256`
+ * sẽ có hash khác — dùng `git mktree` với input rỗng để tự khớp object-format
+ * thật của repo (ghi luôn object này vào object store nên `git diff` resolve được).
+ */
+function emptyTreeHash() {
+  return execFileSync('git', ['mktree'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    input: '',
+  }).trim();
 }
 
 /** Chuẩn hóa "1" → "01". */
@@ -85,7 +97,7 @@ function prevTag(nn) {
     .filter((n) => n < nn)
     .sort((a, b) => b - a);
   if (tags.length > 0) return `lesson/${pad(tags[0])}`;
-  return EMPTY_TREE;
+  return emptyTreeHash();
 }
 
 function classify(file) {

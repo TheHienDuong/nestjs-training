@@ -35,7 +35,9 @@ function createRepo(): string {
 
 function commit(repo: string, message: string): string {
   git(repo, ['add', '.']);
-  git(repo, ['commit', '-m', message]);
+  // --no-gpg-sign: fixture commit không được kế thừa commit.gpgSign=true từ
+  // global config của máy chạy test — nếu không có key GPG, commit sẽ fail.
+  git(repo, ['commit', '-m', message, '--no-gpg-sign']);
   return git(repo, ['rev-parse', 'HEAD']).trim();
 }
 
