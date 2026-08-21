@@ -12,10 +12,13 @@ export interface Task {
 @Injectable()
 export class TasksService {
   private readonly tasks: Task[] = [];
+  // A counter that only moves forward, so it never reuses an id after a task is deleted:
+  // every new id stays unique for the lifetime of the service.
+  private nextId = 1;
 
   create(createTaskDto: CreateTaskDto): Task {
     const task: Task = {
-      id: this.tasks.length + 1,
+      id: this.nextId++,
       title: createTaskDto.title,
       completed: false,
     };
@@ -44,7 +47,15 @@ export class TasksService {
 
   update(id: number, updateTaskDto: UpdateTaskDto): Task {
     const task = this.findOne(id);
-    Object.assign(task, updateTaskDto);
+
+    // Copy only the fields of the update contract; `id` is the identity so it must never change.
+    if (updateTaskDto.title !== undefined) {
+      task.title = updateTaskDto.title;
+    }
+    if (updateTaskDto.completed !== undefined) {
+      task.completed = updateTaskDto.completed;
+    }
+
     return task;
   }
 
