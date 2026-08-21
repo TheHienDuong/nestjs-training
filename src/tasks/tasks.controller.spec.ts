@@ -40,4 +40,24 @@ describe('TasksController', () => {
       expect.objectContaining({ title: 'Open task', completed: false }),
     ]);
   });
+
+  it('keeps task ids unique after deleting a task', () => {
+    const firstTask = controller.create({ title: 'First task' });
+    const secondTask = controller.create({ title: 'Second task' });
+
+    controller.remove(firstTask.id);
+    const replacementTask = controller.create({ title: 'Replacement task' });
+
+    expect(replacementTask.id).toBeGreaterThan(secondTask.id);
+    expect(new Set(controller.findAll().map((task) => task.id)).size).toBe(2);
+  });
+
+  it('does not allow PATCH to change a task id', () => {
+    const task = controller.create({ title: 'Stable identity' });
+
+    controller.update(task.id, { id: 99 } as never);
+
+    expect(controller.findOne(task.id)).toEqual(task);
+    expect(() => controller.findOne(99)).toThrow();
+  });
 });

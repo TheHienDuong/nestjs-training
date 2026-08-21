@@ -26,7 +26,7 @@ export class TasksController {
   // `@Get()` registers GET /tasks; @Query reads the filter from the query string, for example `?completed=true`.
   @Get()
   // @Header adds a response header while still using Nest standard response handling.
-  @Header('Cache-Control', 'none')
+  @Header('Cache-Control', 'no-store')
   findAll(@Query('completed') completed?: string): Task[] {
     return this.tasksService.findAll(completed);
   }
