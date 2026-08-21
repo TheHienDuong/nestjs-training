@@ -26,7 +26,7 @@ export class TasksController {
   // `@Get()` đăng ký GET /tasks; @Query lấy filter từ query string, ví dụ `?completed=true`.
   @Get()
   // @Header thêm header phản hồi mà vẫn dùng cơ chế response chuẩn của Nest.
-  @Header('Cache-Control', 'none')
+  @Header('Cache-Control', 'no-store')
   findAll(@Query('completed') completed?: string): Task[] {
     return this.tasksService.findAll(completed);
   }

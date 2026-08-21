@@ -12,10 +12,13 @@ export interface Task {
 @Injectable()
 export class TasksService {
   private readonly tasks: Task[] = [];
+  // Counter tăng đều và không quay lại phía sau khi một task bị xóa.
+  // Vì vậy id mới luôn duy nhất trong suốt vòng đời của service.
+  private nextId = 1;
 
   create(createTaskDto: CreateTaskDto): Task {
     const task: Task = {
-      id: this.tasks.length + 1,
+      id: this.nextId++,
       title: createTaskDto.title,
       completed: false,
     };
@@ -44,7 +47,15 @@ export class TasksService {
 
   update(id: number, updateTaskDto: UpdateTaskDto): Task {
     const task = this.findOne(id);
-    Object.assign(task, updateTaskDto);
+
+    // Chỉ copy các field thuộc contract cập nhật; id là identity nên không được đổi.
+    if (updateTaskDto.title !== undefined) {
+      task.title = updateTaskDto.title;
+    }
+    if (updateTaskDto.completed !== undefined) {
+      task.completed = updateTaskDto.completed;
+    }
+
     return task;
   }
 
