@@ -19,7 +19,7 @@ function git(repo: string, args: string[]): string {
   });
 }
 
-function createRepo(): string {
+function createRepo({ objectFormat }: { objectFormat?: string } = {}): string {
   const repo = mkdtempSync(path.join(os.tmpdir(), 'lesson-script-test-'));
   tempRepos.push(repo);
   mkdirSync(path.join(repo, 'scripts'), { recursive: true });
@@ -27,7 +27,13 @@ function createRepo(): string {
     recursive: true,
   });
   copyFileSync(sourceScript, path.join(repo, 'scripts', 'lesson.mjs'));
-  git(repo, ['init', '-b', 'main']);
+  const initArgs = ['init', '-b', 'main'];
+  // objectFormat cho phép test dựng repo SHA-256 — bắt regression của
+  // emptyTreeHash() (derive động qua `git mktree` thay vì hardcode SHA-1).
+  if (objectFormat) {
+    initArgs.push(`--object-format=${objectFormat}`);
+  }
+  git(repo, initArgs);
   git(repo, ['config', 'user.email', 'test@example.com']);
   git(repo, ['config', 'user.name', 'Lesson Test']);
   return repo;
@@ -35,7 +41,9 @@ function createRepo(): string {
 
 function commit(repo: string, message: string): string {
   git(repo, ['add', '.']);
-  git(repo, ['commit', '-m', message]);
+  // --no-gpg-sign: fixture commit không được kế thừa commit.gpgSign=true từ
+  // global config của máy chạy test — nếu không có key GPG, commit sẽ fail.
+  git(repo, ['commit', '-m', message, '--no-gpg-sign']);
   return git(repo, ['rev-parse', 'HEAD']).trim();
 }
 
@@ -69,6 +77,24 @@ afterEach(() => {
 describe('scripts/lesson.mjs', () => {
   it('diffs the first lesson from the Git empty tree', () => {
     const repo = createRepo();
+    writeFileSync(path.join(repo, 'root.txt'), 'root\n');
+    commit(repo, 'setup');
+    writeFileSync(path.join(repo, 'lesson.txt'), 'lesson\n');
+    const lessonCommit = commit(repo, 'lesson 01');
+    git(repo, ['tag', 'lesson/01', lessonCommit]);
+
+    const result = runLesson(repo, ['01']);
+
+    expect(result.status).toBe(0);
+    expect(result.output).toContain('root.txt');
+    expect(result.output).toContain('lesson.txt');
+  });
+
+  // Guard cho fix C2: EMPTY_TREE hardcode SHA-1 (4b825dc...) vỡ trên repo
+  // --object-format=sha256 ("unknown revision"). emptyTreeHash() qua
+  // `git mktree` phải tự khớp object-format thật của repo.
+  it('diffs the first lesson from the Git empty tree in a SHA-256 repo', () => {
+    const repo = createRepo({ objectFormat: 'sha256' });
     writeFileSync(path.join(repo, 'root.txt'), 'root\n');
     commit(repo, 'setup');
     writeFileSync(path.join(repo, 'lesson.txt'), 'lesson\n');

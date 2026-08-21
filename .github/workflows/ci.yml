@@ -67,10 +67,10 @@ jobs:
       # --max-warnings=0: cảnh báo cũng bị coi là lỗi trên CI.
       # (Ở máy local `pnpm lint` có --fix nên tự sửa; ở CI thì chỉ kiểm tra.)
       - name: Lint
-        run: pnpm exec eslint "{src,apps,libs,test}/**/*.ts" --max-warnings=0
+        run: pnpm exec eslint "{src,apps,libs,test,scripts}/**/*.ts" --max-warnings=0
 
       - name: Kiểm tra format (Prettier)
-        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"
+        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "scripts/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"
 
       - name: Unit tests
         run: pnpm test
