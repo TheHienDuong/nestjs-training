@@ -87,7 +87,7 @@ Run `pnpm verify` before opening a PR so you don't have to wait for CI to find o
 ## Architecture & conventions
 
 - Standard Nest layering: `*.module.ts` ties together providers/controllers · `*.controller.ts` handles only HTTP · `*.service.ts` holds business logic. **Business logic must not be placed in controllers** — this is the most common mistake made by developers migrating from Express.
-- Unit tests `*.spec.ts` are placed alongside their source files (`rootDir: src`). E2E tests are located at `test/*.e2e-spec.ts` and use `test/jest-e2e.json`.
+- Unit tests `*.spec.ts` are placed alongside source files — `src/` for app code and `scripts/` for tooling scripts (Jest `rootDir: "."` + `roots: ["<rootDir>/src", "<rootDir>/scripts"]`). E2E tests are located at `test/*.e2e-spec.ts` and use `test/jest-e2e.json`.
 - `tsconfig.json`: uses `nodenext`, `strictNullChecks: true`, `noImplicitAny: false` (full `strict` mode is not enabled yet).
 - ESLint uses `typescript-eslint` `recommendedTypeChecked` + `eslint-plugin-prettier`. The `no-explicit-any` rule is **disabled** → ESLint will not flag `any` usage, so reviewers are responsible for catching it. `no-floating-promises` and `no-unsafe-argument` are set to `warn` level, but **CI runs with `--max-warnings=0`** so even warnings will cause CI to fail.
 - Prettier is the single source of truth for formatting `.ts`, `.json`, `.md`, `.yml` files. Check `.prettierignore` for exceptions.

@@ -67,10 +67,10 @@ jobs:
       # --max-warnings=0: warnings are also treated as errors on CI.
       # (Locally `pnpm lint` has --fix so it self-corrects; on CI it only checks.)
       - name: Lint
-        run: pnpm exec eslint "{src,apps,libs,test}/**/*.ts" --max-warnings=0
+        run: pnpm exec eslint "{src,apps,libs,test,scripts}/**/*.ts" --max-warnings=0
 
       - name: Check format (Prettier)
-        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"
+        run: pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "scripts/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"
 
       - name: Unit tests
         run: pnpm test

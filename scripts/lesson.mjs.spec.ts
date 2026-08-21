@@ -19,7 +19,7 @@ function git(repo: string, args: string[]): string {
   });
 }
 
-function createRepo(): string {
+function createRepo({ objectFormat }: { objectFormat?: string } = {}): string {
   const repo = mkdtempSync(path.join(os.tmpdir(), 'lesson-script-test-'));
   tempRepos.push(repo);
   mkdirSync(path.join(repo, 'scripts'), { recursive: true });
@@ -27,7 +27,12 @@ function createRepo(): string {
     recursive: true,
   });
   copyFileSync(sourceScript, path.join(repo, 'scripts', 'lesson.mjs'));
-  git(repo, ['init', '-b', 'main']);
+  const initArgs = ['init', '-b', 'main'];
+  // objectFormat lets the fixture use SHA-256 and catch hardcoded SHA-1 empty-tree hashes.
+  if (objectFormat) {
+    initArgs.push(`--object-format=${objectFormat}`);
+  }
+  git(repo, initArgs);
   git(repo, ['config', 'user.email', 'test@example.com']);
   git(repo, ['config', 'user.name', 'Lesson Test']);
   return repo;
@@ -35,7 +40,8 @@ function createRepo(): string {
 
 function commit(repo: string, message: string): string {
   git(repo, ['add', '.']);
-  git(repo, ['commit', '-m', message]);
+  // --no-gpg-sign keeps fixture commits independent from the host GPG configuration.
+  git(repo, ['commit', '-m', message, '--no-gpg-sign']);
   return git(repo, ['rev-parse', 'HEAD']).trim();
 }
 
@@ -69,6 +75,22 @@ afterEach(() => {
 describe('scripts/lesson.mjs', () => {
   it('diffs the first lesson from the Git empty tree', () => {
     const repo = createRepo();
+    writeFileSync(path.join(repo, 'root.txt'), 'root\n');
+    commit(repo, 'setup');
+    writeFileSync(path.join(repo, 'lesson.txt'), 'lesson\n');
+    const lessonCommit = commit(repo, 'lesson 01');
+    git(repo, ['tag', 'lesson/01', lessonCommit]);
+
+    const result = runLesson(repo, ['01']);
+
+    expect(result.status).toBe(0);
+    expect(result.output).toContain('root.txt');
+    expect(result.output).toContain('lesson.txt');
+  });
+
+  // This guards against using the SHA-1 empty-tree hash in a SHA-256 repository.
+  it('diffs the first lesson from the Git empty tree in a SHA-256 repository', () => {
+    const repo = createRepo({ objectFormat: 'sha256' });
     writeFileSync(path.join(repo, 'root.txt'), 'root\n');
     commit(repo, 'setup');
     writeFileSync(path.join(repo, 'lesson.txt'), 'lesson\n');
