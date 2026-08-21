@@ -23,6 +23,8 @@ import process from 'node:process';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const LESSONS_DIR = path.join(ROOT, 'docs', 'lessons');
+// Empty tree là mốc Git không chứa file nào; lesson đầu phải diff từ mốc này.
+const EMPTY_TREE = '4b825dc642cb6eb9a060e54bf8d69288fbee4904';
 
 /** Chạy lệnh git, trả stdout (trim). Exit code khác 0 → throw. */
 function git(args, { silent = false } = {}) {
@@ -72,7 +74,7 @@ function notePath(nn, slugs) {
   return existsSync(p) ? path.relative(ROOT, p) : null;
 }
 
-/** Tag lesson của lesson trước liền kề (bé hơn NN). Không có → root commit. */
+/** Tag lesson của lesson trước liền kề (bé hơn NN). Không có → empty tree. */
 function prevTag(nn) {
   const tags = git(['tag', '-l', 'lesson/*'])
     .split('\n')
@@ -83,7 +85,7 @@ function prevTag(nn) {
     .filter((n) => n < nn)
     .sort((a, b) => b - a);
   if (tags.length > 0) return `lesson/${pad(tags[0])}`;
-  return git(['rev-list', '--max-parents=0', 'HEAD']).split('\n')[0];
+  return EMPTY_TREE;
 }
 
 function classify(file) {
@@ -131,6 +133,14 @@ function printFileMap(nn, slugs) {
   const modified = git(['diff', '--diff-filter=M', '--name-only', `${prev}..${tag}`])
     .split('\n')
     .filter(Boolean);
+  // --name-status giữ lại cả hai đường dẫn của rename (old và new), thay vì chỉ tên mới.
+  const renamed = git(['diff', '--diff-filter=R', '--name-status', `${prev}..${tag}`])
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => {
+      const [, oldPath, newPath] = line.split('\t');
+      return { oldPath, newPath };
+    });
   const deleted = git(['diff', '--diff-filter=D', '--name-only', `${prev}..${tag}`])
     .split('\n')
     .filter(Boolean);
@@ -146,6 +156,12 @@ function printFileMap(nn, slugs) {
   console.log('✏️  File sửa:');
   if (modified.length === 0) console.log('   (không có)');
   for (const f of modified) console.log(`   ${classify(f).padEnd(12)} ${f}`);
+  console.log('');
+  console.log('🔁 File đổi tên:');
+  if (renamed.length === 0) console.log('   (không có)');
+  for (const { oldPath, newPath } of renamed) {
+    console.log(`   ${classify(newPath).padEnd(12)} ${oldPath} → ${newPath}`);
+  }
   if (deleted.length > 0) {
     console.log('');
     console.log('🗑  File xóa:');
@@ -193,6 +209,11 @@ function printDiff(a, b, slugs) {
 }
 
 function createTag(nn) {
+  // Tag chỉ nhận số lesson dạng 1–2 chữ số để luôn khớp với lesson/NN.
+  if (!/^\d{1,2}$/.test(nn)) {
+    console.error(`❌ Số lesson không hợp lệ: "${nn}" (chỉ nhận 1–2 chữ số, ví dụ 0 hoặc 01).`);
+    process.exit(1);
+  }
   const branch = git(['branch', '--show-current']);
   if (branch !== 'main') {
     console.error(`❌ Chỉ được tag trên main (hiện đang ở branch "${branch}").`);
@@ -202,6 +223,12 @@ function createTag(nn) {
   const tag = `lesson/${nn}`;
   if (git(['tag', '-l', tag])) {
     console.error(`❌ Tag ${tag} đã tồn tại. Xóa thủ công nếu muốn tạo lại: git tag -d ${tag}`);
+    process.exit(1);
+  }
+  // Tag trỏ trực tiếp vào HEAD, nên mọi thay đổi chưa commit phải được xử lý trước.
+  const dirty = git(['status', '--porcelain']);
+  if (dirty) {
+    console.error('❌ Working tree còn thay đổi chưa commit; hãy commit hoặc stash trước khi tạo tag.');
     process.exit(1);
   }
   git(['tag', tag]);
