@@ -1,63 +1,52 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
 
 describe('TasksController', () => {
   let controller: TasksController;
+  const serviceMock = {
+    create: jest.fn(),
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+  };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TasksController],
       providers: [TasksService],
-    }).compile();
+    })
+      .overrideProvider(TasksService)
+      .useValue(serviceMock)
+      .compile();
 
     controller = module.get<TasksController>(TasksController);
   });
 
-  it('creates, reads, updates, and removes a task', () => {
-    const created = controller.create({ title: 'Learn routing' });
+  it('delegates create to the injected service', () => {
+    const task = { id: 1, title: 'Learn DI', completed: false };
+    serviceMock.create.mockReturnValue(task);
 
-    expect(controller.findAll()).toEqual([created]);
-    expect(controller.findOne(created.id)).toEqual(created);
-    expect(controller.update(created.id, { completed: true })).toEqual({
-      ...created,
-      completed: true,
-    });
-
-    controller.remove(created.id);
-    expect(controller.findAll()).toEqual([]);
+    expect(controller.create({ title: 'Learn DI' })).toBe(task);
+    expect(serviceMock.create).toHaveBeenCalledWith({ title: 'Learn DI' });
   });
 
-  it('filters tasks using the completed query', () => {
-    controller.create({ title: 'Open task' });
-    const completedTask = controller.create({ title: 'Done task' });
-    controller.update(completedTask.id, { completed: true });
+  it('delegates filtered reads to the injected service', () => {
+    serviceMock.findAll.mockReturnValue([]);
 
-    expect(controller.findAll('true')).toEqual([
-      expect.objectContaining({ title: 'Done task', completed: true }),
-    ]);
-    expect(controller.findAll('false')).toEqual([
-      expect.objectContaining({ title: 'Open task', completed: false }),
-    ]);
+    expect(controller.findAll('true')).toEqual([]);
+    expect(serviceMock.findAll).toHaveBeenCalledWith('true');
   });
 
-  it('keeps task ids unique after deleting a task', () => {
-    const firstTask = controller.create({ title: 'First task' });
-    const secondTask = controller.create({ title: 'Second task' });
+  it('delegates update and remove without owning business logic', () => {
+    const task = { id: 1, title: 'Learn DI', completed: true };
+    serviceMock.update.mockReturnValue(task);
 
-    controller.remove(firstTask.id);
-    const replacementTask = controller.create({ title: 'Replacement task' });
-
-    expect(replacementTask.id).toBeGreaterThan(secondTask.id);
-    expect(new Set(controller.findAll().map((task) => task.id)).size).toBe(2);
-  });
-
-  it('does not allow PATCH to change a task id', () => {
-    const task = controller.create({ title: 'Stable identity' });
-
-    controller.update(task.id, { id: 99 } as never);
-
-    expect(controller.findOne(task.id)).toEqual(task);
-    expect(() => controller.findOne(99)).toThrow();
+    expect(controller.update(1, { completed: true })).toBe(task);
+    controller.remove(1);
+    expect(serviceMock.update).toHaveBeenCalledWith(1, { completed: true });
+    expect(serviceMock.remove).toHaveBeenCalledWith(1);
   });
 });
