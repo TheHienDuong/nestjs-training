@@ -1,3 +1,4 @@
+// [NES-4 · lesson 03] Reference — service behavior and regression coverage.
 import { Test, type TestingModule } from '@nestjs/testing';
 import { TasksService } from './tasks.service';
 
@@ -46,6 +47,17 @@ describe('TasksService', () => {
     });
     service.remove(task.id);
     expect(service.findAll()).toEqual([]);
+  });
+
+  it('keeps task IDs increasing after deletion', () => {
+    const firstTask = service.create({ title: 'First task' });
+    const secondTask = service.create({ title: 'Second task' });
+
+    service.remove(firstTask.id);
+
+    const replacementTask = service.create({ title: 'Replacement task' });
+
+    expect(replacementTask.id).toBeGreaterThan(secondTask.id);
   });
 
   it('filters by completion status', () => {

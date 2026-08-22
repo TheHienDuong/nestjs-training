@@ -36,11 +36,22 @@ describe('TasksController (e2e)', () => {
     expect(task.title).toBe('Learn providers');
     expect(task.completed).toBe(false);
     await request(app.getHttpServer())
+      .get('/tasks')
+      .query({ completed: 'false' })
+      .expect(200)
+      .expect('Cache-Control', 'no-store')
+      .expect([task]);
+    await request(app.getHttpServer())
+      .get(`/tasks/${task.id}`)
+      .expect(200)
+      .expect(task);
+    await request(app.getHttpServer())
       .patch(`/tasks/${task.id}`)
-      .send({ completed: true })
+      .send({ id: task.id + 1000, completed: true })
       .expect(200)
       .expect((response) => {
         const body = response.body as unknown as TaskResponse;
+        expect(body.id).toBe(task.id);
         expect(body.completed).toBe(true);
       });
     await request(app.getHttpServer()).delete(`/tasks/${task.id}`).expect(204);
