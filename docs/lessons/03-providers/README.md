@@ -23,6 +23,8 @@ This table is a quick-reading summary; update it when the lesson is complete.
 | `src/tasks/tasks.controller.ts` | Ref — constructor injection of `TasksService`, thin controller | L02 (NES-3) | Existing, used as an example for DI |
 | `src/tasks/tasks.module.ts` | Ref — provider registration | L02 (NES-3) | Existing, used for the L03 hands-on |
 
+## 🎯 Objectives
+
 <!-- Objectives: observable outcomes are more useful than a list of topics. The previous lesson used routes and CRUD as evidence of progress; this lesson uses provider and DI behavior. -->
 
 - [ ] Explain how the IoC container and dependency injection through a constructor work in Nest
@@ -32,7 +34,7 @@ This table is a quick-reading summary; update it when the lesson is complete.
 
 ## 📚 Theory
 
-<!-- Explain in Vietnamese, in this order: PROBLEM first, SOLUTION second. Each concept must link to the exact original docs section for later reference. Avoid translating the docs mechanically — write as if teaching someone sitting beside you. -->
+<!-- Explain in English, in this order: PROBLEM first, SOLUTION second. Each concept must link to the exact original docs section for later reference. Avoid translating the docs mechanically — write as if teaching someone sitting beside you. -->
 
 ### Concept 1: IoC container & Dependency Injection through a constructor
 
@@ -308,6 +310,12 @@ curl localhost:3000/tasks # should show both tasks, proving state is preserved b
 
 **Answer:** ...
 
+---
+
+## ✅ Review & Quiz
+
+<!-- Complete this after /lesson-review. Answer in your own words; do not copy the answers. If you cannot answer independently, the lesson is not complete — return to the Theory section. -->
+
 2. **Question:** Why does `TasksService` keep the task list across multiple HTTP requests when each request is a completely new function call?
 
 **Answer:** ...
@@ -345,3 +353,11 @@ curl localhost:3000/tasks # should show both tasks, proving state is preserved b
 - [docs.nestjs.com/providers](https://docs.nestjs.com/providers)
 - [docs.nestjs.com/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers)
 - [docs.nestjs.com/fundamentals/injection-scopes](https://docs.nestjs.com/fundamentals/injection-scopes)
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
+**Disclaimer**: This document was translated using the AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
+
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
