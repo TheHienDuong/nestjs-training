@@ -1,20 +1,26 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
+// [NES-4 · lesson 03] Reference — singleton service and constructor DI.
 export interface Task {
   id: number;
   title: string;
   completed: boolean;
 }
 
-// Injectable allows Nest to manage the service and provide it through constructor injection.
+// `@Injectable()` marks this class as a provider that Nest can instantiate.
+// Providers are singleton-scoped by default, so this in-memory task collection
+// is shared by every controller method that receives this service instance.
 @Injectable()
 export class TasksService {
   private readonly tasks: Task[] = [];
-  // A counter that only moves forward, so it never reuses an id after a task is deleted:
-  // every new id stays unique for the lifetime of the service.
-  private nextId = 1;
+  private nextId: number;
+
+  constructor(@Inject('TASK_ID_START') taskIdStart: number) {
+    // The token is resolved by TasksModule's custom provider and injected here.
+    this.nextId = taskIdStart;
+  }
 
   create(createTaskDto: CreateTaskDto): Task {
     const task: Task = {
@@ -26,7 +32,7 @@ export class TasksService {
     return task;
   }
 
-  // Filtering is business logic, so the controller only receives input and delegates to the service.
+  // Filtering is business logic, so it belongs in the provider rather than the controller.
   findAll(completed?: string): Task[] {
     if (completed === undefined) {
       return this.tasks;
@@ -38,7 +44,6 @@ export class TasksService {
 
   findOne(id: number): Task {
     const task = this.tasks.find((item) => item.id === id);
-    // Nest converts this exception into HTTP 404 when the task is not found.
     if (!task) {
       throw new NotFoundException(`Task ${id} not found`);
     }
@@ -48,14 +53,12 @@ export class TasksService {
   update(id: number, updateTaskDto: UpdateTaskDto): Task {
     const task = this.findOne(id);
 
-    // Copy only the fields of the update contract; `id` is the identity so it must never change.
     if (updateTaskDto.title !== undefined) {
       task.title = updateTaskDto.title;
     }
     if (updateTaskDto.completed !== undefined) {
       task.completed = updateTaskDto.completed;
     }
-
     return task;
   }
 
