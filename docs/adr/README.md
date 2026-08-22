@@ -25,13 +25,16 @@ For you, ADRs also have unique value: **writing an ADR forces you to articulate 
 
 ## List
 
-| #                                                 | Decision                                                                                                             | Status                        |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| [0001](0001-choose-prisma-as-orm.md)              | Choose Prisma as ORM instead of TypeORM                                                                              | Accepted                      |
-| [0002](0002-linear-as-source-of-truth.md)         | Linear is the single source of truth for tasks, with native integration with GitHub/Slack                            | Accepted                      |
-| [0003](0003-trunk-based-one-lesson-one-pr.md)     | Trunk-based development: one lesson per PR                                                                           | Accepted                      |
-| [0004](0004-mcp-single-writer-for-coder-agent.md) | Claude Code is the single writer for Notion/Slack/Postman; Linear is open to the coder agent; coder receives SPEC.md | Accepted (amended 2026-08-13) |
-| [0005](0005-coder-agent-opens-pr-to-main.md)      | Coder agent opens separate PRs to main (replaces decision #5 from ADR-0003)                                          | Accepted                      |
+| #                                                    | Decision                                                                                                             | Status                        |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| [0001](0001-choose-prisma-as-orm.md)                 | Choose Prisma as ORM instead of TypeORM                                                                              | Accepted                      |
+| [0002](0002-linear-as-source-of-truth.md)            | Linear is the single source of truth for tasks, with native integration with GitHub/Slack                            | Accepted                      |
+| [0003](0003-trunk-based-one-lesson-one-pr.md)        | Trunk-based development: one lesson per PR                                                                           | Accepted                      |
+| [0004](0004-mcp-single-writer-for-coder-agent.md)    | Claude Code is the single writer for Notion/Slack/Postman; Linear is open to the coder agent; coder receives SPEC.md | Accepted (amended 2026-08-13) |
+| [0005](0005-coder-agent-opens-pr-to-main.md)         | Coder agent opens separate PRs to main (replaces decision #5 from ADR-0003)                                          | Accepted                      |
+| [0006](0006-herdr-pty-pane-bridge.md)                | Dispatch via the Herdr PTY-pane bridge (Hermes drives agents inside a terminal pane)                                 | Proposed                      |
+| [0007](0007-claude-reviewer-local-multi-reviewer.md) | Claude Code takes back the Reviewer local role in the multi-reviewer model (revises the 2026-08-13/PR#24 decision)   | Proposed                      |
+| [0008](0008-review-collector-mr.md)                  | The `mr/*` collector branch is a post-merge audit layer, not a replacement for ADR-0005                              | Proposed                      |
 
 ## Template
 
@@ -63,11 +66,3 @@ What we will do. Write it decisively, in the active voice.
 **Negative / cost paid:** ...
 **Follow-up needed:** ...
 ```
-
----
-
-<!-- CO-OP TRANSLATOR DISCLAIMER START -->
-
-**Disclaimer**:
-This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
-<!-- CO-OP TRANSLATOR DISCLAIMER END -->

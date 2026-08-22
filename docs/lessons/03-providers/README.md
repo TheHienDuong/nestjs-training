@@ -2,13 +2,13 @@
 
 # L03 — Providers & Dependency Injection
 
-| | |
+|                |                                                             |
 | -------------- | ----------------------------------------------------------- |
-| **Phase** | 1 — NestJS Fundamentals |
-| **Linear** | NES-4 |
-| **Branch** | `duongthehien2001/nes-4-l03-providers-dependency-injection` |
-| **Main docs** | https://docs.nestjs.com/providers |
-| **Study date** | 2026-08-21 |
+| **Phase**      | 1 — NestJS Fundamentals                                     |
+| **Linear**     | NES-4                                                       |
+| **Branch**     | `duongthehien2001/nes-4-l03-providers-dependency-injection` |
+| **Main docs**  | https://docs.nestjs.com/providers                           |
+| **Study date** | 2026-08-21                                                  |
 
 ---
 
@@ -17,11 +17,11 @@
 The most accurate map, with each code file and its line numbers: run `pnpm lesson <NN>`.
 This table is a quick-reading summary; update it when the lesson is complete.
 
-| File | Role (theory / ref / hands-on) | Created in lesson | Status |
-| ------------------------------- | --------------------------------------------------------------------------- | ------------ | ---------------------------------------- |
-| `src/tasks/tasks.service.ts` | Ref — `@Injectable()` provider, default singleton, Task business logic | L02 (NES-3) | Existing, used as an example for L03 theory |
-| `src/tasks/tasks.controller.ts` | Ref — constructor injection of `TasksService`, thin controller | L02 (NES-3) | Existing, used as an example for DI |
-| `src/tasks/tasks.module.ts` | Ref — provider registration | L02 (NES-3) | Existing, used for the L03 hands-on |
+| File                            | Role (theory / ref / hands-on)                                         | Created in lesson | Status                                      |
+| ------------------------------- | ---------------------------------------------------------------------- | ----------------- | ------------------------------------------- |
+| `src/tasks/tasks.service.ts`    | Ref — `@Injectable()` provider, default singleton, Task business logic | L02 (NES-3)       | Existing, used as an example for L03 theory |
+| `src/tasks/tasks.controller.ts` | Ref — constructor injection of `TasksService`, thin controller         | L02 (NES-3)       | Existing, used as an example for DI         |
+| `src/tasks/tasks.module.ts`     | Ref — provider registration                                            | L02 (NES-3)       | Existing, used for the L03 hands-on         |
 
 ## 🎯 Objectives
 
@@ -193,11 +193,11 @@ If `TasksService` injects this `RequestContextService`, both `TasksService` and 
 
 <!-- The most important section of the entire note. Fast learning means anchoring new knowledge to what is already known. Always compare with Express, Prisma, and hexagonal architecture. -->
 
-| Existing knowledge | NestJS equivalent | What differs |
-| --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Express: `const tasksService = require('./tasksService')`, then pass it into the route handler (or manually `new TasksService(db)`) | Nest: declare `constructor(private readonly tasksService: TasksService)`, and the IoC container resolves it | In Express the developer is responsible for instance creation order and manual passing; at bootstrap the Nest container builds the dependency graph, and the developer only declares “what I need” |
-| Prisma: `export const prisma = new PrismaClient()` in one file, imported throughout the app to reuse one connection pool | Nest: a provider is a singleton by default (`Scope.DEFAULT`); the IoC container caches and returns one instance | The Prisma singleton is achieved by convention (a module-level export and remembering not to call `new` again); the Nest singleton is **the framework default**, needs no convention, and can become `REQUEST`/`TRANSIENT` when needed |
-| Express middleware: attach `req.tenantDb = getDbForTenant(req)` on each request for a tenant-specific connection | Nest: a `Scope.REQUEST` provider injects the `REQUEST` token, reads the header, and creates a new instance per request | Express manually attaches a property to `req` without type safety; Nest DI creates the request-scoped instance at the right time with types, but changes the whole provider chain above it to request scope (performance impact) |
+| Existing knowledge                                                                                                                  | NestJS equivalent                                                                                                      | What differs                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Express: `const tasksService = require('./tasksService')`, then pass it into the route handler (or manually `new TasksService(db)`) | Nest: declare `constructor(private readonly tasksService: TasksService)`, and the IoC container resolves it            | In Express the developer is responsible for instance creation order and manual passing; at bootstrap the Nest container builds the dependency graph, and the developer only declares “what I need”                                     |
+| Prisma: `export const prisma = new PrismaClient()` in one file, imported throughout the app to reuse one connection pool            | Nest: a provider is a singleton by default (`Scope.DEFAULT`); the IoC container caches and returns one instance        | The Prisma singleton is achieved by convention (a module-level export and remembering not to call `new` again); the Nest singleton is **the framework default**, needs no convention, and can become `REQUEST`/`TRANSIENT` when needed |
+| Express middleware: attach `req.tenantDb = getDbForTenant(req)` on each request for a tenant-specific connection                    | Nest: a `Scope.REQUEST` provider injects the `REQUEST` token, reads the header, and creates a new instance per request | Express manually attaches a property to `req` without type safety; Nest DI creates the request-scoped instance at the right time with types, but changes the whole provider chain above it to request scope (performance impact)       |
 
 **What I previously misunderstood:** <write this as soon as you discover it — this is the section you will reread most often>
 

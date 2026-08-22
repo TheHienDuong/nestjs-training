@@ -4,11 +4,29 @@
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Phase**      | 1 — Foundations                                                                                                                                       |
 | **Linear**     | NES-2                                                                                                                                                 |
-| **Branch**     | `hien/nes-2-...` _(taken from Linear)_                                                                                                                |
+| **Branch**     | `duongthehien2001/nes-2-l01-cau-truc-project-bootstrap`                                                                                               |
 | **Main Docs**  | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism) |
-| **Study Date** | _(fill in when starting)_                                                                                                                             |
+| **Study Date** | 2026-08-12                                                                                                                                            |
 
-> 📝 **This is a draft** — the Theory section is pre-written for you to read in advance. Run `/teach first-steps` when starting the lesson to dive deeper and supplement it; the Hands-on and Quiz sections you complete on your own.
+---
+
+## 🗂 Lesson file map
+
+| File                                    | Role                               | Created in lesson | Status |
+| --------------------------------------- | ---------------------------------- | ----------------- | ------ |
+| `src/users/dto/create-user.dto.ts`      | Ref — DTO                          | L01               | New    |
+| `src/users/users.controller.spec.ts`    | Ref — unit test                    | L01               | New    |
+| `src/users/users.controller.ts`         | Ref — controller                   | L01               | New    |
+| `src/users/users.module.ts`             | Ref — module                       | L01               | New    |
+| `src/users/users.service.ts`            | Ref — service                      | L01               | New    |
+| `test/users.e2e-spec.ts`                | Ref — e2e test                     | L01               | New    |
+| `src/app.module.ts`                     | Ref — registers UsersModule        | L00               | Edited |
+| `README.md`                             | Docs — project description + guide | L00               | Edited |
+| `docs/ROADMAP.md`                       | Docs — updates L01 progress        | L00               | Edited |
+| `docs/lessons/_agent-log.md`            | Docs — logs the NES-2 dispatch     | L00               | Edited |
+| `docs/lessons/01-first-steps/README.md` | L01 lesson note                    | L01               | New    |
+
+> The most accurate map + reading code line by line: run `pnpm lesson 01`.
 
 ---
 
@@ -263,11 +281,3 @@ _(Fill in up to 5 lines after finishing the lesson)_
 - [NestJS — SWC builder](https://docs.nestjs.com/recipes/swc)
 - [NestJS CLI — overview](https://docs.nestjs.com/cli/overview)
 - [nestjs/nest — sample/01-cats-app](https://github.com/nestjs/nest/tree/master/sample/01-cats-app)
-
----
-
-<!-- CO-OP TRANSLATOR DISCLAIMER START -->
-
-**Disclaimer**:
-This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
-<!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,6 +1,6 @@
 # 🔄 WORKFLOW — Project Workflow
 
-> This is the repo's "rulebook". Every lesson goes through exactly 6 steps below.
+> This is the repo's "rulebook". Every lesson goes through exactly the 7 steps below.
 > Dual purpose: **learn NestJS** and **learn how a real backend team operates**.
 
 ## Tool Map
@@ -29,7 +29,7 @@
 
 ---
 
-## Lesson Lifecycle (6 steps)
+## Lesson Lifecycle (7 steps)
 
 ### Step 1 — Open Lesson · `/lesson-start`
 
@@ -72,9 +72,10 @@ To get a "reference solution" to compare after you finish coding on your own: ta
 
 Separate from the learning review above — this is the approval gate before code enters `main`:
 
-1. **Copilot CLI** (GitHub) reviews automatically, once, right after the PR is opened.
-2. **User (lead reviewer)** reviews the code and decides whether to merge.
-3. **Only the user merges** — no agent merges, not even Claude Code.
+1. **Claude Code** reviews the Coder agent's code locally (before the PR is opened).
+2. **Codex GitHub App connector** (`chatgpt-codex-connector[bot]`) reviews automatically, right after the PR opens/syncs — runs on **every PR**, including small ones, with no dedicated workflow. **Copilot CLI is NOT automatic** — it is only dispatched for large MRs (`mr/*`, max 2/day, see [REVIEW-MODEL.md](REVIEW-MODEL.md)).
+3. **User (lead reviewer)** reviews the code again and decides whether to merge — the PR also needs the mandatory approval of code owner `@hienduong-agilityio` (`.github/CODEOWNERS`).
+4. **Only the user merges** — no agent merges, not even Claude Code.
 
 ### Step 5 — Pull Request
 
@@ -85,11 +86,15 @@ gh pr create --fill
 
 - The PR description **must include** the line `Fixes NES-XX` → after merging, Linear will automatically move the issue to **Done**
 - CI must be passing before merging (the `main` branch has protection enabled)
-- Merge using **Squash and merge** by the user (no agent merges) to keep the `main` history clean: 1 lesson = 1 commit
+- Merge using **Squash and merge** to keep the `main` history clean: 1 lesson = 1 commit — **only the user merges** (no agent merges)
 
 ### Step 6 — Sync · `/sync-progress`
 
 Update `docs/ROADMAP.md`, push knowledge notes to the Notion hub, send learning digests to the `#nestjs-training` channel.
+
+### Step 7 — Tag the lesson · `pnpm lesson --tag <NN>`
+
+After the PR has been merged into `main`, run `pnpm lesson --tag <NN>` to create the git tag `lesson/NN` marking that lesson's exact commit. Thanks to this tag, `pnpm lesson <NN>` afterward can show the exact file map and let you read code lesson by lesson.
 
 ---
 
@@ -191,11 +196,3 @@ pnpm install                   # Husky automatically installs hooks via the "pre
 cp .env.example .env           # then fill in the values
 docker compose up -d
 ```
-
----
-
-<!-- CO-OP TRANSLATOR DISCLAIMER START -->
-
-**Disclaimer**:
-This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
-<!-- CO-OP TRANSLATOR DISCLAIMER END -->

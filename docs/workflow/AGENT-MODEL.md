@@ -1,137 +1,157 @@
-# 🤖 AGENT MODEL — Multi-Agent Collaborative Model
+# 🤖 AGENT MODEL — Multi-agent coordination model
 
-> This repo intentionally uses **multiple AI agents with clearly separated roles**, instead of one agent handling all tasks.
-> This is not just "for fun": role separation is the only way to preserve both learning value and review value.
+> This repo deliberately uses **multiple AI agents with separate roles**, instead of one agent doing everything.
+> This isn't "for fun": splitting roles is the only way to preserve both the learning value and the review value.
 
-## Core Principles
+## Core principle
 
-> **No agent should write code and review its own code at the same time.**
+> **No agent both writes code and reviews its own code.**
 
-The reason is exactly the same as why real teams don't let authors approve their own pull requests: the person who just built a solution has already "committed" to its underlying assumptions, making it very hard to spot flaws in those very assumptions. With AI, this effect is even stronger — models tend to defend the output they just generated.
+The reason is the same as why a real team doesn't let an author approve their own PR: whoever wrote a solution has already "committed" to its assumptions, making it very hard to spot the flaws in those same assumptions. With AI the effect is even stronger — a model tends to defend the output it just produced.
 
-The second principle, which is especially important for learners:
+The second principle, important for the learner:
 
-> **Agents do not do hands-on work for you.** If AI writes code for you, the only thing being trained is the AI.
+> **Agents do not do the hands-on work for you.** If AI writes the code for you, the only thing that gets trained is the AI.
 
 ---
 
-## Role Division
+## Role split
 
-There are only **2 roles**, not a fixed list of tools. The "Coder" role is **flexible** — whichever tool fills this role follows the same standard, with no separate rules for each individual tool. You will mostly use codex; switching to or adding other tools only requires changing the name in the command, no need to relearn rules.
+Only **2 roles**, not a fixed list of tools. The "Coder" role is **flexible** — whichever tool fills that role follows the same mold, no need for tool-specific rules. You mainly use codex; occasionally swapping in or adding another tool just means changing the name in the command, not relearning the rules.
 
-### 🎓 Claude Code — Mentor · PM (fixed)
+### 🎓 Claude Code — Mentor · PM · Reviewer local (fixed)
 
-| Responsibilities                                                                           | Does not do                                                |
-| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| Create and assign tasks on Linear, write full task descriptions                            | Write hands-on code for you                                |
-| Teach lessons, read the latest documentation, provide examples, connect to prior knowledge | Review PR code before merge (Copilot CLI + user handle it) |
-| Quiz to assess understanding (learning review)                                             | Merge PRs for you — **only the user merges**               |
-| Write lesson notes, ADRs, create/update SPEC.md, sync with Notion/Slack                    | Review code it generated itself                            |
+| Does                                                                   | Does not do                                             |
+| ---------------------------------------------------------------------- | ------------------------------------------------------- |
+| Create & split tasks on Linear, write full descriptions                | Write hands-on code for you                             |
+| Teach, read the latest docs, give examples, connect to prior knowledge | Review code it generated itself                         |
+| Quiz to check understanding (learning review)                          | Merge PRs for you — **only the user merges**            |
+| **Review the Coder agent's code before merge (local review)**          | Write code/tests in `src/`, `test/` for the Coder agent |
+| Write lesson notes, ADR, generate/update SPEC.md, sync Notion/Slack    |                                                         |
 
-**Why this role is fixed to Claude:** its large context window allows it to hold your entire roadmap, all notes, and your full learning history at the same time — exactly what a teacher needs. The PM role also requires **a single** source of truth for status tracking (see the MCP section below) — fixing one agent in this role is a requirement to avoid conflicts, not a preference.
+**Local review is Claude Code's responsibility** — when the Coder agent (codex) opens a PR, Claude Code reviews that code before the user decides whether to merge. The Coder agent **does not** review PRs itself (whether its own or someone else's) — this follows exactly the core principle above: no agent both writes and reviews its own code, and a reviewer must not be the same party as the author.
 
-### 🔎 Copilot CLI — Layer-1 code reviewer (automated)
+**Exception when Claude is the author:** if a PR (docs/ADR/infrastructure) was created by Claude itself, Claude **does not** review that PR — it routes to Hermes for manual verification + direct user lead review (details: `docs/workflow/REVIEW-MODEL.md`).
 
-Runs automatically, **once**, right after a PR is opened — no background, no daemon. Does not merge.
+**Why this role is fixed on Claude:** its large context window lets it hold the whole roadmap + all your notes + your learning history at once — exactly what a mentor needs. The PM role also needs **one** single place of record (see the MCP section below) — fixing one agent to this role is a requirement to avoid conflicts, not a preference.
+
+### 🔎 Codex GitHub App connector — Code-quality reviewer, layer 1 (automatic on EVERY PR)
+
+The GitHub App connector (`chatgpt-codex-connector[bot]`, the actual bot commenting on PRs on GitHub), automatic when a PR opens/syncs/reopens — no dedicated CI workflow, no background process, no daemon, no merging. This is the **automated review layer on GitHub for every PR** (including small ones); **local review** (reading/reviewing the Coder agent's code before merge) is **Claude Code's** responsibility, described above. The **Codex GitHub App connector** is a separate connector/bot — **not** the `codex` holding the Coder role, so it is not bound by the "Coder does not review" rule.
+
+### 🚪 Copilot CLI — Gatekeeper for large MRs (dispatched via herdr, NOT automatic)
+
+Only used for the collector branch `mr/*` (max 2 times/day), dispatched interactively via herdr — **does not** run automatically on every PR, **not** used for small PRs. Details: `docs/workflow/REVIEW-MODEL.md`.
 
 ### 🧑‍💻 User (Hien Duong, `@TheHienDuong`) — Lead reviewer + merge
 
-Reviews the code after Copilot CLI, makes the final call on whether to merge. **Only the user merges** — no agent merges, even when granted broad authority.
+Reviews the code again after Claude Code's local review + the Codex GitHub App connector (and the Copilot gatekeeper for large MRs), and makes the final call on whether to merge. **Only the user merges** — no agent merges, even one granted broad authority. A PR also needs the mandatory approval of code owner `@hienduong-agilityio` (`.github/CODEOWNERS`, 2026-08-20) before the merge button becomes available.
 
-### ⚙️ Coder — flexible role, follows the same standard no matter which tool fills it
+### ⚙️ Coder — a flexible role, follows the same mold whichever tool holds it
 
-Receives issues labeled `agent:codex` (or the corresponding label if you assign the role to another tool). **`SPEC.md` generated from the main Linear issue description is the official spec** — vague specs produce vague output, which is also a lesson in writing good tickets.
+Takes an issue labeled `agent:codex` (or the matching label if you assign another tool). **The `SPEC.md` generated from the Linear description IS the spec** — a vague spec produces vague output, which is also a lesson about how to write good tickets.
 
-Rules — apply to **any tool** currently holding the Coder role, not just codex:
+Rules — apply to **any tool** holding the Coder role, not just codex:
 
-- Work on a **dedicated branch**, named `<tool name>/nes-XX-...` (`codex/...`, `opencode/...`, or any other tool name) — never commit directly to your personal `hien/...` lesson branch
-- Read `AGENTS.md` (shared contract) + `docs/lessons/XX-*/SPEC.md` (spec for the relevant lesson) before starting work
-- All output **must go through a PR** — layer-1 review by Copilot CLI, lead review + merge by the user (no agent merges)
+- Work on a **dedicated branch**, named `<tool name>/nes-XX-...` (`codex/...`, or another tool's name) — never commit straight to your `hien/...` lesson branch
+- Read `AGENTS.md` (the general contract) + `docs/lessons/XX-*/SPEC.md` (the spec for the exact lesson) before working
+- Output **always goes through a PR** — Claude Code local review → Codex GitHub App connector review (layer 1, automated, every PR) → user lead review — never merge directly, no agent merges. Large MRs (`mr/*`) add a Copilot gatekeeper before the user merges
+- ⛔ **DOES NOT review code/PRs** — the Coder role only **codes**; it does not review (whether the PR it just created or someone else's). The local reviewer is Claude Code, the final reviewer is the user.
 
-**Primary tool:** codex — the default tool for the Coder role.
+**Mainly used:** codex — the default tool for the Coder role.
 
 ```bash
 git checkout -b codex/nes-12-reference-solution
-codex "Read AGENTS.md first. Implement per the spec in docs/lessons/02-controllers/SPEC.md.
-       Only edit files in src/. Do not edit docs/ or .github/."
+codex "Read AGENTS.md first. Implement according to the spec in docs/lessons/02-controllers/SPEC.md.
+       Only touch files in src/. Do not touch docs/ or .github/."
 ```
 
-**Occasional use (not required):** when you want an additional perspective for comparison, assign the **same `SPEC.md`** to another tool (opencode, or any CLI agent you have available) on that tool's dedicated branch — the rules above apply exactly the same, no separate documentation needed for each tool. The goal is not to find a "better tool" but to realize: the same spec can generate multiple valid designs, and **you** are the one who decides which one to use.
+**The most useful way to use this when learning:** do the hands-on work yourself first, and only _after_ finishing look at the Coder agent's "reference solution" to compare. The difference between the two is the most valuable lesson in that lesson.
 
-**Most useful way to use this when learning:** do the hands-on work yourself first, _finish it completely_ before looking at the Coder agent's "reference solution" and comparing. The difference between the two versions is the most valuable lesson in that lesson.
+### 🔀 agy — Counter-view (NOT a Coder, 2026-08-20)
+
+Replaces `opencode` (removed from the system). Used when you want an additional perspective to compare against an existing PR/design — **not an official Coder role**, not mandatory, not the primary reviewer. Runs via a **herdr pane** (profile `coder-agy`), **NOT wrapped by headroom** — the CLI runs bare:
+
+```bash
+# Edit files itself to compare (dedicated branch agy/nes-XX-...)
+git checkout -b agy/nes-12-alt-solution
+agy -p "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first. Implement per the spec." \
+  --model <model> --output-format text --mode accept-edits
+
+# Only want a perspective/plan, without editing code
+agy -p "Assess the design in PR #NN, point out edge cases it misses" \
+  --model <model> --output-format text --mode plan
+```
+
+The goal isn't to find "which tool is better" but to recognize that the same spec/PR can have multiple valid perspectives, and **you** are the one who decides which to pick.
 
 ---
 
-## MCP: Linear is open to the coder agent; Notion/Slack/Postman only Claude Code connects to
+## MCP: Linear open to the coder agent, Notion/Slack/Postman connected only by Claude Code
 
-**Principle: Claude Code is the single-writer for Notion/Slack/Postman; Linear is open to both Claude (PM) and the coder agent.** The coder agent (codex) may configure the Linear MCP to read/create/track its own tasks. The Coder role — no matter which tool is filling it — still **does not** configure MCP to Notion/Slack/Postman, even though technically many CLI agents (codex, opencode...) support adding their own MCP servers via their own config files.
+**Principle: Claude Code is the single-writer for Notion/Slack/Postman; Linear is open to both Claude (PM) and the coder agent.** The coder agent (codex) is configured with the Linear MCP so it can read/create/track its own tasks. The Coder role — whichever tool holds it — still **does not** configure an MCP connection to Notion/Slack/Postman, even though technically many CLI agents (codex, etc.) support adding their own MCP server via their own config file.
 
-Reasons and considered alternatives: see [ADR-0004](../adr/0004-mcp-single-writer-for-coder-agent.md) (amended). Summary: multiple agents writing to Notion/Slack creates real race conditions (duplicate Slack notifications, overwritten Notion entries) — this is exactly the "multiple sources of truth" problem that [ADR-0002](../adr/0002-linear-as-source-of-truth.md) avoided at the system layer, and now avoids at the agent layer. For Linear, the boundary is no longer kept by "only one agent connects to MCP" but by the rule: the coder does not touch issues under Claude's review/PM (no status changes on issues Claude created or is handling).
+Reasoning and alternatives considered: see [ADR-0004](../adr/0004-mcp-single-writer-for-coder-agent.md) (amended). Summary: multiple agents writing to Notion/Slack at once creates a real race condition (Slack gets duplicate notifications, Notion gets overwritten) — exactly the "multiple sources of truth" problem that [ADR-0002](../adr/0002-linear-as-source-of-truth.md) avoided at the system level, now avoided again at the agent level. For Linear, the boundary is no longer kept by "only one agent has an MCP connection" but by a rule: the coder does not touch issues under Claude's review/PM cycle (does not change the status of an issue Claude created or is currently processing).
 
-| Role             | Connects to Linear/Notion/Slack/Postman?           | How to receive spec                                                           |
-| ---------------- | -------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Claude Code (PM) | Yes — Linear + Notion/Slack/Postman                | Reads issues directly via Linear MCP                                          |
-| Coder (codex)    | Linear: Yes (own tasks) — Notion/Slack/Postman: No | SPEC.md for learning tasks; reads/creates/tracks its own tasks via Linear MCP |
+| Role             | Connects to Linear/Notion/Slack/Postman?               | How it gets the spec                                                              |
+| ---------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| Claude Code (PM) | Yes — Linear + Notion/Slack/Postman                    | Reads the issue directly via the Linear MCP                                       |
+| Coder (codex)    | Linear: Yes (its own tasks) — Notion/Slack/Postman: No | SPEC.md for learning tasks; reads/creates/tracks its own tasks via the Linear MCP |
 
 ### What is SPEC.md
 
-At the `/lesson-start` step, Claude Code copies the original Linear issue description into `docs/lessons/XX-ten-lesson/SPEC.md`. This is a **point-in-time snapshot** — similar to the role of `ROADMAP.md` for Linear — not the source of truth. If the issue changes later, only Claude Code is allowed to update the file; Coder agents cannot modify it on their own.
+At the `/lesson-start` step, Claude Code copies the Linear issue's description verbatim into `docs/lessons/XX-lesson-name/SPEC.md`. This is a **snapshot at a point in time** — the same role `ROADMAP.md` plays relative to Linear — not the source of truth. If the issue changes afterward, only Claude Code updates this file; the Coder agent does not edit it itself.
 
 ---
 
-## Cheatsheet: Assigning work to the Coder
+## Cheatsheet: assigning work to the Coder
 
-One single template, just rename the tool to whatever you are using that day. Always checkout a dedicated branch first, never work on your personal `hien/...` branch:
+One single mold, swap the tool name for whatever you're using that day. Always check out a dedicated branch first, never work on your `hien/...` branch:
 
 ```bash
 # Default: codex
 git checkout -b codex/nes-12-reference-solution
 codex "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
-       Implement per the spec. Only modify files in src/ and test/."
+       Implement per the spec. Only touch files in src/ and test/."
 
-# To add a counterargument perspective: change the branch prefix + use a different tool call command, the rules are exactly the same
-git checkout -b opencode/nes-12-alt-solution
-opencode run "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
-              Implement per the spec. Only modify files in src/ and test/."
+# Want an additional counter-view: agy (not a Coder, not wrapped by headroom — see the agy section above)
+git checkout -b agy/nes-12-alt-solution
+agy -p "Read AGENTS.md and docs/lessons/02-controllers/SPEC.md first.
+        Implement per the spec. Only touch files in src/ and test/." \
+  --model <model> --output-format text --mode accept-edits
 ```
 
-Then always open a separate PR for each branch — layer-1 review by Copilot CLI, lead review + merge by the user; no direct merges, do not combine PRs with your hands-on branch.
+Afterward, always open a dedicated PR for each branch — Claude Code local review → Codex GitHub App connector review (layer 1, automated, every PR) → user lead review + merge — never merge directly, never combine with your hands-on branch's PR.
 
 ---
 
-## Shared Context
+## Shared context
 
-Multiple agents can only collaborate when they all read the same context source:
+Multiple agents can only collaborate when they all read from the same context source:
 
-| Source          | Role                                                                                                                                                                          |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`AGENTS.md`** | Shared contract. All agents must read this before starting work. Open standard, supported by codex, opencode, and Claude.                                                     |
-| **`CLAUDE.md`** | Instructions specific to Claude Code (workflow, role boundaries).                                                                                                             |
-| **`docs/`**     | Long-term context: roadmap, workflow, ADRs, lesson notes.                                                                                                                     |
-| **serena MCP**  | Navigate code by **symbol** instead of reading entire files — find definitions, find reference locations. Saves context and is more accurate than grep as the codebase grows. |
-| **`/graphify`** | Build knowledge graph from notes + code. Enable after Phase 3, when you have enough notes for cross-document queries to be meaningful.                                        |
+| Source          | Role                                                                                                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`AGENTS.md`** | The general contract. Every agent must read it before working. An open standard supported by codex/agy/Claude alike.                                                |
+| **`CLAUDE.md`** | Instructions specific to Claude Code (workflow, role boundaries).                                                                                                   |
+| **`docs/`**     | Long-lived context: roadmap, workflow, ADR, lesson notes.                                                                                                           |
+| **serena MCP**  | Navigates code by **symbol** instead of reading whole files — find definitions, find references. Saves context and is more precise than grep as the codebase grows. |
+| **`/graphify`** | Builds a knowledge graph from notes + code. Enabled once Phase 3 is reached, once there are enough notes for "cross-document questions" to be meaningful.           |
 
-## File Boundaries (prevent agents from stepping on each other's work)
+## File boundaries (avoiding agents stepping on each other)
 
-| Path                                            | Who can modify                                                                |
-| ----------------------------------------------- | ----------------------------------------------------------------------------- |
-| `src/**`, `test/**`                             | You (hands-on) · Coder agent (when explicitly assigned, on dedicated branch)  |
-| `docs/lessons/**/SPEC.md`                       | Only Claude (snapshot from Linear) — Coder agents only read, no modifications |
-| `docs/lessons/**`                               | Claude (draft) + you (add personal notes)                                     |
-| `docs/adr/**`, `docs/workflow/**`               | Claude, with your approval via PR                                             |
-| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                                        |
-| `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                             |
+| Path                                            | Who may edit it                                                            |
+| ----------------------------------------------- | -------------------------------------------------------------------------- |
+| `src/**`, `test/**`                             | You (hands-on) · Coder agent (when explicitly assigned, dedicated branch)  |
+| `docs/lessons/**/SPEC.md`                       | Only Claude (a snapshot from Linear) — Coder agent only reads, never edits |
+| `docs/lessons/**`                               | Claude (writes) + you (adds personal notes)                                |
+| `docs/adr/**`, `docs/workflow/**`               | Claude, with your approval via PR                                          |
+| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                                     |
+| `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                          |
 
-Any agent changing docs must update both vi/en versions (`main` in Vietnamese, `example/nestjs-training` in English) — see [bilingual-policy.md](../bilingual-policy.md). GitLab only accepts the EN version from `example/nestjs-training`, never the Vietnamese one.
+> `.github/CODEOWNERS` also falls under `.github/**` → only **Claude Code** creates/edits it, committed with the `Co-authored-by: Claude <noreply@anthropic.com>` trailer. If the Coder agent (codex) generates a change under `.github/**`, it must be recreated through Claude Code before merge — it is not accepted as-is.
 
-## Agent Experiment Log
+## Agent experiment log
 
-Every time you assign work to an agent, log one line to `docs/lessons/_agent-log.md`: what the task was, which agent was used, and what the good/bad results were. After the course, you will have real data to answer the very practical industry question: **what tasks should be delegated to AI, and what shouldn't.**
+Every time you assign work to an agent, log one line in `docs/lessons/_agent-log.md`: what task, which agent, what went well/badly. After the course you'll have real data to answer a very practical question in the field: **which work should be handed to AI, and which shouldn't.**
 
----
-
-<!-- CO-OP TRANSLATOR DISCLAIMER START -->
-
-**Disclaimer**:
-This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
-<!-- CO-OP TRANSLATOR DISCLAIMER END -->
+Every agent that changes docs must update both vi/en versions (`main` Vietnamese, `example/nestjs-training` English) — see [bilingual-policy.md](../bilingual-policy.md). GitLab only accepts the EN version from `example/nestjs-training`, never the Vietnamese one.
