@@ -17,10 +17,10 @@ import type { UpdateTaskDto } from './dto/update-task.dto';
 import { TasksService } from './tasks.service';
 import type { Task } from './tasks.service';
 
-// [NES-4 · lesson 03] Reference — thin HTTP controller using constructor DI.
+// [NES-5 · lesson 04] Reference — thin HTTP controller using constructor DI.
 @Controller('tasks')
 export class TasksController {
-  // Nest supplies the singleton TasksService; the controller never constructs it.
+  // Nest supplies the provider; the controller never constructs a service itself.
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
