@@ -12,8 +12,6 @@ export class UsersService {
   private readonly users: User[] = [];
 
   create(createUserDto: CreateUserDto): User {
-    // The DTO is untrusted external input; copy only the fields declared by User so undeclared
-    // properties (e.g. password) are neither stored nor returned.
     const user: User = {
       id: this.users.length + 1,
       name: createUserDto.name,
