@@ -334,9 +334,9 @@ curl localhost:3000/tasks   # phải thấy đủ 2 task ở trên — chứng m
 
 ## 🛠 Hands-on
 
-<!-- BẠN tự code phần này. Agent không làm hộ. -->
+<!-- Mặc định phần này BẠN tự code — agent không làm hộ. Ngoại lệ ở lesson này: xem ghi chú ngay dưới. -->
 
-> Bằng chứng dưới đây chạy thật trên máy trong ngoại lệ 2026-08-24 (xem disclaimer đầu file) — **chỉ đọc và gọi thử** custom provider/injection scope reference đã có sẵn trong `src/tasks/` (thêm ở lesson 04, NES-5), không sửa code.
+> Dưới ngoại lệ user duyệt một lần (2026-08-24), phần hands-on này được **Hermes/Claude Code thực thi thay và ghi lại** — KHÔNG phải bằng chứng người dùng tự làm. Bằng chứng dưới đây chạy thật trên máy (xem disclaimer đầu file) — **chỉ đọc và gọi thử** custom provider/injection scope reference đã có sẵn trong `src/tasks/` (thêm ở lesson 04, NES-5), không sửa code.
 
 **Yêu cầu (đã thực hiện dưới ngoại lệ):**
 
@@ -368,10 +368,9 @@ curl -i localhost:3000/tasks
 
 ## ✅ Ôn tập & Quiz
 
-<!-- Điền sau bước /lesson-review. Trả lời bằng lời của mình, KHÔNG copy đáp án.
-     Nếu không tự trả lời được thì lesson chưa xong — quay lại phần Lý thuyết. -->
+<!-- Mặc định mục này điền sau bước /lesson-review, tự trả lời bằng lời của mình — KHÔNG copy đáp án. Ngoại lệ ở lesson này: xem ghi chú ngay dưới. -->
 
-> Trả lời dưới đây là bằng chứng thực thi thay của Hermes/Claude Code (xem disclaimer đầu file), đối chiếu trực tiếp với `src/tasks/` thật và kết quả chạy ở mục Hands-on.
+> Dưới ngoại lệ user duyệt một lần (2026-08-24): các câu trả lời dưới đây được **ghi lại dưới ngoại lệ đã được duyệt**, là bằng chứng thực thi thay của Hermes/Claude Code (xem disclaimer đầu file) — **KHÔNG phải bằng chứng cá nhân người dùng tự trả lời**. Đối chiếu trực tiếp với `src/tasks/` thật và kết quả chạy ở mục Hands-on.
 
 1. **Hỏi:** `TasksController` khai `constructor(private readonly tasksService: TasksService)` nhưng không có dòng nào `new TasksService()`. Ai tạo instance đó, và dựa vào đâu để biết phải tạo class nào?
    **Trả lời:** IoC container của Nest tạo instance đó lúc `NestFactory.create(AppModule)` chạy. Nest đọc metadata kiểu tham số constructor qua `reflect-metadata` (type `TasksService`), dùng chính class đó làm **token**, tra trong `providers: [TasksService, ...]` của `TasksModule` — thấy khớp, resolve theo `useClass: TasksService` (dạng đầy đủ của khai báo ngắn), tạo instance, rồi tiêm vào constructor của `TasksController`.

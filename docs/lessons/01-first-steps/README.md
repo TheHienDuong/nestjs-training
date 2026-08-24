@@ -8,7 +8,7 @@
 | **Docs chính** | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism) |
 | **Ngày học**   | 2026-08-12                                                                                                                                            |
 
-> 📝 **Đây là bản nháp** — phần Lý thuyết đã soạn sẵn để bạn đọc trước. Chạy `/teach first-steps` khi bắt đầu lesson để đi sâu và bổ sung; phần Hands-on và Quiz bạn tự làm.
+> 📝 **Phần Lý thuyết** đã soạn sẵn để bạn đọc trước. Chạy `/teach first-steps` khi cần đào sâu hoặc bổ sung. Tình trạng thực tế của phần Hands-on/Quiz bên dưới: xem disclaimer ngay sau đây — đây là tuyên bố có hiệu lực, không phải dòng "bạn tự làm" cũ.
 
 > ⚠️ **Disclaimer — Hermes/Claude execution substitute (2026-08-24):** Phần **🛠 Hands-on** và **✅ Ôn tập & Quiz** dưới đây được **Hermes/Claude Code thực thi thay** trong một ngoại lệ **user duyệt một lần** (approved one-time exception, 2026-08-24) để dọn các gap còn sót của L01–L03 trước khi sang phase tiếp theo. Đây là **bằng chứng thực thi thay (execution substitute)** — chạy thật lệnh, đọc thật output, trả lời thật quiz bằng lý luận của agent — **KHÔNG phải xác nhận rằng Hien Duong đã tự tay làm phần hands-on/quiz này**. Nội dung dưới đây dùng để đóng gap tài liệu, không thay thế việc bạn tự làm lại các bước này khi ôn tập.
 
