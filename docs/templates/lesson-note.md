@@ -16,6 +16,17 @@ Do not delete any section: each section has its own pedagogical purpose, noted i
 
 ---
 
+## 🗂 Lesson file map
+
+> The most accurate map + reading each code file (with line numbers): run `pnpm lesson <NN>`.
+> This table is a quick-reading summary; update it when the lesson is complete.
+
+| File | Role (theory / ref / hands-on) | Created in lesson | Status       |
+| ---- | ------------------------------ | ----------------- | ------------ |
+| ...  | ...                            | L00               | New / Edited |
+
+---
+
 ## 🎯 Objectives
 
 <!-- 3-5 measurable bullet points. "Understand controllers" is not measurable.
@@ -122,11 +133,3 @@ curl ...
 
 - [docs.nestjs.com/...](https://docs.nestjs.com/...)
 - [nestjs/nest — sample/...](https://github.com/nestjs/nest/tree/master/sample)
-
----
-
-<!-- CO-OP TRANSLATOR DISCLAIMER START -->
-
-**Disclaimer**:
-This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
-<!-- CO-OP TRANSLATOR DISCLAIMER END -->

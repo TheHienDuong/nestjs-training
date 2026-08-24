@@ -16,7 +16,7 @@ ADR-0003, decision #5: _"Agent branches (`codex/...`) merge into the **lesson br
 
 ## Decision
 
-1. Coder agent branches (`codex/...`, `opencode/...`, etc.) always open **separate PRs directly to `main`**. The only exception is when a lesson requires a "reference solution" and the lesson's SPEC.md explicitly states the merge target — in that case, merge into the lesson branch as a documented exception.
+1. Coder agent branches (`codex/...`, `agy/...`, etc.) always open **separate PRs directly to `main`**. The only exception is when a lesson requires a "reference solution" and the lesson's SPEC.md explicitly states the merge target — in that case, merge into the lesson branch as a documented exception.
 2. All Coder agent PRs must go through automated review (Copilot CLI) + the user's lead review before merging — **only the user merges**. This maintains the principle that "no agent reviews its own code".
 3. Decision #5 of ADR-0003 is replaced by this ADR. Decisions 1–4 of ADR-0003 (trunk-based development, one lesson per PR, squash merge, branch protection) remain in effect.
 

@@ -13,15 +13,9 @@ describe('UsersController', () => {
     controller = module.get<UsersController>(UsersController);
   });
 
-  it('is defined', () => expect(controller).toBeDefined());
-
   it('creates and returns a user', () => {
     expect(
       controller.create({ name: 'Hien', email: 'hien@example.com' }),
-    ).toEqual({
-      id: 1,
-      name: 'Hien',
-      email: 'hien@example.com',
-    });
+    ).toEqual({ id: 1, name: 'Hien', email: 'hien@example.com' });
   });
 });

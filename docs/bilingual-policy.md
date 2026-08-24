@@ -1,6 +1,6 @@
 # 🌐 Bilingual Policy — two-version rule (vi/en)
 
-> Official policy page. Every agent (Claude Code, Hermes, codex, opencode...) touching docs/config **must read this file first**.
+> This is the official policy page. Every agent (Claude Code, Hermes, codex, opencode...) touching docs/config **must read this file first**.
 
 ## Purpose
 

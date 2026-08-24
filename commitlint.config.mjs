@@ -33,7 +33,7 @@ export default {
         'revert', // revert a previous commit
       ],
     ],
-    // Allow a longer subject than the default since Vietnamese descriptions take more characters.
+    // Allow a longer subject than the default since descriptions may take more characters.
     'subject-max-length': [2, 'always', 100],
     // Disabled: the default rule forbids the subject from starting with an uppercase letter, but
     // sentences are often capitalized at the start and proper nouns (Prisma, NestJS) are also capitalized.

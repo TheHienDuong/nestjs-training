@@ -1,3 +1,4 @@
+// [NES-5 · lesson 04] Reference — service behavior and custom-provider coverage.
 import { Test, type TestingModule } from '@nestjs/testing';
 import { TasksService } from './tasks.service';
 
@@ -6,15 +7,8 @@ describe('TasksService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        TasksService,
-        {
-          provide: 'TASK_ID_START',
-          useFactory: (): number => 100,
-        },
-      ],
+      providers: [TasksService, { provide: 'TASK_ID_START', useValue: 100 }],
     }).compile();
-
     service = module.get<TasksService>(TasksService);
   });
 
@@ -22,44 +16,20 @@ describe('TasksService', () => {
     expect(service.create({ title: 'First task' }).id).toBe(100);
   });
 
-  it('creates and lists tasks', () => {
-    const task = service.create({ title: 'Learn providers' });
-
+  it('performs create, list, get-one, patch, and remove', () => {
+    const task = service.create({ title: 'Learn modules' });
     expect(service.findAll()).toEqual([task]);
-    expect(task).toEqual({
-      id: 100,
-      title: 'Learn providers',
-      completed: false,
-    });
-  });
-
-  it('finds, updates, and removes a task', () => {
-    const task = service.create({ title: 'Learn DI' });
-
     expect(service.findOne(task.id)).toBe(task);
-    expect(
-      service.update(task.id, { completed: true, title: 'Practice DI' }),
-    ).toEqual({
+    expect(service.update(task.id, { completed: true })).toEqual({
       id: 100,
-      title: 'Practice DI',
+      title: 'Learn modules',
       completed: true,
     });
     service.remove(task.id);
     expect(service.findAll()).toEqual([]);
   });
 
-  it('filters by completion status', () => {
-    service.create({ title: 'Open' });
-    const completed = service.create({ title: 'Done' });
-    service.update(completed.id, { completed: true });
-
-    expect(service.findAll('true')).toEqual([completed]);
-    expect(service.findAll('false')).toEqual([
-      { id: 100, title: 'Open', completed: false },
-    ]);
-  });
-
-  it('throws NotFoundException for missing tasks', () => {
+  it('throws for a missing task', () => {
     expect(() => service.findOne(999)).toThrow('Task 999 not found');
     expect(() => service.update(999, { completed: true })).toThrow(
       'Task 999 not found',

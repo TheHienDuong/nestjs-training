@@ -43,7 +43,7 @@ All `docs.nestjs.com/...` links below have been verified against the actual rout
 
 | L   | Lesson                                                               | Status | Docs                                                                                                                                                                                                                                |
 | --- | -------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| L01 | Project structure & bootstrap (`main.ts`, platform adapter)          | ✅     | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
+| L01 | Project structure & bootstrap (`main.ts`, platform adapter)          | 🟦     | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
 | L02 | Controllers & Routing (`@Get`, `@Post`, `@Param`, `@Body`, `@Query`) | 🟦     | [/controllers](https://docs.nestjs.com/controllers)                                                                                                                                                                                 |
 | L03 | Providers & Dependency Injection                                     | ✅     | [/providers](https://docs.nestjs.com/providers) · [/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers) · [/fundamentals/injection-scopes](https://docs.nestjs.com/fundamentals/injection-scopes) |
 | L04 | Modules + **Hands-on: CRUD Tasks (in-memory)**                       | ⬜     | [/modules](https://docs.nestjs.com/modules) · [/fundamentals/dynamic-modules](https://docs.nestjs.com/fundamentals/dynamic-modules)                                                                                                 |
@@ -141,11 +141,3 @@ All `docs.nestjs.com/...` links below have been verified against the actual rout
 ## Retrospective after each phase
 
 At the end of each phase, write a retrospective following the [`docs/templates/retro.md`](templates/retro.md) template into `docs/lessons/_retros/phase-X.md`. This is a real Agile team practice: reviewing progress to move faster next time.
-
----
-
-<!-- CO-OP TRANSLATOR DISCLAIMER START -->
-
-**Disclaimer**:
-This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
-<!-- CO-OP TRANSLATOR DISCLAIMER END -->
