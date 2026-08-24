@@ -1,11 +1,13 @@
 ---
 name: teach
-description: Teach a NestJS concept like a teacher — read the latest docs from official
-  sources, explain in Vietnamese following the problem→solution flow, provide runnable
+description:
+  Teach a NestJS concept like a teacher — read the latest docs from official
+  sources, explain in English following the problem→solution flow, provide runnable
   examples aligned with the project's domain, connect to existing knowledge of Express/Prisma/hexagonal
   architecture, then add a quiz. Use when the user asks "explain X", "teach me about
   X", "/teach X", or when filling in the Theory section of a lesson note.
 ---
+
 # teach
 
 Teach a NestJS concept to a new backend developer who already knows basic Node.js / Express / Prisma / hexagonal architecture.
@@ -78,8 +80,8 @@ Code must **run correctly**: full imports, correct types, match the repo's `tsco
 
 Always include a comparison table:
 
-| Known                       | In NestJS                         | How it differs                                                                      |
-| ----------------------------- | ------------------------------------ | ------------------------------------------------------------------------------- |
+| Known                          | In NestJS                            | How it differs                                                                  |
+| ------------------------------ | ------------------------------------ | ------------------------------------------------------------------------------- |
 | `app.use(logger)` from Express | `middleware` + `configure(consumer)` | Nest adds Guard/Interceptor/Pipe/Filter, each with its own position and purpose |
 
 Anchor to the user's 3 prior knowledge sources: **Express**, **Prisma**, **hexagonal architecture** (ports & adapters, separating domain from infrastructure).
@@ -106,11 +108,12 @@ Write the questions in the **✅ Review & Quiz** section, **leave the answer bla
 - **Do not** do the hands-on for them. The lesson provides illustrative examples; the user writes the hands-on code themselves.
 - **Do not** teach if step 0 fails. Be straightforward that the docs could not be retrieved, and ask the user to open the link and read along.
 - **Do not** invent APIs. If it's not in the docs/source → clearly state that you're not sure.
-Write in **Vietnamese**, keep English terminology (provider, guard, interceptor, dependency injection) — because these are the terms the user will encounter in code and interviews.
+  Write in **English**, keep standard technical terminology (provider, guard, interceptor, dependency injection) — because these are the terms the user will encounter in code and interviews.
 
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
