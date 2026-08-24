@@ -4,10 +4,10 @@
 
 These two tools answer two different questions:
 
-|                                    | Answers the question                                         |
-| ---------------------------------- | ------------------------------------------------------- |
+|                                       | Answers the question                                        |
+| ------------------------------------- | ----------------------------------------------------------- |
 | **Automated tests** (jest, supertest) | _"Is this behavior still correct after I change the code?"_ |
-| **Postman**                        | _"How is this API actually used in practice?"_                   |
+| **Postman**                           | _"How is this API actually used in practice?"_              |
 
 Postman is where you **explore** APIs: try out a request, view the real response, modify the payload, see what errors are returned. It is also **living documentation** that you share with frontend developers or QA — they can import the collection and call the API immediately, no need to read code.
 
@@ -17,23 +17,23 @@ In the industry, a Postman collection is usually the first thing the frontend te
 
 The `NestJS Training API` collection is organized into folders, following the learning path in order:
 
-| Folder     | From lesson                                       |
-| ---------- | ----------------------------------------------- |
-| `Health`   | L01 — `GET /`                                   |
+| Folder     | From lesson                                           |
+| ---------- | ----------------------------------------------------- |
+| `Health`   | L01 — `GET /`                                         |
 | `Tasks`    | L04 — In-memory CRUD, then connect to database in L07 |
-| `Auth`     | L12–L15 — register, login, refresh token        |
-| `Projects` | Phase 4 — includes owner/member permission checks  |
-| `Comments` | Phase 4                                         |
+| `Auth`     | L12–L15 — register, login, refresh token              |
+| `Projects` | Phase 4 — includes owner/member permission checks     |
+| `Comments` | Phase 4                                               |
 
 ## Environment variables
 
 Use variables instead of hardcoding URLs into each request — you only need to change one place to switch environments.
 
-| Variable           | Local value           | Notes                                      |
-| -------------- | ----------------------- | -------------------------------------------- |
-| `baseUrl`      | `http://localhost:3000` | Change when API versioning is added in L19              |
-| `accessToken`  | _(leave blank)_            | The login request will automatically write to this variable (see below) |
-| `refreshToken` | _(leave blank)_            | Same as above                                     |
+| Variable       | Local value             | Notes                                                                   |
+| -------------- | ----------------------- | ----------------------------------------------------------------------- |
+| `baseUrl`      | `http://localhost:3000` | Change when API versioning is added in L19                              |
+| `accessToken`  | _(leave blank)_         | The login request will automatically write to this variable (see below) |
+| `refreshToken` | _(leave blank)_         | Same as above                                                           |
 
 **Time-saving tip:** In the login request's _Scripts → Post-response_ tab, add:
 
@@ -59,6 +59,7 @@ From then on, all you need to do for every request is set Authorization = `Beare
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->
