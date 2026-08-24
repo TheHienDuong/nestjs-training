@@ -308,9 +308,9 @@ curl localhost:3000/tasks # should show both tasks, proving state is preserved b
 
 ## 💻 Hands-on
 
-<!-- The learner implements this in the repo, then uses /lesson-review. Do not write the solution here. -->
+<!-- By default the learner implements this in the repo, then uses /lesson-review. Do not write the solution here. Exception for this lesson: see the note right below. -->
 
-> The evidence below was run for real under the 2026-08-24 exception (see the disclaimer at the top of this file) - **read-and-call only** against the custom provider/injection scope reference already present in `src/tasks/` (added in lesson 04, NES-5); no code was edited.
+> Under the one-time user-approved exception (2026-08-24), this hands-on section was **executed and recorded by Hermes/Claude Code as a substitute** - it is NOT evidence that the user personally performed it. The evidence below was run for real on the machine (see the disclaimer at the top of this file) - **read-and-call only** against the custom provider/injection scope reference already present in `src/tasks/` (added in lesson 04, NES-5); no code was edited.
 
 **Requirements (performed under the exception):**
 
@@ -342,9 +342,9 @@ curl -i localhost:3000/tasks
 
 ## ✅ Review & Quiz
 
-<!-- Complete this after /lesson-review. Answer in your own words; do not copy the answers. If you cannot answer independently, the lesson is not complete — return to the Theory section. -->
+<!-- By default this section is completed after /lesson-review, answered in the learner's own words — do not copy the answers. Exception for this lesson: see the note right below. -->
 
-> The answers below are Hermes/Claude Code execution-substitute evidence (see the disclaimer at the top of this file), checked directly against the real `src/tasks/` code and the results in the Hands-on section.
+> Under the one-time user-approved exception (2026-08-24): the answers below are **recorded under the approved exception** as Hermes/Claude Code execution-substitute evidence (see the disclaimer at the top of this file) - they are NOT the user's own personal answers. Checked directly against the real `src/tasks/` code and the results in the Hands-on section.
 
 1. **Question:** `TasksController` declares `constructor(private readonly tasksService: TasksService)` but there is no line calling `new TasksService()`. Who creates that instance, and how does it know which class to create?
 
