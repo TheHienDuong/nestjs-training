@@ -32,11 +32,11 @@ Do not delete any section: each section has its own pedagogical purpose, noted i
 <!-- 3-5 measurable bullet points. "Understand controllers" is not measurable.
      "Be able to write a controller with 5 CRUD routes, and explain @Param vs @Query" is measurable. -->
 
-- [ ] Be able to explain the role of `imports` / `exports` / `providers` / `controllers` in `@Module` and when each field is needed.
-- [ ] Split `TasksModule` out of `AppModule`, so `AppModule` only has `imports: [TasksModule]`.
-- [ ] Complete all 5 CRUD routes for Tasks (in-memory) end-to-end, runnable via `pnpm start:dev`.
-- [ ] Test the whole CRUD flow with the Tasks Postman collection, all 5 routes returning the correct status/body.
-- [ ] Read and summarize dynamic modules (roadmap link) — no need to implement yet, just be able to explain when they're needed.
+- [x] Be able to explain the role of `imports` / `exports` / `providers` / `controllers` in `@Module` and when each field is needed.
+- [x] Split `TasksModule` out of `AppModule`, so `AppModule` only has `imports: [TasksModule]`.
+- [x] Complete all 5 CRUD routes for Tasks (in-memory) end-to-end, runnable via `pnpm start:dev`.
+- [x] Test the whole CRUD flow with the Tasks Postman collection, all 5 routes returning the correct status/body.
+- [x] Read and summarize dynamic modules (roadmap link) — no need to implement yet, just be able to explain when they're needed.
 
 ## 📚 Theory
 
@@ -259,22 +259,34 @@ export class TasksModule {
 
 ## 🛠 Hands-on
 
-<!-- YOU code this section yourself. The Agent will not do it for you. -->
+<!-- L04 hands-on was executed under a one-time user authorization in the 2026-08-24 session. -->
 
-**Requirements:**
+**Requirements and verified results:**
 
-1. ...
+1. `pnpm start:dev` started successfully; Nest mapped `GET/POST /tasks` and `GET/PATCH/DELETE /tasks/:id`.
+2. `POST /tasks` with `{"title":"L04 modules"}` returned `201` and `{id: 1, completed: false}`.
+3. `GET /tasks` and `GET /tasks/1` returned `200`; `GET /tasks` included `Cache-Control: no-store`.
+4. `PATCH /tasks/1` changed the title and `completed: true`, returning `200`; both `completed=false` and `completed=true` returned the correct set.
+5. `DELETE /tasks/1` returned `204`; reading/deleting a missing task returned `404` with `Task <id> not found`.
 
 **How to verify:**
 
 ```bash
 pnpm start:dev
-curl ...
+curl -X POST http://localhost:3000/tasks \
+  -H 'content-type: application/json' \
+  -d '{"title":"L04 modules"}'
+curl http://localhost:3000/tasks
+curl http://localhost:3000/tasks/1
+curl -X PATCH http://localhost:3000/tasks/1 \
+  -H 'content-type: application/json' \
+  -d '{"title":"L04 CRUD verified","completed":true}'
+curl -X DELETE http://localhost:3000/tasks/1
 ```
 
 **Where you might get stuck, and how to troubleshoot:**
 
-- ...
+- No blocker occurred in this verification run. If `Nest can't resolve dependencies` appears, check that `TasksModule` declares `TasksService` and the `TASK_ID_START` token in `providers`, and that `AppModule` imports `TasksModule`.
 
 ---
 
@@ -284,19 +296,19 @@ curl ...
      If you can't answer on your own, the lesson is not complete — go back to the Theory section. -->
 
 1. **Question:** If you add `exports: [TasksService]` to `TasksModule` but **don't** add `TasksModule` to `CommentsModule`'s `imports`, can `CommentsModule` inject `TasksService`? Why?
-   **Answer:** ...
+   **Answer:** No. `exports` makes the provider public, but the consuming module still needs `imports: [TasksModule]` so Nest places that provider in `CommentsModule`'s scope.
 
 2. **Question:** `TasksModule` currently does not use `@Global()`. What would change (for better and worse) if you added `@Global()` to `TasksModule` right now?
-   **Answer:** ...
+   **Answer:** A global module can make its exported providers available everywhere without repeated imports, but dependencies become hidden and harder to trace. For a domain-specific module such as Tasks, `@Global()` is over-engineering and weakens encapsulation.
 
 3. **Question:** If `TasksModule` became a dynamic module with `TasksModule.forRoot(seedTasks)`, how would the `imports` line in `AppModule` differ from the current `imports: [TasksModule]`? What in `TasksModule` would have to change to support that?
-   **Answer:** ...
+   **Answer:** `AppModule` would use `imports: [TasksModule.forRoot(seedTasks)]`. `TasksModule` would need a static `forRoot()` returning a `DynamicModule`, accepting configuration, and adding the relevant provider/config metadata; the current lesson does not need that change because it has one configuration.
 
 4. **Question:** The `'TASK_ID_START'` provider in `TasksModule` currently sits only in `providers`, not in `exports`. If `UsersModule` also wanted to use this token, what would you change — and is that good design?
-   **Answer:** ...
+   **Answer:** Add the token to `exports` and have `UsersModule` import `TasksModule`. However, this is usually not good design: the ID-start token is an internal Tasks detail, so it should only be exported when Users has a real use case and a clear contract.
 
 5. **Question:** With Express, a route can see every service it can `require()`, with no boundary at all. With Nest, which providers can `TasksController` see? How does this affect how you debug a `Nest can't resolve dependencies of ...` error?
-   **Answer:** ...
+   **Answer:** `TasksController` can see providers in `TasksModule` and providers exported by modules it imports. When debugging DI, check that the provider is in `providers`, the token matches, the owning module is imported, and the provider is exported when it crosses a module boundary.
 
 **Review the previous lesson:** L03 taught how to turn a class into a provider (`@Injectable()`) and inject it through a constructor; L04 teaches which module a provider "belongs to", which modules are allowed to see it, and how modules communicate through `imports`/`exports`.
 
