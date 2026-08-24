@@ -32,11 +32,11 @@ Skill /lesson-start sẽ tự làm việc copy + điền phần đầu.
 <!-- 3-5 gạch đầu dòng ĐO ĐƯỢC. "Hiểu về controller" là không đo được.
      "Tự viết được controller có 5 route CRUD, giải thích được @Param vs @Query" là đo được. -->
 
-- [ ] Giải thích được vai trò của `imports` / `exports` / `providers` / `controllers` trong `@Module` và khi nào mỗi field cần dùng.
-- [ ] Tách `TasksModule` ra khỏi `AppModule`, `AppModule` chỉ còn `imports: [TasksModule]`.
-- [ ] Hoàn thiện đủ 5 route CRUD của Tasks (in-memory) end-to-end, chạy được qua `pnpm start:dev`.
-- [ ] Test toàn bộ CRUD bằng Tasks Postman collection, cả 5 route trả đúng status/body.
-- [ ] Đọc và tóm tắt được dynamic modules (link roadmap) — chưa cần implement, chỉ cần giải thích khi nào cần.
+- [x] Giải thích được vai trò của `imports` / `exports` / `providers` / `controllers` trong `@Module` và khi nào mỗi field cần dùng.
+- [x] Tách `TasksModule` ra khỏi `AppModule`, `AppModule` chỉ còn `imports: [TasksModule]`.
+- [x] Hoàn thiện đủ 5 route CRUD của Tasks (in-memory) end-to-end, chạy được qua `pnpm start:dev`.
+- [x] Test toàn bộ CRUD bằng Tasks Postman collection, cả 5 route trả đúng status/body.
+- [x] Đọc và tóm tắt được dynamic modules (link roadmap) — chưa cần implement, chỉ cần giải thích khi nào cần.
 
 ## 📚 Lý thuyết
 
@@ -259,22 +259,34 @@ export class TasksModule {
 
 ## 🛠 Hands-on
 
-<!-- BẠN tự code phần này. Agent không làm hộ. -->
+<!-- L04 hands-on đã được thực thi theo ủy quyền một lần của user trong session 2026-08-24. -->
 
-**Yêu cầu:**
+**Yêu cầu và kết quả đã kiểm tra:**
 
-1. ...
+1. Chạy `pnpm start:dev` thành công; Nest map đủ `GET/POST /tasks` và `GET/PATCH/DELETE /tasks/:id`.
+2. `POST /tasks` với `{"title":"L04 modules"}` trả `201` và task `{id: 1, completed: false}`.
+3. `GET /tasks`, `GET /tasks/1` trả `200`; `GET /tasks` có `Cache-Control: no-store`.
+4. `PATCH /tasks/1` đổi title và `completed: true`, trả `200`; cả `completed=false` và `completed=true` trả đúng tập kết quả.
+5. `DELETE /tasks/1` trả `204`; đọc/xóa task không tồn tại trả `404` với thông báo `Task <id> not found`.
 
 **Cách kiểm tra:**
 
 ```bash
 pnpm start:dev
-curl ...
+curl -X POST http://localhost:3000/tasks \
+  -H 'content-type: application/json' \
+  -d '{"title":"L04 modules"}'
+curl http://localhost:3000/tasks
+curl http://localhost:3000/tasks/1
+curl -X PATCH http://localhost:3000/tasks/1 \
+  -H 'content-type: application/json' \
+  -d '{"title":"L04 CRUD verified","completed":true}'
+curl -X DELETE http://localhost:3000/tasks/1
 ```
 
 **Vướng ở đâu, gỡ thế nào:**
 
-- ...
+- Không có blocker trong lượt kiểm tra này. Nếu gặp `Nest can't resolve dependencies`, kiểm tra `TasksModule` có khai báo `TasksService` và token `TASK_ID_START` trong `providers`, đồng thời `AppModule` có import `TasksModule`.
 
 ---
 
@@ -284,19 +296,19 @@ curl ...
      Nếu không tự trả lời được thì lesson chưa xong — quay lại phần Lý thuyết. -->
 
 1. **Hỏi:** Nếu bạn thêm `exports: [TasksService]` vào `TasksModule` nhưng **không** thêm `TasksModule` vào `imports` của `CommentsModule`, `CommentsModule` có inject được `TasksService` không? Vì sao?
-   **Trả lời:** ...
+   **Trả lời:** Không. `exports` chỉ công khai provider ra ngoài; module tiêu thụ vẫn phải `imports: [TasksModule]` để Nest đưa provider đó vào scope của `CommentsModule`.
 
 2. **Hỏi:** `TasksModule` hiện tại không dùng `@Global()`. Điều gì sẽ thay đổi (tốt và xấu) nếu bạn thêm `@Global()` vào `TasksModule` ngay bây giờ?
-   **Trả lời:** ...
+   **Trả lời:** Module global có thể cung cấp các provider đã export cho mọi module mà không cần import lặp lại, nhưng dependency trở nên ẩn và khó truy vết. Với domain riêng như Tasks, `@Global()` là over-engineering và làm yếu encapsulation.
 
 3. **Hỏi:** Nếu `TasksModule` chuyển thành dynamic module với `TasksModule.forRoot(seedTasks)`, dòng `imports` trong `AppModule` sẽ khác gì so với `imports: [TasksModule]` hiện tại? Cái gì trong `TasksModule` bắt buộc phải đổi để hỗ trợ điều đó?
-   **Trả lời:** ...
+   **Trả lời:** `AppModule` sẽ dùng `imports: [TasksModule.forRoot(seedTasks)]`. `TasksModule` phải có static `forRoot()` trả về `DynamicModule`, nhận cấu hình, và đưa provider/config tương ứng vào metadata; lesson hiện tại chưa cần đổi vì module chỉ có một cấu hình.
 
 4. **Hỏi:** Provider `'TASK_ID_START'` trong `TasksModule` hiện chỉ nằm trong `providers`, không nằm trong `exports`. Nếu `UsersModule` cũng muốn dùng token này, bạn sẽ sửa gì — và đó có phải là thiết kế tốt không?
-   **Trả lời:** ...
+   **Trả lời:** Thêm token vào `exports` và cho `UsersModule` import `TasksModule`. Tuy nhiên đây thường không phải thiết kế tốt: token khởi tạo ID là chi tiết nội bộ của Tasks, nên chỉ export khi Users thực sự có use case và contract rõ ràng.
 
 5. **Hỏi:** Với Express, một route thấy được mọi service `require()` được, không có ranh giới nào. Với Nest, `TasksController` chỉ thấy được provider nào? Điều này ảnh hưởng thế nào đến cách bạn debug lỗi `Nest can't resolve dependencies of ...`?
-   **Trả lời:** ...
+   **Trả lời:** `TasksController` chỉ thấy provider trong `TasksModule` hoặc provider được module mà nó import export ra. Khi debug lỗi DI, kiểm tra lần lượt provider có nằm trong `providers`, token có đúng, module sở hữu có được import, và provider đó có được export nếu đi qua module khác hay không.
 
 **Ôn lại lesson trước:** L03 dạy cách biến một class thành provider (`@Injectable()`) và inject nó qua constructor; L04 dạy provider đó "thuộc về" module nào, module nào được phép thấy nó, và các module giao tiếp với nhau qua `imports`/`exports` như thế nào.
 
