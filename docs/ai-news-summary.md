@@ -2,7 +2,7 @@
 
 Research date: 14/8/2026
 
-Source transparency note: Researched via web search, no xurl; search engines don't index X deeply so most sources are roundup articles quoting tweets — only 3/8 items have a direct x.com link.
+Source-transparency note: Researched via web search, no xurl; search engines don't index X deeply so most sources are roundup articles quoting tweets — only 3/8 items have a direct x.com link.
 
 ## 1. OpenAI classifies Astra as critical for the first time under the Preparedness Framework
 
@@ -16,7 +16,7 @@ OpenAI announced on X: after evaluating the upcoming Astra model, it assigned a 
 
 **Date:** 1/8/2026
 
-OpenAI announced that an internal version of Astra solved 10 open problems, with public Lean proofs on GitHub, including a proof of the existence of a non-sofic group. Timothy Gowers praised one proof as worthy of submission to a top journal; Gary Marcus and Ernie Davis pushed back, citing a lack of transparency.
+OpenAI announced that an internal version of Astra solved 10 open problems, with with public Lean proofs on GitHub, including a proof of the existence of a non-sofic group. Timothy Gowers praised one proof as worthy of submission to a top journal; Gary Marcus and Ernie Davis pushed back, citing a lack of transparency.
 
 **Source:** CACM blog
 

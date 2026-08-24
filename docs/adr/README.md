@@ -21,7 +21,7 @@ For you, ADRs also have unique value: **writing an ADR forces you to articulate 
 - **ADRs are immutable:** once merged, content cannot be modified. If you change your mind, write a new ADR and mark the old ADR as `Superseded by ADR-NNNN`
   > **Exception 2026-08-13 (ADR-0004):** amended in place per user decision — the ADR was only 2 days old (2026-08-11), no agent depends on it, and amending keeps the history clearer than a replacement ADR. From now on, changing an accepted ADR REQUIRES writing a new ADR marked `Superseded by ADR-NNNN`.
 - Status: `Proposed` → `Accepted` → `Deprecated` / `Superseded`
-- Keep it short: one page is enough
+- Keep it short: one page is sufficient
 
 ## List
 

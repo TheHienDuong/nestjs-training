@@ -1,6 +1,6 @@
 # NestJS Training
 
-> A project to **learn NestJS 11** following the official [docs.nestjs.com](https://docs.nestjs.com) documentation, but operated **like a real backend project**: Linear for task management, GitHub PR + CI for quality control, Slack for progress updates, Notion as the knowledge base.
+> A This project **learns NestJS 11** following the official [docs.nestjs.com](https://docs.nestjs.com) documentation, but operated **like a real backend project**: Linear for task management, GitHub PR + CI for quality control, Slack for progress updates, Notion as the knowledge base.
 
 Final course product: a **Task Management API** (User · Project · Task · Comment) with validation, centralized error handling, JWT auth + RBAC, Swagger docs, API versioning, Redis cache, health check, unit + e2e tests, automated CI.
 

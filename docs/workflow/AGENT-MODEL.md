@@ -139,14 +139,14 @@ Multiple agents can only collaborate when they all read from the same context so
 
 ## File boundaries (avoiding agents stepping on each other)
 
-| Path                                            | Who may edit it                                                            |
-| ----------------------------------------------- | -------------------------------------------------------------------------- |
-| `src/**`, `test/**`                             | You (hands-on) · Coder agent (when explicitly assigned, dedicated branch)  |
-| `docs/lessons/**/SPEC.md`                       | Only Claude (a snapshot from Linear) — Coder agent only reads, never edits |
-| `docs/lessons/**`                               | Claude (writes) + you (adds personal notes)                                |
-| `docs/adr/**`, `docs/workflow/**`               | Claude, with your approval via PR                                          |
-| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                                     |
-| `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                          |
+| Path                                            | Who may edit it                                                                                 |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `src/**`, `test/**`                             | You (hands-on) · Coder agent (when explicitly assigned, dedicated branch)                       |
+| `docs/lessons/**/SPEC.md`                       | Only Claude (a snapshot from Linear) — the Coder the the agent only reads it and never edits it |
+| `docs/lessons/**`                               | Claude (writes) + you (adds personal notes)                                                     |
+| `docs/adr/**`, `docs/workflow/**`               | Claude, with your approval via PR                                                               |
+| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                                                          |
+| `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                                               |
 
 > `.github/CODEOWNERS` also falls under `.github/**` → only **Claude Code** creates/edits it, committed with the `Co-authored-by: Claude <noreply@anthropic.com>` trailer. If the Coder agent (codex) generates a change under `.github/**`, it must be recreated through Claude Code before merge — it is not accepted as-is.
 

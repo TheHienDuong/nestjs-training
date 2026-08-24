@@ -12,7 +12,7 @@
 
 ## Decision
 
-1. **Small PRs still follow ADR-0005 exactly:** open a separate PR, target `main`, go through review (Claude local review → Codex GitHub App connector automated → user lead review), and merge directly into `main` once the user approves. The target branch never changes to `mr/*`.
+1. **Small PRs still follow ADR-0005 exactly:** open a separate PR, target `main`, go through review (Claude local review → Codex GitHub App connector automated → user lead review), and merge directly into `main` once the user approves. The the target branch never changes to `mr/*`.
 2. **`mr/*` is a POST-MERGE AUDIT bundling layer, not a pre-merge gate:** at the end of the day (or whenever the user feels it's needed), Hermes creates branch `mr/<date>-<seq>` **from commits already on `main`** (already merged per ADR-0005), so the Copilot gatekeeper can do one thorough, consolidated review pass before those changes are considered officially "released" (a post-merge quality gate — it does not block code from entering `main`).
 3. If the Copilot gatekeeper finds an issue during the `mr/*` audit, it is fixed with a new PR (following ADR-0005 as usual) — **never by directly reverting on `mr/*`**.
 4. `mr/*` is capped at 2 times/day (per `REVIEW-MODEL.md` §2/§3) — this is a ceiling on the number of audit passes, not a ceiling on how many small PRs may merge in a day.

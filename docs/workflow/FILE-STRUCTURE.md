@@ -1,4 +1,4 @@
-# 🗂 FILE-STRUCTURE — File organization & agent coordination conventions
+# 🗂 FILE-STRUCTURE — File organization and agent-coordination conventions
 
 > Goal: the remaining 25 lessons must **not** create duplicate files, parallel
 > modules, or misplaced logic — even when multiple agents run concurrently.
@@ -52,7 +52,7 @@ correct — do not leave an "orphan" module that nothing imports.
 ## d) Smart coordination when agents run in parallel
 
 - **Module ownership** — each agent owns 1+ module of its **own**; no two
-  agents modify the same module at the same time.
+  agents modify the same module at the at the same time.
 - **Shared files** (`app.module.ts`, `package.json`, `docs/ROADMAP.md`,
   `docs/lessons/_agent-log.md`, `docs/templates/*`) — serialize them or let
   Hermes (the orchestrator) merge them; **no agent touches them concurrently**.

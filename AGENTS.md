@@ -86,7 +86,7 @@ pnpm db:up / db:down    # postgres + redis via docker compose
 - Prettier: single quote, trailing comma. Prettier manages formatting for `.ts`, `.json`, `.md`, `.yml` — **do not format by hand**, run `pnpm format`.
 - Every new reference code file must have a header comment in the form `// [NES-X · lesson NN] <file role>`, e.g. `// [NES-3 · lesson 02] Reference — controller, teaching comments inline`.
 - One feature = one `src/<feature>/` folder, created exactly once. **Look-before-create**: check whether `src/<feature>/` already exists with `test -d`/`find` (see [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md)) before creating a new file/feature; if it already exists, extend it instead of creating a parallel copy.
-- Agents running in parallel: each agent only touches its own module; shared files (`app.module.ts`, `package.json`, `docs/ROADMAP.md`, `docs/lessons/_agent-log.md`, `docs/templates/*`) are merged by Hermes — do not touch them concurrently. Details: [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md).
+- Agents running in parallel: each the the agent touches only its own module; shared files (`app.module.ts`, `package.json`, `docs/ROADMAP.md`, `docs/lessons/_agent-log.md`, `docs/templates/*`) are merged by Hermes — do not touch them concurrently. Details: [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md).
 - `tsconfig.json`: `strictNullChecks: true`, `noImplicitAny: false`. `no-explicit-any` is disabled in ESLint, but still **avoid `any`** — the reviewer will catch it.
 - **CI runs `eslint --max-warnings=0`** → even warnings will fail CI, including `no-floating-promises`.
 
@@ -139,14 +139,14 @@ Allowed types: `feat` `fix` `docs` `test` `refactor` `chore` `style` `perf` `rev
 
 ## File Boundaries
 
-| Path                                                         | Who may edit                                                               |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| `src/**`, `test/**`                                          | User (hands-on) · coder agent (when explicitly assigned, dedicated branch) |
-| `docs/lessons/**/SPEC.md`                                    | Only Claude (a snapshot from Linear) — coder agent only reads, never edits |
-| `docs/lessons/**`                                            | Claude (writes) + user (personal notes)                                    |
-| `docs/adr/**`, `docs/workflow/**`                            | Claude, user approves via PR                                               |
-| `.github/**`, `.husky/**`, `docker-compose.yml`, root config | Claude                                                                     |
-| `dist/`, `node_modules/`, `pnpm-lock.yaml`                   | Never edit by hand                                                         |
+| Path                                                         | Who may edit                                                                                    |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `src/**`, `test/**`                                          | User (hands-on) · coder agent (when explicitly assigned, dedicated branch)                      |
+| `docs/lessons/**/SPEC.md`                                    | Only Claude (a snapshot from Linear) — the Coder the the agent only reads it and never edits it |
+| `docs/lessons/**`                                            | Claude (writes) + user (personal notes)                                                         |
+| `docs/adr/**`, `docs/workflow/**`                            | Claude, user approves via PR                                                                    |
+| `.github/**`, `.husky/**`, `docker-compose.yml`, root config | Claude                                                                                          |
+| `dist/`, `node_modules/`, `pnpm-lock.yaml`                   | Never edit by hand                                                                              |
 
 ## Security & Configuration
 

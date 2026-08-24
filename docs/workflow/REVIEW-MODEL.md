@@ -1,6 +1,6 @@
 # 🔎 REVIEW MODEL — Multi-Reviewer Load-Balancing Model
 
-> **For every agent:** this file defines **who reviews what** in the repo. Read together with `AGENT-MODEL.md` + `docs/bilingual-policy.md`. Core rule: **no agent writes code and reviews its own code at the same time**; the reviewer must not be the same as the author; the Coder (codex) only writes code, **does not review**.
+> **For every agent:** this file defines **who reviews what** in the repo. Read it together with with `AGENT-MODEL.md` + `docs/bilingual-policy.md`. Core rule: **no agent writes code and reviews its own code at the at the same time**; the reviewer must not be the same as the author; the the Coder (codex) writes code only and **does not review**.
 
 ## Goals
 

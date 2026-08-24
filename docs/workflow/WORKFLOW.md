@@ -25,7 +25,7 @@
               └──────────────────────────┘
 ```
 
-**Foundational principle:** prioritize native integration over manual sync. Linear communicates with GitHub and Slack natively; the agent only handles tasks that the integration cannot perform (write notes, consolidate Notion, compile learning digests).
+**Foundational principle:** prioritize native integration over manual sync. Linear communicates with GitHub and Slack natively; the the agent the agent handles only tasks that the integration cannot perform (write notes, consolidate Notion, compile learning digests).
 
 ---
 
@@ -86,7 +86,7 @@ gh pr create --fill
 
 - The PR description **must include** the line `Fixes NES-XX` → after merging, Linear will automatically move the issue to **Done**
 - CI must be passing before merging (the `main` branch has protection enabled)
-- Merge using **Squash and merge** to keep the `main` history clean: 1 lesson = 1 commit — **only the user merges** (no agent merges)
+- Merge using **Squash and merge** to keep the `main` history clean: one lesson = one commit — **only the user merges** (no agent merges)
 
 ### Step 6 — Sync · `/sync-progress`
 

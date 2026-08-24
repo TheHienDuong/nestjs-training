@@ -28,15 +28,15 @@ Hermes acts as the **orchestrator** — its full contract is located at `/.herme
 
 ## Enabled config on this machine (per standard docs)
 
-| Key                         | Value                                      | Meaning                                                        |
-| --------------------------- | -------------------------------------------- | -------------------------------------------------------------- |
-| `approvals.mode`            | `manual`                                     | Ask the user before any risky command — approval gate               |
+| Key                         | Value                                        | Meaning                                                                |
+| --------------------------- | -------------------------------------------- | ---------------------------------------------------------------------- |
+| `approvals.mode`            | `manual`                                     | Ask the user before any risky command — approval gate                  |
 | `agent.verify_on_stop`      | `true`                                       | Reject ending the turn if code is modified without verification proof  |
-| `memory.write_approval`     | `true`                                       | All memory writes must be approved by the user                            |
-| `updates.pre_update_backup` | `quick`                                      | Snapshot config/auth/cron before every update                 |
+| `memory.write_approval`     | `true`                                       | All memory writes must be approved by the user                         |
+| `updates.pre_update_backup` | `quick`                                      | Snapshot config/auth/cron before every update                          |
 | `checkpoints.enabled`       | `true`                                       | Snapshot filesystem before destructive operations (rollback supported) |
-| `terminal.backend`          | `local`                                      | Run commands on the real machine (no sandbox)                        |
-| `model.default`             | `deepseek-v4-flash` (provider `opencode-go`) | Current main model                                           |
+| `terminal.backend`          | `local`                                      | Run commands on the real machine (no sandbox)                          |
+| `model.default`             | `deepseek-v4-flash` (provider `opencode-go`) | Current main model                                                     |
 
 ## Context files — which files this project loads
 
@@ -68,6 +68,7 @@ hermes setup tools             # Enable/disable toolset
 ---
 
 <!-- CO-OP TRANSLATOR DISCLAIMER START -->
+
 **Disclaimer**:
 This document has been translated using AI translation service [Co-op Translator](https://github.com/Azure/co-op-translator). While we strive for accuracy, please be aware that automated translations may contain errors or inaccuracies. The original document in its native language should be considered the authoritative source. For critical information, professional human translation is recommended. We are not liable for any misunderstandings or misinterpretations arising from the use of this translation.
 <!-- CO-OP TRANSLATOR DISCLAIMER END -->

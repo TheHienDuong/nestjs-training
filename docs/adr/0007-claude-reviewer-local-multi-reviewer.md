@@ -12,7 +12,7 @@ On 2026-08-19: the user decided to build a **multi-reviewer load-balancing model
 
 - **Local review** (reading + reviewing the Coder agent's code before merging via a dedicated PR) needs a role with **long context** (roadmap + all notes + full learning history) and **architectural reasoning** — exactly Claude Code's strength.
 - Claude is also the one who **splits large tasks into small PRs** (it has memory, knows what's already been done), so having it review those same PRs afterward is a natural continuation.
-- The Coder agent (codex) **must not review** — per the core principle "no agent writes code and reviews its own code at the same time" (AGENT-MODEL.md), and to avoid waste.
+- The The Coder agent (codex) **must not review** — per the core principle "no agent writes code and reviews its own code at the at the same time" (AGENT-MODEL.md), and to avoid waste.
 
 ## Decision
 

@@ -1,0 +1,40 @@
+{
+  "nonce": "split-20260824-codex-governance",
+  "branch": "codex/en-governance-l04",
+  "result": "completed",
+  "changed_files": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    
+    "README.md",
+    ".hermes/README.md",
+    
+    "docs/bilingual-policy.md",
+    "docs/adr/README.md",
+    "docs/adr/0001-choose-prisma-as-orm.md",
+    "docs/adr/0002-linear-as-source-of-truth.md",
+    "docs/adr/0004-mcp-single-writer-for-coder-agent.md",
+    "docs/adr/0005-coder-agent-opens-pr-to-main.md",
+    "docs/adr/0007-claude-reviewer-local-multi-reviewer.md",
+    "docs/adr/0008-review-collector-mr.md",
+    "docs/ai-news-summary.md",
+    "docs/workflow/AGENT-MODEL.md",
+    "docs/workflow/FILE-STRUCTURE.md",
+    "docs/workflow/REVIEW-MODEL.md",
+    "docs/workflow/AGENT-MODEL.md","docs/workflow/FILE-STRUCTURE.md","docs/workflow/REVIEW-MODEL.md","docs/workflow/WORKFLOW.md",
+    ".hermes/runs/CODEX-EN-GOVERNANCE-L04.json"
+  ],
+  "scans": {
+    "utf8": "passed",
+    "vietnamese_diacritic_characters": "passed",
+    "vietnamese_no_diacritic_scan": "passed; allowlisted identifiers include Hien, hien/*, va-routing, and English 'ban'"
+  },
+  "verify": {
+    "prettier_check": "passed with local node_modules/.bin/prettier",
+    "link_inspection": "passed: local Markdown targets resolved or are documented external URLs",
+    "git_scope": "passed: only assigned governance/docs files and the required Hermes run record changed"
+  },
+  "blockers": [
+    "RTK.md is referenced by AGENTS.md but is absent from this worktree."
+  ]
+}
