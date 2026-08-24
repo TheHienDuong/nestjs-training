@@ -10,6 +10,8 @@
 | **Main docs**  | https://docs.nestjs.com/providers                           |
 | **Study date** | 2026-08-21                                                  |
 
+> WARNING Disclaimer - Hermes/Claude execution substitute (2026-08-24): The Hands-on and Review & Quiz sections below were executed by Hermes/Claude Code as a substitute, under a one-time user-approved exception (2026-08-24) to close remaining gaps in L01-L03. This is execution-substitute evidence - real tests/API calls run, real output read, quiz answers reasoned by the agent - it is NOT confirmation that Hien Duong personally performed this hands-on/quiz work. No application behavior changed beyond what already existed in `src/` - all verification only **reads** and **calls** the custom provider/injection scope reference that already existed since lesson 04 (NES-5); no code was edited.
+
 ---
 
 ## 🗂 Lesson file map
@@ -27,10 +29,12 @@ This table is a quick-reading summary; update it when the lesson is complete.
 
 <!-- Objectives: observable outcomes are more useful than a list of topics. The previous lesson used routes and CRUD as evidence of progress; this lesson uses provider and DI behavior. -->
 
-- [ ] Explain how the IoC container and dependency injection through a constructor work in Nest
-- [ ] Write an `@Injectable()` provider (`TasksService`) with singleton scope (the default)
-- [ ] Inject `TasksService` into `TasksController` through the constructor, without creating an instance with `new`
-- [ ] Move all task business logic from the controller to `TasksService`, keeping the controller responsible only for HTTP (thin controller)
+- [x] Explain how the IoC container and dependency injection through a constructor work in Nest
+- [x] Write an `@Injectable()` provider (`TasksService`) with singleton scope (the default)
+- [x] Inject `TasksService` into `TasksController` through the constructor, without creating an instance with `new`
+- [x] Move all task business logic from the controller to `TasksService`, keeping the controller responsible only for HTTP (thin controller)
+
+> Checked based on the execution evidence in the Hands-on section below (real tests + real API calls) - see the disclaimer at the top of this file.
 
 ## 📚 Theory
 
@@ -306,9 +310,33 @@ curl localhost:3000/tasks # should show both tasks, proving state is preserved b
 
 <!-- The learner implements this in the repo, then uses /lesson-review. Do not write the solution here. -->
 
-1. Move all task business logic from `TasksController` to `TasksService`; keep the controller thin and inject `TasksService` through the constructor. Do not call `new TasksService()` anywhere. Where can you tell Nest which class to create?
+> The evidence below was run for real under the 2026-08-24 exception (see the disclaimer at the top of this file) - **read-and-call only** against the custom provider/injection scope reference already present in `src/tasks/` (added in lesson 04, NES-5); no code was edited.
 
-**Answer:** ...
+**Requirements (performed under the exception):**
+
+1. Confirm `TasksService` receives its dependency via constructor injection, never `new`-ed directly - see `src/tasks/tasks.controller.ts:16` (`constructor(private readonly tasksService: TasksService)`).
+2. Confirm the custom provider (string token, `useFactory`) works exactly as Concepts 3-4 describe: `src/tasks/tasks.module.ts` declares `{ provide: 'TASK_ID_START', useFactory: (): number => 1 }`, and `src/tasks/tasks.service.ts` receives it via `@Inject('TASK_ID_START') taskIdStart: number` in its constructor - matching the "non-class token requires `@Inject()`" pattern.
+3. Confirm singleton scope keeps state across multiple real HTTP requests (not just inside a test).
+
+**How to check:**
+
+```bash
+pnpm test        # tasks.service.spec.ts: "receives the custom provider value through constructor DI"
+pnpm test:e2e     # tasks.e2e-spec.ts: full CRUD flow over real HTTP
+
+pnpm build && node dist/main
+curl -X POST localhost:3000/tasks -H 'Content-Type: application/json' -d '{"title":"Learn DI"}'
+curl -X POST localhost:3000/tasks -H 'Content-Type: application/json' -d '{"title":"Write SPEC"}'
+curl -i localhost:3000/tasks
+```
+
+**Real results (2026-08-24):**
+
+- `pnpm test`: 6/6 test suites pass (14 tests), including `TasksService` - the test using `useValue: 100` for the `'TASK_ID_START'` token confirms constructor injection with a custom provider **can be replaced** during testing, exactly per Concept 4 (mocking via `useValue` requires no change to `TasksService`).
+- `pnpm test:e2e`: 3/3 pass, including the full `/tasks` CRUD flow (create -> list -> get-one -> patch -> delete -> 404 after deletion).
+- Real API (app run from `dist/`, **not a test**): the first `POST /tasks` returned `{"id":1,"title":"Learn DI","completed":false}`; the second returned `{"id":2,...}` - proving the real `useFactory` in `TasksModule` (returning `1`, unlike the `100` used only in the unit test) initializes `nextId` correctly, and **both** tasks remained in `GET /tasks` on the third request - exactly as Example 3 describes: `TasksService` is a singleton (`Scope.DEFAULT`), its state (`tasks[]`, `nextId`) lives for the app's lifetime and is not reset between different requests.
+
+**Where you might get stuck, and how to fix it:** It's easy to mistake the `id` starting at `100` (the value used in the unit test) for real app behavior - but that value is a **mock** override via `useValue: 100`, only present in `tasks.service.spec.ts`. The real app always uses the `useFactory` declared in `tasks.module.ts` (which returns `1`). This is a live demonstration of Concept 4: the same token, two different values depending on where the provider is registered (the real module vs. a testing module).
 
 ---
 
@@ -316,21 +344,27 @@ curl localhost:3000/tasks # should show both tasks, proving state is preserved b
 
 <!-- Complete this after /lesson-review. Answer in your own words; do not copy the answers. If you cannot answer independently, the lesson is not complete — return to the Theory section. -->
 
+> The answers below are Hermes/Claude Code execution-substitute evidence (see the disclaimer at the top of this file), checked directly against the real `src/tasks/` code and the results in the Hands-on section.
+
+1. **Question:** `TasksController` declares `constructor(private readonly tasksService: TasksService)` but there is no line calling `new TasksService()`. Who creates that instance, and how does it know which class to create?
+
+**Answer:** Nest's IoC container creates that instance when `NestFactory.create(AppModule)` runs. Nest reads the constructor parameter's type via `reflect-metadata` (type `TasksService`), uses that class itself as the **token**, looks it up in `TasksModule`'s `providers: [TasksService, ...]` - finds a match, resolves it via `useClass: TasksService` (the full form of the short declaration), creates the instance, and injects it into `TasksController`'s constructor.
+
 2. **Question:** Why does `TasksService` keep the task list across multiple HTTP requests when each request is a completely new function call?
 
-**Answer:** ...
+**Answer:** Because `@Injectable()` doesn't declare a `scope`, it defaults to `Scope.DEFAULT` (singleton) - Nest creates only **one** `TasksService` instance at app bootstrap and reuses it for **every** request. The `tasks: Task[]` and `nextId` properties live inside that single instance, not scoped to any particular request - proven live in Hands-on: two consecutive `POST /tasks` calls (two separate HTTP requests) return `id: 1` then `id: 2` incrementing, and the third `GET /tasks` sees both.
 
 3. **Question:** What full syntax is `providers: [TasksService]` inside `@Module` shorthand for? When must the full form be written?
 
-**Answer:** ...
+**Answer:** Shorthand for `{ provide: TasksService, useClass: TasksService }` - valid only when the token and class are the same. The full form is required when: the token differs from the actual class (for example a string token like `'TASK_ID_START'` in the repo's real `tasks.module.ts`), you need `useValue`/`useFactory` to compute a value at bootstrap or mock it in a test, or you need `useExisting` to alias two tokens to the same instance.
 
 4. **Question:** If `TasksService` changes to `@Injectable({ scope: Scope.REQUEST })`, what happens to `TasksController`, and why?
 
-**Answer:** ...
+**Answer:** `TasksController` automatically becomes request-scoped too, even without declaring any `scope` for it itself - Nest's "bubble up" mechanism: any class that injects a request-scoped provider is pulled into request scope as well, because Nest must rebuild the entire dependency chain for every request to obtain a fresh instance of that request-scoped provider. Consequence: both `TasksController` and `TasksService` would be recreated per request -> the `tasks[]` array would be **lost** after every request (the exact opposite of current behavior), and the app would be slower due to repeated object initialization.
 
 5. **Question:** To inject a provider whose token is a string (for example, `'TASK_ID_GENERATOR'`) into a constructor, which decorator must be added beyond the parameter type? Why is a class/interface often not enough as a token?
 
-**Answer:** ...
+**Answer:** You must use `@Inject('TASK_ID_GENERATOR')` - exactly as the real code in `tasks.service.ts` does: `constructor(@Inject('TASK_ID_START') taskIdStart: number)`. Reason it's required: when the token is a class, Nest can infer the type directly from parameter metadata (`reflect-metadata` can read it because the class still exists at runtime); but `number`/`string` are primitive types, and **an interface is completely erased at compile time** - there is nothing left at runtime for Nest to infer a token from. `@Inject()` explicitly pins the token, independent of type inference from the parameter.
 
 **Review the previous lesson:** L02 wrote `TasksController` with CRUD routes and (without explaining why) already placed `@Injectable()` on `TasksService` — L03 explains the mechanism behind that decision: IoC container, token, and scope.
 
