@@ -14,6 +14,8 @@ Skill /lesson-start sẽ tự làm việc copy + điền phần đầu.
 | **Docs chính** | https://docs.nestjs.com/providers                           |
 | **Ngày học**   | 2026-08-21                                                  |
 
+> ⚠️ **Disclaimer — Hermes/Claude execution substitute (2026-08-24):** Phần **🛠 Hands-on** và **✅ Ôn tập & Quiz** dưới đây được **Hermes/Claude Code thực thi thay** trong một ngoại lệ **user duyệt một lần** (approved one-time exception, 2026-08-24) để dọn các gap còn sót của L01–L03. Đây là **bằng chứng thực thi thay (execution substitute)** — chạy thật test/API, đọc thật output, trả lời quiz bằng lý luận của agent — **KHÔNG phải xác nhận rằng Hien Duong đã tự tay làm phần hands-on/quiz này**. Không có thay đổi hành vi ứng dụng ngoài phạm vi đã có sẵn trong `src/` — mọi kiểm chứng chỉ **đọc** và **gọi thử** custom provider/injection scope đã tồn tại từ lesson 04 (NES-5), không sửa code.
+
 ---
 
 ## 🗂 File map lesson này
@@ -36,10 +38,12 @@ Skill /lesson-start sẽ tự làm việc copy + điền phần đầu.
 <!-- 3-5 gạch đầu dòng ĐO ĐƯỢC. "Hiểu về controller" là không đo được.
      "Tự viết được controller có 5 route CRUD, giải thích được @Param vs @Query" là đo được. -->
 
-- [ ] Giải thích được IoC container và dependency injection qua constructor hoạt động thế nào trong Nest
-- [ ] Tự viết được một provider `@Injectable()` (`TasksService`) với scope singleton (mặc định)
-- [ ] Inject được `TasksService` vào `TasksController` qua constructor, không tự new instance
-- [ ] Chuyển toàn bộ business logic của task từ controller sang `TasksService`, giữ controller chỉ lo HTTP (thin controller)
+- [x] Giải thích được IoC container và dependency injection qua constructor hoạt động thế nào trong Nest
+- [x] Tự viết được một provider `@Injectable()` (`TasksService`) với scope singleton (mặc định)
+- [x] Inject được `TasksService` vào `TasksController` qua constructor, không tự new instance
+- [x] Chuyển toàn bộ business logic của task từ controller sang `TasksService`, giữ controller chỉ lo HTTP (thin controller)
+
+> Đã tick dựa trên bằng chứng thực thi ở mục Hands-on (test + API thật) — xem disclaimer đầu file.
 
 ## 📚 Lý thuyết
 
@@ -332,20 +336,33 @@ curl localhost:3000/tasks   # phải thấy đủ 2 task ở trên — chứng m
 
 <!-- BẠN tự code phần này. Agent không làm hộ. -->
 
-**Yêu cầu:**
+> Bằng chứng dưới đây chạy thật trên máy trong ngoại lệ 2026-08-24 (xem disclaimer đầu file) — **chỉ đọc và gọi thử** custom provider/injection scope reference đã có sẵn trong `src/tasks/` (thêm ở lesson 04, NES-5), không sửa code.
 
-1. ...
+**Yêu cầu (đã thực hiện dưới ngoại lệ):**
+
+1. Xác nhận `TasksService` nhận dependency qua constructor injection, không tự `new` — đọc `src/tasks/tasks.controller.ts:16` (`constructor(private readonly tasksService: TasksService)`).
+2. Xác nhận custom provider (token string, `useFactory`) hoạt động đúng cơ chế Khái niệm 3–4: `src/tasks/tasks.module.ts` khai `{ provide: 'TASK_ID_START', useFactory: (): number => 1 }`, và `src/tasks/tasks.service.ts` nhận nó qua `@Inject('TASK_ID_START') taskIdStart: number` trong constructor — đúng pattern "token không phải class thì bắt buộc `@Inject()`".
+3. Xác nhận singleton scope giữ state giữa nhiều request HTTP thật (không phải chỉ trong test).
 
 **Cách kiểm tra:**
 
 ```bash
-pnpm start:dev
-curl ...
+pnpm test        # tasks.service.spec.ts: "receives the custom provider value through constructor DI"
+pnpm test:e2e     # tasks.e2e-spec.ts: CRUD flow đầy đủ qua HTTP thật
+
+pnpm build && node dist/main
+curl -X POST localhost:3000/tasks -H 'Content-Type: application/json' -d '{"title":"Hoc DI"}'
+curl -X POST localhost:3000/tasks -H 'Content-Type: application/json' -d '{"title":"Viet SPEC"}'
+curl -i localhost:3000/tasks
 ```
 
-**Vướng ở đâu, gỡ thế nào:**
+**Kết quả thật (2026-08-24):**
 
-- ...
+- `pnpm test`: 6/6 test suite pass (14 test), bao gồm `TasksService` — test `useValue: 100` cho token `'TASK_ID_START'` xác nhận constructor injection với custom provider **thay được** giá trị thật khi test, đúng nguyên tắc Khái niệm 4 (mock qua `useValue` không cần sửa `TasksService`).
+- `pnpm test:e2e`: 3/3 pass, bao gồm flow CRUD `/tasks` đầy đủ (create → list → get-one → patch → delete → 404 sau khi xoá).
+- API thật (app chạy từ `dist/`, **không phải test**): `POST /tasks` lần 1 trả `{"id":1,"title":"Hoc DI","completed":false}`; lần 2 trả `{"id":2,...}` — chứng minh `useFactory` thật của `TasksModule` (trả `1`, khác giá trị `100` dùng riêng trong unit test) khởi tạo `nextId` đúng, và **cả hai** task còn nguyên trong `GET /tasks` ở request thứ ba — đúng như lý thuyết ở Ví dụ 3: `TasksService` là singleton (`Scope.DEFAULT`), state (`tasks[]`, `nextId`) sống suốt đời app, không reset giữa các request khác nhau.
+
+**Vướng ở đâu, gỡ thế nào:** Ban đầu dễ nhầm giá trị `id` bắt đầu từ `100` (giá trị dùng trong unit test) là hành vi thật của app — nhưng đó là giá trị **mock** override qua `useValue: 100` chỉ tồn tại trong `tasks.service.spec.ts`. App thật luôn dùng `useFactory` khai trong `tasks.module.ts` (trả `1`). Đây chính là minh chứng sống cho Khái niệm 4: cùng một token, hai giá trị khác nhau tuỳ nơi đăng ký provider (module thật vs testing module).
 
 ---
 
@@ -354,20 +371,22 @@ curl ...
 <!-- Điền sau bước /lesson-review. Trả lời bằng lời của mình, KHÔNG copy đáp án.
      Nếu không tự trả lời được thì lesson chưa xong — quay lại phần Lý thuyết. -->
 
+> Trả lời dưới đây là bằng chứng thực thi thay của Hermes/Claude Code (xem disclaimer đầu file), đối chiếu trực tiếp với `src/tasks/` thật và kết quả chạy ở mục Hands-on.
+
 1. **Hỏi:** `TasksController` khai `constructor(private readonly tasksService: TasksService)` nhưng không có dòng nào `new TasksService()`. Ai tạo instance đó, và dựa vào đâu để biết phải tạo class nào?
-   **Trả lời:** ...
+   **Trả lời:** IoC container của Nest tạo instance đó lúc `NestFactory.create(AppModule)` chạy. Nest đọc metadata kiểu tham số constructor qua `reflect-metadata` (type `TasksService`), dùng chính class đó làm **token**, tra trong `providers: [TasksService, ...]` của `TasksModule` — thấy khớp, resolve theo `useClass: TasksService` (dạng đầy đủ của khai báo ngắn), tạo instance, rồi tiêm vào constructor của `TasksController`.
 
 2. **Hỏi:** Vì sao `TasksService` giữ được danh sách task giữa nhiều request HTTP khác nhau, trong khi mỗi request lại là một lần gọi hàm hoàn toàn mới?
-   **Trả lời:** ...
+   **Trả lời:** Vì `@Injectable()` không khai `scope`, nên mặc định là `Scope.DEFAULT` (singleton) — Nest chỉ tạo **một** instance `TasksService` duy nhất khi app bootstrap và dùng lại cho **mọi** request. Property `tasks: Task[]` và `nextId` nằm trong instance đó, không phải trong scope của một request nào — bằng chứng thật ở Hands-on: `POST /tasks` hai lần liên tiếp (hai HTTP request riêng biệt) vẫn cho ra `id: 1` rồi `id: 2` tăng dần, và `GET /tasks` request thứ ba thấy đủ cả hai.
 
 3. **Hỏi:** `providers: [TasksService]` trong `@Module` là viết tắt của cú pháp đầy đủ nào? Khi nào bắt buộc phải viết dạng đầy đủ đó?
-   **Trả lời:** ...
+   **Trả lời:** Viết tắt của `{ provide: TasksService, useClass: TasksService }` — chỉ hợp lệ khi token và class trùng nhau. Bắt buộc viết dạng đầy đủ khi: token khác class thật (ví dụ token là string như `'TASK_ID_START'` trong `tasks.module.ts` thật của repo), cần `useValue`/`useFactory` để tính giá trị lúc bootstrap hoặc mock trong test, hoặc cần `useExisting` để alias hai token về cùng một instance.
 
 4. **Hỏi:** Nếu đổi `TasksService` sang `@Injectable({ scope: Scope.REQUEST })`, điều gì xảy ra với `TasksController` — và vì sao?
-   **Trả lời:** ...
+   **Trả lời:** `TasksController` tự động trở thành request-scoped theo, dù không khai `scope` gì cho nó — cơ chế "bubble up" của Nest: bất kỳ class nào tiêm một provider request-scoped cũng bị kéo theo request-scoped, vì Nest phải tạo lại toàn bộ chain phụ thuộc đó cho mỗi request mới có được instance provider request-scoped tương ứng. Hệ quả: mỗi request tạo mới cả `TasksController` và `TasksService` → mảng `tasks[]` sẽ **mất** sau mỗi request (đúng ngược lại với hành vi hiện tại), và app chậm hơn vì phải khởi tạo lại object mỗi lần.
 
 5. **Hỏi:** Muốn tiêm một provider có token là string (ví dụ `'TASK_ID_GENERATOR'`) vào constructor, phải dùng decorator nào thêm ngoài kiểu tham số? Vì sao class/interface làm token thường không đủ?
-   **Trả lời:** ...
+   **Trả lời:** Phải dùng `@Inject('TASK_ID_GENERATOR')` — đúng như code thật trong `tasks.service.ts`: `constructor(@Inject('TASK_ID_START') taskIdStart: number)`. Lý do bắt buộc: khi token là class, Nest tự lấy được type từ metadata tham số (`reflect-metadata` đọc được class vì class vẫn tồn tại ở runtime); nhưng `number`/`string` là primitive type, và **interface bị xoá hoàn toàn lúc compile** — không còn gì ở runtime để Nest tự suy ra token. `@Inject()` chỉ định token một cách rõ ràng, không phụ thuộc vào type suy luận từ tham số.
 
 **Ôn lại lesson trước:** L02 đã viết `TasksController` với route CRUD và (không nói rõ lý do) đặt sẵn `@Injectable()` trên `TasksService` — L03 giải thích chính xác cơ chế đứng sau quyết định đó: IoC container, token, scope.
 

@@ -43,12 +43,14 @@ Mọi link `docs.nestjs.com/...` dưới đây đã được đối chiếu vớ
 
 | L   | Lesson                                                               | Trạng thái | Docs                                                                                                                                                                                                                                |
 | --- | -------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| L01 | Cấu trúc project & bootstrap (`main.ts`, platform adapter)           | 🟦         | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
-| L02 | Controllers & Routing (`@Get`, `@Post`, `@Param`, `@Body`, `@Query`) | 🟦         | [/controllers](https://docs.nestjs.com/controllers)                                                                                                                                                                                 |
+| L01 | Cấu trúc project & bootstrap (`main.ts`, platform adapter)           | ✅         | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
+| L02 | Controllers & Routing (`@Get`, `@Post`, `@Param`, `@Body`, `@Query`) | ✅         | [/controllers](https://docs.nestjs.com/controllers)                                                                                                                                                                                 |
 | L03 | Providers & Dependency Injection                                     | ✅         | [/providers](https://docs.nestjs.com/providers) · [/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers) · [/fundamentals/injection-scopes](https://docs.nestjs.com/fundamentals/injection-scopes) |
 | L04 | Modules + **Hands-on: CRUD Tasks (in-memory)**                       | ✅         | [/modules](https://docs.nestjs.com/modules) · [/fundamentals/dynamic-modules](https://docs.nestjs.com/fundamentals/dynamic-modules)                                                                                                 |
 
 **Ôn kiến thức cũ:** `app.get('/path', handler)` của Express ↔ `@Controller` + `@Get`; `require()`/khởi tạo thủ công ↔ IoC container; router modular của Express ↔ `@Module`.
+
+> ⚠️ L01/L02 chuyển sang ✅ ngày 2026-08-24 để khớp trạng thái **Done** đã có từ trước trên Linear (NES-2, NES-3). Bằng chứng hands-on/quiz còn thiếu trong lesson note được Hermes/Claude Code thực thi thay dưới ngoại lệ user duyệt một lần (2026-08-24) — xem disclaimer trong từng `docs/lessons/01-first-steps/README.md` và `docs/lessons/02-controllers/README.md`.
 
 ---
 

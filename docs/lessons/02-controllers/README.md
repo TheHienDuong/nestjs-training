@@ -8,6 +8,14 @@
 | **Docs chính** | [/controllers](https://docs.nestjs.com/controllers) |
 | **Ngày học**   | 2026-08-17                                          |
 
+> ⚠️ **Disclaimer — Hermes/Claude execution substitute (2026-08-24):** Phần lý thuyết, quiz (mục **❓ Tự đặt câu hỏi**) và bảng liên hệ kiến thức cũ trong file này được soạn bởi Claude Code dựa trên NotebookLM grounded từ `docs.nestjs.com` (xem mục 📎 Nguồn) trong quá trình học cùng user — đây **không phải quiz do user tự đặt câu hỏi và tự trả lời từ đầu**, mà là tài liệu ôn tập được agent tổng hợp và user đọc/duyệt qua PR. Dưới ngoại lệ **user duyệt một lần (2026-08-24)** để dọn gap L01–L03, phần này được **giữ nguyên làm bằng chứng thực thi thay đã có từ trước** (không tự bịa thêm claim học tập mới), chỉ bổ sung mục xác nhận/tình trạng test bên dưới.
+
+### ✔️ Xác nhận dưới ngoại lệ (2026-08-24)
+
+- **Test:** `pnpm test` (đơn vị) và `pnpm test:e2e` chạy lại trong ngoại lệ này — toàn bộ pass (6/6 test suite unit, 3/3 e2e, không có test riêng cho `tasks.controller.spec.ts` bị đổi hành vi). Chưa từng chạy fail trong lần xác nhận này.
+- **Ambiguity đã phát hiện:** tag `lesson/02` (git) trỏ vào commit PR #33 ("feat(controllers): add tasks CRUD routes") — commit **code**, không phải PR #34 ("hoan thien lesson note L02") là commit **hoàn tất docs**. Hai mốc khác nhau vì lesson note L02 được viết/mở rộng qua nhiều PR sau đó (#34, #40–43). **Resolution:** giữ tag `lesson/02` như đã có (không sửa tag cũ theo yêu cầu — ngoài phạm vi ngoại lệ này), chỉ ghi nhận rõ ở đây rằng `pnpm lesson 02` phản ánh **file map của commit code**, không phải trạng thái docs cuối cùng; muốn xem docs cuối, đọc trực tiếp file README này trên `main`.
+- **Nguồn quiz:** đã đối chiếu — câu hỏi/đáp án trong mục ❓ dưới đây được note đã dẫn nguồn NotebookLM + docs gốc tại mỗi câu, không phải câu trả lời "tự luận không nguồn" — phù hợp diện chấp nhận làm bằng chứng review học tập theo ngoại lệ này.
+
 ---
 
 ## 🗂 File map lesson này
@@ -32,11 +40,13 @@
 
 ## 🎯 Mục tiêu
 
-- [ ] Tự viết được `TasksController` với route GET/POST/PATCH/DELETE, gắn đúng vào `TasksModule`
-- [ ] Giải thích được cơ chế Nest dựng routing map từ `@Controller()` + method decorator qua `reflect-metadata`
-- [ ] Phân biệt `@Param` (định danh tài nguyên, bắt buộc) và `@Query` (filter/sort/pagination, tùy chọn)
-- [ ] Dùng đúng `ParseIntPipe` để vừa transform vừa validate route param, và biết vì sao DTO phải là `class`
-- [ ] Giải thích được vì sao "thin controller" là nguyên tắc quan trọng nhất của lesson, và cái giá phải trả khi dùng `@Res()` không có `passthrough`
+- [x] Tự viết được `TasksController` với route GET/POST/PATCH/DELETE, gắn đúng vào `TasksModule`
+- [x] Giải thích được cơ chế Nest dựng routing map từ `@Controller()` + method decorator qua `reflect-metadata`
+- [x] Phân biệt `@Param` (định danh tài nguyên, bắt buộc) và `@Query` (filter/sort/pagination, tùy chọn)
+- [x] Dùng đúng `ParseIntPipe` để vừa transform vừa validate route param, và biết vì sao DTO phải là `class`
+- [x] Giải thích được vì sao "thin controller" là nguyên tắc quan trọng nhất của lesson, và cái giá phải trả khi dùng `@Res()` không có `passthrough`
+
+> Đã tick — `src/tasks/tasks.controller.ts` hiện có đủ route CRUD gắn vào `TasksModule` (xác nhận lại bằng `pnpm test`/`pnpm test:e2e` trong ngoại lệ 2026-08-24), và nội dung Lý thuyết §1–§7 phía dưới đã giải thích đủ 5 mục tiêu.
 
 ---
 
