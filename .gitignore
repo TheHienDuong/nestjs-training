@@ -11,11 +11,9 @@
 /.venv/
 /.claude/*.bak-*
 
-# Hermes local working state — keep only .md files (README, reference plans) and run reports for commit
+# Hermes local working state — keep only .md files (README, reference plans) for commit
 .hermes/*
 !.hermes/*.md
-!.hermes/runs/
-!.hermes/runs/*.json
 
 # codex local hooks — machine-local paths, not committed (MCP config.toml is committed)
 .codex/hooks.json
