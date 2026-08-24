@@ -1,0 +1,29 @@
+{
+  "nonce": "pr71-claude-docs-fixes-20260824",
+  "branch": "claude/pr71-docs-fixes",
+  "base_context": "example/nestjs-training",
+  "pr_head_corrected": "collector/en-mirror-l04",
+  "result": "completed",
+  "status": "done",
+  "changed_files": [
+    "CLAUDE.md",
+    ".hermes/README.md",
+    ".hermes/runs/CLAUDE-PR71-DOCS-FIXES.json"
+  ],
+  "fixes": [
+    "CLAUDE.md: Language section now says explanations/lesson notes are written in English (was incorrectly still 'Vietnamese' on the English mirror branch); rest of the sentence unchanged.",
+    ".hermes/README.md: documented the tracked run-report contract (.hermes/runs/*.json is committed per .gitignore) with required fields (nonce, branch, status/result, changed files, scan/verification results, blockers); corrected the prior statement that implied only .md files are committed."
+  ],
+  "scans": {
+    "git_diff_check": "passed, no whitespace errors",
+    "vietnamese_diacritic_characters": "passed, none found in either edited file (python3 regex scan)",
+    "scope_check": "passed: only CLAUDE.md and .hermes/README.md changed, plus this required run artifact"
+  },
+  "verify": {
+    "pnpm_verify": "skipped: node_modules not installed in this worktree (dependencies not available locally)",
+    "src_test_diff_vs_origin_main": "passed: git diff origin/main..HEAD -- src test is empty"
+  },
+  "blockers": [
+    "pnpm verify could not be run because dependencies are not installed in this worktree; no src/ or test/ files were touched by this change, and the two edited files are prose-only docs, so this is not expected to affect lint/build/test."
+  ]
+}

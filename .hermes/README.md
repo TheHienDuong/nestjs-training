@@ -1,6 +1,6 @@
 # .hermes/ — Hermes Structure (Reference Document)
 
-> This directory is Hermes' **working state** in the project. Only commit `.md` files (reference documents, approved plans...); the rest is included in `.gitignore` (`.hermes/*` + `!.hermes/*.md`).
+> This directory is Hermes' **working state** in the project. Commit `.md` files (reference documents, approved plans...) and run reports at `.hermes/runs/*.json`; everything else is excluded via `.gitignore` (`.hermes/*` + `!.hermes/*.md` + `!.hermes/runs/` + `!.hermes/runs/*.json`).
 
 ## Context: Hermes in this Project
 
@@ -8,6 +8,18 @@ Hermes acts as the **orchestrator** — its full contract is located at `/.herme
 
 - `README.md` — this file (reference)
 - `plans/` — work plans (gitignored, not committed)
+- `runs/*.json` — machine-readable agent run reports (tracked, see below)
+
+## Run reports (`.hermes/runs/*.json`)
+
+Unlike the rest of `.hermes/`, `.hermes/runs/*.json` is committed — it's the machine-readable verdict Hermes polls instead of trusting an agent's self-report (`.hermes.md` §5 step 4, Herdr bridge step 5). Each report should include at least:
+
+- `nonce` — unique token proving this exact run produced the file
+- `branch` — the branch the agent worked on
+- `status` / `result` — outcome of the run (e.g. done/blocked/failed)
+- changed files — what the agent touched
+- scan/verification results — e.g. `pnpm verify`, bilingual diff/scan output
+- `blockers` — anything preventing completion, or empty/null if none
 
 ## Structure of `~/.hermes/` (standard docs)
 

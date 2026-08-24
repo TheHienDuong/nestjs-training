@@ -45,7 +45,7 @@ Exceptions (Claude may write these itself): infrastructure files — `.github/`,
 
 ## Language
 
-All explanations and lesson notes are written in **Vietnamese**. Keep English technical terms unchanged: provider, guard, interceptor, pipe, dependency injection, decorator — these are the terms the user will encounter in code, in docs, and in interviews.
+All explanations and lesson notes are written in **English**. Keep English technical terms unchanged: provider, guard, interceptor, pipe, dependency injection, decorator — these are the terms the user will encounter in code, in docs, and in interviews.
 
 ## Package manager
 
