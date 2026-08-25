@@ -12,8 +12,9 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import type { CreateTaskDto } from './dto/create-task.dto';
-import type { UpdateTaskDto } from './dto/update-task.dto';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
+import { ParseCompletedQueryPipe } from './pipes/parse-completed-query.pipe';
 import { TasksService } from './tasks.service';
 import type { Task } from './tasks.service';
 
@@ -25,7 +26,9 @@ export class TasksController {
 
   @Get()
   @Header('Cache-Control', 'no-store')
-  findAll(@Query('completed') completed?: string): Task[] {
+  findAll(
+    @Query('completed', ParseCompletedQueryPipe) completed?: string,
+  ): Task[] {
     return this.tasksService.findAll(completed);
   }
 
