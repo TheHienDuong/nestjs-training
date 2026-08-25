@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
@@ -14,6 +15,18 @@ import { UsersModule } from './users/users.module';
     TasksConfigModule.forRoot({ appName: 'nestjs-training' }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      // APP_PIPE covers both src/main.ts bootstrap and createNestApplication e2e apps.
+      useFactory: (): ValidationPipe =>
+        new ValidationPipe({
+          whitelist: true,
+          forbidNonWhitelisted: true,
+          transform: true,
+        }),
+    },
+  ],
 })
 export class AppModule {}
