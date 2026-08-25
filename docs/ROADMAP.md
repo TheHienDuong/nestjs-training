@@ -33,7 +33,7 @@ All `docs.nestjs.com/...` links below have been verified against the actual rout
 
 | L   | Lesson                                                             | Status | Docs / Sources                                                               |
 | --- | ------------------------------------------------------------------ | ------ | ---------------------------------------------------------------------------- |
-| L00 | Project setup, Linear/GitHub/Slack/CI/Docker, development workflow | 🟦     | [Lesson note](lessons/00-setup/README.md) · [WORKFLOW](workflow/WORKFLOW.md) |
+| L00 | Project setup, Linear/GitHub/Slack/CI/Docker, development workflow | ✅     | [Lesson note](lessons/00-setup/README.md) · [WORKFLOW](workflow/WORKFLOW.md) |
 
 ---
 
@@ -43,12 +43,14 @@ All `docs.nestjs.com/...` links below have been verified against the actual rout
 
 | L   | Lesson                                                               | Status | Docs                                                                                                                                                                                                                                |
 | --- | -------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| L01 | Project structure & bootstrap (`main.ts`, platform adapter)          | 🟦     | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
-| L02 | Controllers & Routing (`@Get`, `@Post`, `@Param`, `@Body`, `@Query`) | 🟦     | [/controllers](https://docs.nestjs.com/controllers)                                                                                                                                                                                 |
+| L01 | Project structure & bootstrap (`main.ts`, platform adapter)          | ✅     | [/first-steps](https://docs.nestjs.com/first-steps) · [/fundamentals/platform-agnosticism](https://docs.nestjs.com/fundamentals/platform-agnosticism)                                                                               |
+| L02 | Controllers & Routing (`@Get`, `@Post`, `@Param`, `@Body`, `@Query`) | ✅     | [/controllers](https://docs.nestjs.com/controllers)                                                                                                                                                                                 |
 | L03 | Providers & Dependency Injection                                     | ✅     | [/providers](https://docs.nestjs.com/providers) · [/fundamentals/custom-providers](https://docs.nestjs.com/fundamentals/custom-providers) · [/fundamentals/injection-scopes](https://docs.nestjs.com/fundamentals/injection-scopes) |
 | L04 | Modules + **Hands-on: CRUD Tasks (in-memory)**                       | ✅     | [/modules](https://docs.nestjs.com/modules) · [/fundamentals/dynamic-modules](https://docs.nestjs.com/fundamentals/dynamic-modules)                                                                                                 |
 
 **Review prior knowledge:** Express's `app.get('/path', handler)` ↔ `@Controller` + `@Get`; `require()`/manual initialization ↔ IoC container; Express's modular router ↔ `@Module`.
+
+> WARNING L00/L01/L02 updated on 2026-08-24. L00 was a stale VN/EN parity mismatch (VN already showed done) fixed by this update. L01/L02 flipped to done to match the pre-existing Done status on Linear (NES-2, NES-3). Missing hands-on/quiz evidence in the lesson notes was executed as a substitute by Hermes/Claude Code under a one-time user-approved exception (2026-08-24) - see the disclaimer in `docs/lessons/01-first-steps/README.md` and `docs/lessons/02-controllers/README.md`.
 
 ---
 

@@ -8,6 +8,14 @@
 | **Main docs**    | [/controllers](https://docs.nestjs.com/controllers) |
 | **Date studied** | 2026-08-17                                          |
 
+> WARNING Disclaimer - Hermes/Claude execution substitute (2026-08-24): The theory, quiz (see "Self-quiz" section), and prior-knowledge table in this file were authored by Claude Code based on NotebookLM grounded in `docs.nestjs.com` (see Sources) while studying with the user - this is **not a quiz the user wrote and answered from scratch**, but review material synthesized by the agent and read/approved by the user through a PR. Under the one-time user-approved exception (2026-08-24) to close L01-L03 gaps, this section is **kept as pre-existing execution-substitute evidence** (no new learning claim invented), only adding the confirmation section below.
+
+### Confirmation under the exception (2026-08-24)
+
+- **Tests:** `pnpm test` (unit) and `pnpm test:e2e` were re-run under this exception - all pass (6/6 unit test suites, 3/3 e2e, no `tasks.controller.spec.ts` behavior changed). No failure observed in this confirmation pass.
+- **Ambiguity found:** the git tag `lesson/02` points to the PR #33 commit ("feat(controllers): add tasks CRUD routes") - a **code** commit, not PR #34 ("hoan thien lesson note L02"), the **docs-completion** commit. These are two different milestones because the L02 lesson note was written/extended across several later PRs (#34, #40-43). **Resolution:** the existing `lesson/02` tag is kept as-is (not retagged - out of scope for this exception); this note only clarifies that `pnpm lesson 02` reflects the **file map of the code commit**, not the final docs state - read this README directly on `main` for the final docs.
+- **Quiz source:** verified - the questions/answers in the Self-quiz section below cite NotebookLM + original docs at each item, not "unsourced free-form answers" - this qualifies as acceptable learning-review evidence under this exception.
+
 ---
 
 ## 🗂 File map for this lesson
@@ -32,11 +40,13 @@
 
 ## 🎯 Objectives
 
-- [ ] Write `TasksController` yourself with GET/POST/PATCH/DELETE routes, correctly wired into `TasksModule`
-- [ ] Explain how Nest builds the routing map from `@Controller()` + method decorators via `reflect-metadata`
-- [ ] Distinguish `@Param` (resource identifier, required) from `@Query` (filter/sort/pagination, optional)
-- [ ] Correctly use `ParseIntPipe` to both transform and validate a route param, and know why a DTO must be a `class`
-- [ ] Explain why "thin controller" is the most important principle of this lesson, and the cost of using `@Res()` without `passthrough`
+- [x] Write `TasksController` yourself with GET/POST/PATCH/DELETE routes, correctly wired into `TasksModule`
+- [x] Explain how Nest builds the routing map from `@Controller()` + method decorators via `reflect-metadata`
+- [x] Distinguish `@Param` (resource identifier, required) from `@Query` (filter/sort/pagination, optional)
+- [x] Correctly use `ParseIntPipe` to both transform and validate a route param, and know why a DTO must be a `class`
+- [x] Explain why "thin controller" is the most important principle of this lesson, and the cost of using `@Res()` without `passthrough`
+
+> Checked - `src/tasks/tasks.controller.ts` already has the full CRUD routes wired into `TasksModule` (re-confirmed via `pnpm test`/`pnpm test:e2e` under the 2026-08-24 exception), and Theory sections 1-7 below already explain all 5 objectives.
 
 ---
 
