@@ -1,9 +1,3 @@
-<!--
-Lesson note L05 — scaffold từ docs/templates/lesson-note.md ở bước /lesson-start.
-Đừng xoá mục nào: mỗi mục có một lý do sư phạm riêng, ghi trong comment.
-Mục 🛠 Hands-on do BẠN tự làm; mục ✅ Ôn tập & Quiz điền ở bước /lesson-review.
--->
-
 # L05 — DTO + Pipes + ValidationPipe
 
 |                |                                                                                                                   |
@@ -14,6 +8,10 @@ Mục 🛠 Hands-on do BẠN tự làm; mục ✅ Ôn tập & Quiz điền ở b
 | **Docs chính** | [/techniques/validation](https://docs.nestjs.com/techniques/validation) · [/pipes](https://docs.nestjs.com/pipes) |
 | **Ngày học**   | 2026-08-25                                                                                                        |
 
+> 📝 **Toàn bộ phần Hands-on + Quiz của lesson này được thực thi thay**, không phải "bạn tự làm" như scaffold gốc. Xem disclaimer ngay dưới đây trước khi đọc tiếp — đây là tuyên bố có hiệu lực.
+
+> ⚠️ **Disclaimer — execution substitute (2026-08-25):** Phần **🛠 Hands-on** (NES-60: DTO validation, `ValidationPipe` toàn cục, custom pipe, test case invalid → 400) được **Hermes/Codex thực thi thay** qua PR #78 (`Fixes NES-6`, branch `codex/nes-6-dto-pipes-validation`, merge commit `b3086f4`). Phần **✅ Ôn tập & Quiz** (NES-65) được **Claude Code thực thi thay** ở bước closeout ngay sau đó, dựa trên việc đọc lại diff PR #78 và docs gốc — không phải câu trả lời do Hien Duong tự nghĩ ra. Cả hai nằm trong **ngoại lệ user duyệt một lần (approved one-time exception, 2026-08-25)** vì user đang bận. Đây là **bằng chứng thực thi thay (execution substitute)**: code chạy thật, test pass thật (`pnpm test` 7 suites/20 tests, `pnpm test:e2e` 3 suites/13 tests, `pnpm verify` PASS), lý luận quiz dựa trên code thật — **KHÔNG phải xác nhận rằng Hien Duong đã tự tay code hands-on hoặc tự trả lời quiz này**. Muốn học thật, hãy tự làm lại hands-on và tự trả lời quiz trước khi đọc phần bên dưới.
+
 ---
 
 ## 🗂 File map lesson này
@@ -21,17 +19,17 @@ Mục 🛠 Hands-on do BẠN tự làm; mục ✅ Ôn tập & Quiz điền ở b
 > Bản đồ chính xác nhất + đọc từng file code (kèm số dòng): chạy `pnpm lesson 05`.
 > Bảng này là bản tóm tắt để đọc nhanh; cập nhật khi lesson xong.
 
-| File                                             | Vai trò (lý thuyết / ref / hands-on)                           | Tạo ở lesson | Trạng thái        |
-| ------------------------------------------------ | -------------------------------------------------------------- | ------------ | ----------------- |
-| `docs/lessons/05-dto-pipes-validation/README.md` | Lý thuyết + hướng dẫn hands-on + quiz                          | L05          | Mới               |
-| `docs/lessons/05-dto-pipes-validation/SPEC.md`   | Bản chiếu NES-6 + acceptance criteria cho reference impl       | L05          | Mới               |
-| `package.json` / `pnpm-lock.yaml`                | Thêm `class-validator` + `class-transformer` (bạn tự cài)      | —            | Sẽ sửa (hands-on) |
-| `src/tasks/dto/create-task.dto.ts`               | Hands-on — thêm validation decorator cho `title`               | L04          | Sẽ sửa (hands-on) |
-| `src/tasks/dto/update-task.dto.ts`               | Hands-on — mọi field optional + rule cho `completed`           | L04          | Sẽ sửa (hands-on) |
-| `src/tasks/tasks.controller.ts`                  | Hands-on — đổi `import type` DTO sang value import             | L02          | Sẽ sửa (hands-on) |
-| `src/main.ts` **hoặc** `src/app.module.ts`       | Hands-on — đăng ký `ValidationPipe` toàn cục (xem Khái niệm 6) | L01 / L04    | Sẽ sửa (hands-on) |
-| `src/tasks/pipes/<tên>.pipe.ts` + `.spec.ts`     | Hands-on — custom pipe tự viết + unit test                     | L05          | Dự kiến           |
-| `test/tasks.e2e-spec.ts`                         | Hands-on — thêm case DTO invalid → 400                         | L04          | Sẽ sửa (hands-on) |
+| File                                                         | Vai trò (lý thuyết / ref / hands-on)                        | Tạo ở lesson | Trạng thái                               |
+| ------------------------------------------------------------ | ----------------------------------------------------------- | ------------ | ---------------------------------------- |
+| `docs/lessons/05-dto-pipes-validation/README.md`             | Lý thuyết + hướng dẫn hands-on + quiz                       | L05          | Merged (PR #78)                          |
+| `docs/lessons/05-dto-pipes-validation/SPEC.md`               | Bản chiếu NES-6 + acceptance criteria cho reference impl    | L05          | Merged (PR #78)                          |
+| `package.json` / `pnpm-lock.yaml`                            | Thêm `class-validator` + `class-transformer`                | —            | ✅ Merged (PR #78, execution substitute) |
+| `src/tasks/dto/create-task.dto.ts`                           | Hands-on — thêm validation decorator cho `title`            | L04          | ✅ Merged (PR #78, execution substitute) |
+| `src/tasks/dto/update-task.dto.ts`                           | Hands-on — mọi field optional + rule cho `completed`        | L04          | ✅ Merged (PR #78, execution substitute) |
+| `src/tasks/tasks.controller.ts`                              | Hands-on — đổi `import type` DTO sang value import          | L02          | ✅ Merged (PR #78, execution substitute) |
+| `src/app.module.ts`                                          | Hands-on — đăng ký `ValidationPipe` toàn cục qua `APP_PIPE` | L01 / L04    | ✅ Merged (PR #78, execution substitute) |
+| `src/tasks/pipes/parse-completed-query.pipe.ts` + `.spec.ts` | Hands-on — custom pipe tự viết + unit test                  | L05          | ✅ Merged (PR #78, execution substitute) |
+| `test/tasks.e2e-spec.ts`                                     | Hands-on — thêm case DTO invalid → 400                      | L04          | ✅ Merged (PR #78, execution substitute) |
 
 ---
 
@@ -40,11 +38,13 @@ Mục 🛠 Hands-on do BẠN tự làm; mục ✅ Ôn tập & Quiz điền ở b
 <!-- 3-5 gạch đầu dòng ĐO ĐƯỢC. "Hiểu về controller" là không đo được.
      "Tự viết được controller có 5 route CRUD, giải thích được @Param vs @Query" là đo được. -->
 
-- [ ] Viết được `CreateTaskDto` / `UpdateTaskDto` bằng decorator của `class-validator`, giải thích được vì sao DTO phải là **class** chứ không phải `interface` hay `type`.
-- [ ] Bật `ValidationPipe` toàn cục và nói rõ khác biệt hành vi giữa `whitelist`, `forbidNonWhitelisted`, `transform` — mỗi option chặn/đổi cái gì.
-- [ ] Tự viết một custom pipe implement `PipeTransform`, bind đúng scope, và giải thích được vì sao pipe chạy _sau_ guard nhưng _trước_ handler.
-- [ ] Chứng minh bằng test: request có DTO sai trả **HTTP 400** với `message` mô tả field lỗi, và request có field lạ bị strip (hoặc bị chặn) đúng theo cấu hình.
-- [ ] Chỉ ra được 2 cái bẫy có thật trong repo này: `import type` cho DTO, và e2e test không chạy code trong `main.ts`.
+- [x] Viết được `CreateTaskDto` / `UpdateTaskDto` bằng decorator của `class-validator`, giải thích được vì sao DTO phải là **class** chứ không phải `interface` hay `type`.
+- [x] Bật `ValidationPipe` toàn cục và nói rõ khác biệt hành vi giữa `whitelist`, `forbidNonWhitelisted`, `transform` — mỗi option chặn/đổi cái gì.
+- [x] Tự viết một custom pipe implement `PipeTransform`, bind đúng scope, và giải thích được vì sao pipe chạy _sau_ guard nhưng _trước_ handler.
+- [x] Chứng minh bằng test: request có DTO sai trả **HTTP 400** với `message` mô tả field lỗi, và request có field lạ bị strip (hoặc bị chặn) đúng theo cấu hình.
+- [x] Chỉ ra được 2 cái bẫy có thật trong repo này: `import type` cho DTO, và e2e test không chạy code trong `main.ts`.
+
+> Đã tick dựa trên **bằng chứng thực thi thay** (code chạy thật + test pass thật ở PR #78, lý luận quiz dựa trên code thật) — **không phải** bằng chứng Hien Duong tự tay code hands-on hoặc tự trả lời quiz. Xem disclaimer đầu file.
 
 ## 📚 Lý thuyết
 
@@ -195,7 +195,10 @@ export interface ArgumentMetadata {
 | Prisma: `prisma.task.create({ data })` sẽ throw nếu `data` sai kiểu/thiếu field bắt buộc      | `ValidationPipe` chặn từ **biên HTTP**, trước khi chạm tới service/DB         | Prisma bảo vệ ở tầng dữ liệu và trả lỗi kỹ thuật (500 nếu không bắt); pipe bảo vệ ở tầng vào và trả 400 kèm thông điệp cho client. Hai lớp khác nhau, nên có cả hai. |
 | Hexagonal: DTO/command ở lớp adapter, entity ở lớp domain, có mapper ở giữa                   | DTO trong `src/<feature>/dto/` = input port của HTTP adapter; `Task` = domain | Nest không ép bạn tách, nên rất dễ trượt sang dùng chung một class cho cả HTTP lẫn domain. Giữ tách bạch là lựa chọn của bạn, không phải mặc định của framework.     |
 
-**Điều tôi từng hiểu sai:** <viết ra ngay khi phát hiện — đây là phần bạn sẽ đọc lại nhiều nhất>
+**Điều tôi từng hiểu sai:** Mục này thường ghi hiểu lầm **cá nhân** phát hiện lúc tự code — nhưng hands-on lesson này do Hermes/Codex thực thi thay (xem disclaimer đầu file), nên không có trải nghiệm cá nhân thật để ghi vào đây. Thay vào đó, đây là 2 điểm dễ hiểu lầm mà Claude Code phát hiện khi đọc lại diff PR #78 và issue Linear gốc — vẫn đáng đọc dù không phải bài học "xương máu" của chính người học:
+
+1. Issue Linear NES-6 viết "status là enum" ở phần Hands-on, dễ khiến người đọc nghĩ phải đổi model `Task`. PR #78 **giữ nguyên** `completed: boolean` (đúng lựa chọn mặc định đã ghi sẵn trong `SPEC.md` trước khi code) — câu chữ đó trong issue chỉ là ví dụ minh hoạ "rule hợp lý", không phải yêu cầu đổi contract.
+2. `whitelist: true` + `forbidNonWhitelisted: true` áp dụng qua `APP_PIPE` là **toàn app**, không chỉ riêng `tasks`. Vì vậy `CreateUserDto` (module khác, ngoài scope trực tiếp của NES-6) cũng phải nhận thêm decorator (`@IsEmail`, `@MaxLength`, `password?` optional) để `users.e2e-spec.ts` cũ không vỡ vì field lạ bị chặn — một thay đổi pipe global có tác dụng phụ tràn qua module không liên quan trực tiếp tới issue.
 
 ---
 
@@ -395,29 +398,50 @@ pnpm test:e2e
 - **ESLint đỏ vì `@typescript-eslint/no-unsafe-argument` hoặc `no-floating-promises`** → CI chạy `--max-warnings=0` nên warning cũng làm đỏ; sửa chứ đừng tắt rule.
 - **Lệch giữa issue và model hiện tại:** NES-6 nhắc "status là enum" nhưng repo đang dùng `completed: boolean`. Mặc định của lesson này là **giữ `completed`** — xem mục "Điểm cần user quyết định" trong `SPEC.md` nếu bạn muốn đổi thật.
 
+### ✅ Bằng chứng thực thi thay — PR #78 (kết quả thật, không phải hướng dẫn)
+
+> Xem disclaimer đầu file: phần dưới đây mô tả code **đã chạy thật** trong PR #78 (`codex/nes-6-dto-pipes-validation` → `main`, merge `b3086f4`), không phải việc Hien Duong tự làm.
+
+**0. Dependency (AC1).** `class-validator@0.15.1` + `class-transformer@0.5.1` nằm trong `dependencies` (không phải `devDependencies`) của `package.json`, `pnpm-lock.yaml` cập nhật cùng commit.
+
+**1–2. DTO.** `src/tasks/dto/create-task.dto.ts`: `title` bắt buộc (`@IsString @IsNotEmpty`), chặn chuỗi toàn khoảng trắng bằng `@Matches(/\S/)` (`@IsNotEmpty()` một mình không đủ vì `"   "` không rỗng theo độ dài string), `@MaxLength(200)`. `src/tasks/dto/update-task.dto.ts`: mọi field `@IsOptional()`, `title` áp cùng rule với `create`, `completed` dùng `@IsBoolean()` — **từ chối** `"true"` dạng string, đúng lựa chọn "từ chối" đặt ra ở yêu cầu 2.
+
+**3. `ValidationPipe` toàn cục qua `APP_PIPE` — vì sao không chọn `main.ts`.** `src/app.module.ts` đăng ký `new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })` qua token `APP_PIPE` (từ `@nestjs/core`) trong `providers` của `AppModule`, kèm comment ngay trong code: _"APP_PIPE covers both src/main.ts bootstrap and createNestApplication e2e apps."_ Đây là phương án (a) của Khái niệm 6 / `SPEC.md` AC4 — bắt buộc vì `test/tasks.e2e-spec.ts` dựng app bằng `Test.createTestingModule({ imports: [AppModule] }).createNestApplication()`, **không** chạy `main.ts`; nếu chọn `app.useGlobalPipes()` trong `main.ts`, toàn bộ case 400 mới thêm ở AC7 sẽ fail trong e2e dù `curl` thủ công qua `pnpm start:dev` vẫn đúng.
+
+**4. Value import (AC5).** `src/tasks/tasks.controller.ts` đổi `import type { CreateTaskDto }` / `import type { UpdateTaskDto }` sang value import (`import { CreateTaskDto } from './dto/create-task.dto'`), giữ `import type { Task }` riêng vì `Task` không cần metadata runtime (không phải DTO qua `@Body()`).
+
+**5. Custom pipe (AC6).** `src/tasks/pipes/parse-completed-query.pipe.ts`: `ParseCompletedQueryPipe implements PipeTransform<string | undefined, string | undefined>` — chuẩn hoá query `completed` (`'true'|'1'` → `'true'`, `'false'|'0'` → `'false'`, giá trị khác → `BadRequestException`), bind ở `@Query('completed', ParseCompletedQueryPipe)` trong `findAll()` (scope parameter, không global — đúng gợi ý "đừng viết lại `ParseIntPipe`"). Unit test cạnh file (`parse-completed-query.pipe.spec.ts`) cover 4 giá trị canonical, giá trị `undefined`, và giá trị không hợp lệ ném exception.
+
+**6–7. Test case DTO invalid → 400 (AC7, `test/tasks.e2e-spec.ts`).** Case thật đang chạy: `POST /tasks {}` → 400, `message` chứa `"title"`; `POST /tasks {title: ''}` và `{title: '   '}` → 400; `POST /tasks {title: 123}` (sai kiểu) → 400; `POST /tasks {title: 'x'.repeat(201)}` (vượt `MaxLength`) → 400; `POST /tasks {title: 'ok', hacker: true}` → 400 (do `forbidNonWhitelisted`, không phải strip + 201); `PATCH /tasks/:id {completed: 'yes'}` → 400; `PATCH /tasks/:id {title: '   '}` → 400; `GET /tasks?completed=maybe` → 400 (qua `ParseCompletedQueryPipe`); `GET /tasks/abc` → 400 (regression `ParseIntPipe` từ L02, vẫn còn nguyên).
+
+**Contract giữ nguyên (AC9).** `POST /tasks` hợp lệ vẫn trả `{ id, title, completed }`; `GET /tasks` vẫn có header `Cache-Control: no-store`; `DELETE /tasks/:id` vẫn `204`. Test CRUD flow cũ (`supports the complete in-memory CRUD flow`) pass không sửa logic.
+
+**Tác dụng phụ ngoài scope NES-6.** Vì `APP_PIPE` là global, `src/users/dto/create-user.dto.ts` cũng cần thêm decorator (`@MaxLength(80)` cho `name`, `password?` optional với `@IsString @MaxLength(200)`) để `test/users.e2e-spec.ts` cũ không vỡ vì `forbidNonWhitelisted`; `password` vẫn không xuất hiện trong response (do logic loại trừ hiện có ở service/mapping, không phải do whitelist của pipe).
+
+**Kết quả verify (đọc lại tại thời điểm closeout, khớp PR #78):** `pnpm test` — 7 suites / 20 tests pass. `pnpm test:e2e` — 3 suites / 13 tests pass. `pnpm verify` (lint `--max-warnings=0` + prettier check + jest + build) — PASS. Merge commit `b3086f4`.
+
 ---
 
 ## ✅ Ôn tập & Quiz
 
-<!-- Điền sau bước /lesson-review. Trả lời bằng lời của mình, KHÔNG copy đáp án.
-     Nếu không tự trả lời được thì lesson chưa xong — quay lại phần Lý thuyết. -->
+> Trả lời dưới đây là **bằng chứng thực thi thay** của Claude Code (xem disclaimer đầu file), dựa trực tiếp trên code thật trong PR #78 và docs gốc — không phải câu trả lời tự nghĩ của Hien Duong.
 
 1. **Hỏi:** DTO trong Nest bắt buộc là `class`, không dùng được `interface`. Cơ chế nào ở runtime khiến điều đó là bắt buộc, và `import type { CreateTaskDto }` phá vỡ nó ở đúng chỗ nào trong `transform()` của pipe?
-   **Trả lời:**
+   **Trả lời:** Nest đọc kiểu tham số handler lúc runtime qua `emitDecoratorMetadata` (bật trong `tsconfig.json`) và gắn kiểu đó vào `ArgumentMetadata.metatype` truyền cho pipe. Chỉ **class** còn tồn tại sau khi TypeScript biên dịch ra JS — `interface`/`type` bị xoá hoàn toàn, không còn gì để `metatype` trỏ tới. `import type { CreateTaskDto }` phá vỡ đúng ở dòng đầu tiên của `transform()` trong `ValidationPipe` (xem Ví dụ 3): `if (!metatype || !this.toValidate(metatype)) { return value; }`. Vì `import type` bị TypeScript xoá hoàn toàn lúc compile (cùng hiệu ứng với `interface`), tham số `createTaskDto: CreateTaskDto` sẽ có `metatype` là `undefined` lúc chạy thật — pipe rơi vào nhánh `return value`, trả nguyên giá trị chưa qua `plainToInstance`/`validate`. Đây chính là lỗi có thật đã tồn tại trong `tasks.controller.ts` trước PR #78, và đã được sửa bằng value import.
 
 2. **Hỏi:** Bạn bật `whitelist: true` nhưng **không** bật `forbidNonWhitelisted`. Client gửi thừa một field. Chuyện gì xảy ra với request đó, và tại sao đây có thể là hành vi nguy hiểm hơn là trả 400?
-   **Trả lời:**
+   **Trả lời:** `whitelist: true` một mình chỉ **xoá âm thầm** property không có validation decorator khỏi object mà `class-transformer` dựng ra — request vẫn trả `201`, service nhận object đã bị strip, nhưng client **không nhận được thông báo gì** về việc field của họ bị bỏ. Nguy hiểm hơn trả 400 vì: (1) client thấy `201` = "thành công" nên tưởng field đã được lưu, trong khi dữ liệu đó đã biến mất — một bug im lặng khó debug; (2) nó che giấu lỗi thật của client (ví dụ typo tên field) thay vì báo ngay, khiến lỗi tích tụ và chỉ lộ ra muộn hơn, ở một chỗ khó truy ngược nguyên nhân. `forbidNonWhitelisted: true` (PR #78 đã chọn, luôn đi kèm `whitelist: true`) đổi hành vi đó thành `400` tức thì với `message` nêu rõ field bị chặn.
 
 3. **Hỏi:** `transform: true` làm hai việc khác nhau. Kể tên cả hai, và cho biết nếu đã bật `transform: true` thì `@Param('id', ParseIntPipe)` trong `tasks.controller.ts` còn cần thiết không — vì sao bạn vẫn muốn (hoặc không muốn) giữ nó?
-   **Trả lời:**
+   **Trả lời:** Hai việc: (1) `plainToInstance` dựng **instance thật** của DTO từ plain object — mắt xích bắt buộc để decorator `class-validator` có tác dụng, vì `validate()` không thấy được decorator trên một plain object thuần; (2) **ép kiểu nguyên thuỷ** theo chữ ký khai trong handler, ví dụ `@Param('id') id: number` sẽ tự đổi `"7"` (string từ URL) thành `7` — "implicit conversion", không cần `ParseIntPipe` riêng. Trong `tasks.controller.ts` thật của repo, `@Param('id', ParseIntPipe)` **vẫn được giữ** dù `transform: true` đã bật toàn cục qua `APP_PIPE`. Lý do hợp lý để giữ: nó tài liệu hoá ngay tại chữ ký route rằng `id` phải là số — ai đọc code không cần biết `transform: true` đang bật ở `AppModule` mới hiểu; nó cũng là pipe đã có từ L02, và AC7 của `SPEC.md` ghi rõ case `GET /tasks/abc → 400` là "regression cho `ParseIntPipe` đã có từ L02" — PR #78 chủ định giữ nguyên làm điểm neo, không đổi sang dựa hẳn vào implicit conversion mới (đúng AC9: không đổi contract sẵn có).
 
 4. **Hỏi:** Đăng ký `ValidationPipe` bằng `app.useGlobalPipes()` trong `main.ts` khác gì với đăng ký bằng provider `APP_PIPE` trong `AppModule`? Nêu **hai** khác biệt, trong đó có một khác biệt bạn đã gặp trực tiếp khi viết e2e test của lesson này.
-   **Trả lời:**
+   **Trả lời:** Khác biệt 1 — **inject dependency**: `app.useGlobalPipes(new ValidationPipe())` trong `main.ts` chỉ gọi hàm với instance dựng tay, không qua DI container của Nest, nên pipe đó không thể inject provider khác. `APP_PIPE` là một provider token thật trong `providers` của `AppModule` (dùng `useFactory`), nên có thể inject dependency như mọi provider khác. Khác biệt 2 — **có hiệu lực trong e2e hay không**, và đây chính là điều gặp trực tiếp khi làm lesson này: `test/tasks.e2e-spec.ts` dựng app bằng `Test.createTestingModule({ imports: [AppModule] }).createNestApplication()` — `bootstrap()` trong `main.ts` **không bao giờ chạy** trên đường này. PR #78 chọn `APP_PIPE` trong `AppModule` chính vì lý do đó (comment trong code: _"APP_PIPE covers both src/main.ts bootstrap and createNestApplication e2e apps"_) — nếu chọn `main.ts`, toàn bộ 9 case `400` mới thêm vào `tasks.e2e-spec.ts` sẽ fail hết dù `curl` thủ công qua `pnpm start:dev` vẫn đúng.
 
 5. **Hỏi:** Pipe chạy sau Guard nhưng trước Handler. Nếu bạn muốn viết một pipe tra Task từ `id` rồi trả về entity cho handler, việc đặt logic đó ở pipe có ưu/nhược gì so với để service tự `findOne()` trong handler? Khi nào bạn sẽ **không** chọn cách pipe?
-   **Trả lời:**
+   **Trả lời:** Ưu điểm đặt logic tra cứu vào pipe: handler nhận thẳng entity đã tồn tại (không cần gọi lại `findOne()`), và lỗi "not found" bị chặn sớm hơn trong request lifecycle (ở Pipe, trước Handler); nếu nhiều route cùng cần "tra rồi mới xử lý", logic viết một lần rồi bind lại nhiều nơi. Nhược điểm: pipe chỉ nhận đúng giá trị của **một** argument (`ArgumentMetadata.data` là tên tham số đó) — nếu việc tra cứu cần thêm ngữ cảnh từ argument khác (ví dụ phải biết `userId` từ token để kiểm tra task có thuộc project của user không), pipe không có sẵn quyền truy cập toàn bộ chữ ký handler nên logic dễ bị cắt khúc. Trong repo hiện tại, `TasksService.findOne()` **đã** ném lỗi not-found sẵn — chuyển logic đó vào pipe sẽ **trùng lặp** với service, và vi phạm đúng quy tắc "business logic không nằm ngoài service" mà repo đang theo (tra entity theo id vẫn là business logic, dù nó chạy trong pipe hay controller). Sẽ **không chọn cách pipe** khi: (1) việc tra cứu cần nhiều hơn một tham số của request (auth, quyền sở hữu qua nhiều argument); (2) service đã có sẵn logic tra + lỗi chuẩn — tách ra pipe chỉ tạo thêm một chỗ nữa phải đồng bộ mỗi khi entity đổi cấu trúc.
 
-**Ôn lại lesson trước:** <một câu nối kiến thức lesson này với lesson trước — điền ở bước `/lesson-review`>
+**Ôn lại lesson trước:** _(điền ở bước `/lesson-review` — dưới đây được Claude Code điền thay ở bước closeout, dựa trên đọc code, không phải hồi tưởng cá nhân của user)_ L04 dựng xong `TasksService`/`TasksModule` với CRUD in-memory, chưa chặn gì ở biên HTTP — `POST /tasks` với body bất kỳ đều lọt tới service. L05 thêm đúng lớp còn thiếu đó: `ValidationPipe` (qua `APP_PIPE`) chặn ở tầng Pipe, **trước khi** request chạm vào chính `TasksService` mà L04 đã xây — cùng một service, không sửa logic của nó, chỉ thêm một lớp phòng thủ phía trước.
 
 ---
 
@@ -435,7 +459,9 @@ pnpm test:e2e
 
 ## 🚧 Ranh giới cho reference implementation (coder agent)
 
-> Chỉ áp dụng **sau khi** bạn đã tự xong hands-on (NES-60). Lời giải tham chiếu là để đối chiếu, không phải để thay thế — xem `docs/workflow/AGENT-MODEL.md`.
+> Đã thực thi qua PR #78 dưới ngoại lệ execution substitute (xem disclaimer đầu file) — ranh giới dưới đây là điều kiện đã được đặt ra **trước khi** chạy, giữ nguyên làm hồ sơ, không phải việc còn phải làm.
+
+> Bình thường chỉ áp dụng **sau khi** bạn đã tự xong hands-on (NES-60). Lời giải tham chiếu là để đối chiếu, không phải để thay thế — xem `docs/workflow/AGENT-MODEL.md`.
 
 - Spec bàn giao: [`SPEC.md`](SPEC.md) (Phần B = acceptance criteria, Phần C = ranh giới file). Coder agent **chỉ đọc**, không sửa `SPEC.md`.
 - Được sửa: `src/**`, `test/**`, và `package.json` + `pnpm-lock.yaml` (chỉ để thêm `class-validator`, `class-transformer`).
