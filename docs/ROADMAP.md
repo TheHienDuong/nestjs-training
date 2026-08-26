@@ -61,11 +61,13 @@ Mọi link `docs.nestjs.com/...` dưới đây đã được đối chiếu vớ
 | L   | Lesson                                                            | Trạng thái | Docs                                                                                                                                |
 | --- | ----------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | L05 | DTO + Pipes + ValidationPipe (class-validator, class-transformer) | ✅         | [/techniques/validation](https://docs.nestjs.com/techniques/validation) · [/pipes](https://docs.nestjs.com/pipes)                   |
-| L06 | Configuration & environment variables                             | 🟦         | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)                                                       |
+| L06 | Configuration & environment variables                             | ✅         | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)                                                       |
 | L07 | Prisma + PostgreSQL: `PrismaService`, lifecycle hooks             | ⬜         | [/recipes/prisma](https://docs.nestjs.com/recipes/prisma) · [prisma.io/docs](https://www.prisma.io/docs)                            |
 | L08 | Schema, relations, migrations, seed                               | ⬜         | [/techniques/database](https://docs.nestjs.com/techniques/database) · [Prisma schema](https://www.prisma.io/docs/orm/prisma-schema) |
 
 > ⚠️ L05 chuyển sang ✅ ngày 2026-08-25 sau khi reference implementation NES-6 merge (PR #78, `b3086f4`, CI xanh: `pnpm test` 7 suites/20 tests, `pnpm test:e2e` 3 suites/13 tests, `pnpm verify` PASS). Hands-on (NES-60) được **Hermes/Codex thực thi thay** và quiz (NES-65) được **Claude Code thực thi thay**, cả hai dưới ngoại lệ user duyệt một lần (2026-08-25) vì user đang bận — không phải bằng chứng Hien Duong tự tay làm. Xem disclaimer trong `docs/lessons/05-dto-pipes-validation/README.md`.
+>
+> ⚠️ L06 chuyển sang ✅ ngày 2026-08-26 sau khi reference implementation NES-7 merge (PR #82, `f496a77`, CI xanh: `pnpm test` 9 suites/28 tests, `pnpm test:e2e` 3 suites/13 tests, `pnpm verify` PASS). Hands-on (NES-72) được **Hermes/Codex thực thi thay** và quiz (NES-77) được **Claude Code thực thi thay**, cả hai dưới ngoại lệ user duyệt một lần (execution-substitute authorization, 2026-08-26) vì user đang bận — không phải bằng chứng Hien Duong tự tay làm. Xem disclaimer trong `docs/lessons/06-configuration/README.md`.
 
 **Ôn kiến thức cũ:** Bạn đã dùng Prisma với Express — giờ so sánh cách bọc `PrismaClient` thành một **provider** để Nest quản lý vòng đời, thay vì import một singleton toàn cục.
 

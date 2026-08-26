@@ -1,8 +1,10 @@
+> ✅ **Verified implementation — execution substitute (2026-08-26):** Thực thi qua PR #82 (`Fixes NES-7`, merge `f496a77`) dưới ngoại lệ user duyệt một lần. Lựa chọn B (`class-validator`, 0 dependency validate mới). Chi tiết bằng chứng: xem disclaimer + mục "✅ Bằng chứng thực thi thay" trong `README.md`.
+
 ## 🎯 Mục tiêu học
 
-- [ ] Dùng `@nestjs/config` với `ConfigModule.forRoot`
-- [ ] Validate schema biến môi trường (Joi hoặc class-validator) — app từ chối start nếu thiếu env
-- [ ] Inject `ConfigService` thay vì đọc `process.env` trực tiếp trong business logic
+- [x] Dùng `@nestjs/config` với `ConfigModule.forRoot`
+- [x] Validate schema biến môi trường (Joi hoặc class-validator) — app từ chối start nếu thiếu env
+- [x] Inject `ConfigService` thay vì đọc `process.env` trực tiếp trong business logic
 
 ## 📚 Tài liệu chính thống
 
@@ -19,5 +21,7 @@ Express + `dotenv`: đọc `process.env.X` rải rác khắp nơi, không ai đ�
 
 ## ✅ Definition of Done
 
-- [ ] Lesson note đầy đủ
-- [ ] Test pass, quiz pass, PR merged
+- [x] Lesson note đầy đủ
+- [x] Test pass, quiz pass, PR merged
+
+> Tick dựa trên bằng chứng thực thi thay (PR #82 merged, CI xanh, quiz do Claude Code trả lời thay ở bước closeout) — xem disclaimer đầu file này và trong `README.md`.
