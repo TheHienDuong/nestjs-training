@@ -8,6 +8,10 @@
 | **Docs chính** | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)    |
 | **Ngày học**   | 2026-08-26                                                                       |
 
+> 📝 **Toàn bộ phần Hands-on + Quiz của lesson này được thực thi thay**, không phải "bạn tự làm" như scaffold gốc. Xem disclaimer ngay dưới đây trước khi đọc tiếp — đây là tuyên bố có hiệu lực.
+
+> ⚠️ **Disclaimer — execution substitute (2026-08-26):** Phần **🛠 Hands-on** (NES-72: cài `@nestjs/config`, viết `src/config/env.validation.ts` bằng `class-validator`, đăng ký `ConfigModule.forRoot` trong `app.module.ts`, sửa `main.ts` đọc `PORT` qua `ConfigService`) được **Hermes/Codex thực thi thay** qua PR #82 (`Fixes NES-7`, branch `codex/nes-7-l06-config-implementation`, merge commit `f496a77`). Phần **✅ Ôn tập & Quiz** (NES-77) được **Claude Code thực thi thay** ở bước closeout, dựa trên đọc lại diff PR #82 và docs gốc — không phải câu trả lời do Hien Duong tự nghĩ ra. Cả hai nằm trong **ngoại lệ user duyệt một lần (approved one-time execution-substitute authorization, 2026-08-26)** vì user đang bận. Đây là **bằng chứng thực thi thay**: code chạy thật, test pass thật (`pnpm test` 9 suites/28 tests, `pnpm test:e2e` 3 suites/13 tests, `pnpm verify` PASS — verify lại tại thời điểm closeout), lý luận quiz dựa trên code thật — **KHÔNG phải xác nhận rằng Hien Duong đã tự tay code hands-on hoặc tự trả lời quiz này**. Muốn học thật, hãy tự làm lại hands-on và tự trả lời quiz trước khi đọc phần bên dưới.
+
 ---
 
 ## 🗂 File map lesson này
@@ -15,22 +19,29 @@
 > Bản đồ chính xác nhất + đọc từng file code (kèm số dòng): chạy `pnpm lesson 06`.
 > Bảng này là bản tóm tắt để đọc nhanh; cập nhật khi lesson xong.
 
-| File                                            | Vai trò (lý thuyết / ref / hands-on)                                         | Tạo ở lesson | Trạng thái                       |
-| ----------------------------------------------- | ---------------------------------------------------------------------------- | ------------ | -------------------------------- |
-| `docs/lessons/06-configuration/README.md`       | Lý thuyết + hướng dẫn hands-on + quiz                                        | L06          | Lý thuyết xong, chờ hands-on     |
-| `docs/lessons/06-configuration/SPEC.md`         | Bản chiếu NES-7 cho coder agent                                              | L06          | Mới                              |
-| `.env.example`                                  | **Đã tồn tại từ L00** — inspect/mở rộng khi hands-on, KHÔNG tạo file mới     | L00          | Sẽ sửa ở hands-on nếu thiếu biến |
-| `src/config/env.validation.ts` _(chưa tồn tại)_ | Hands-on — schema validate (Joi hoặc class-validator, bạn chọn)              | —            | Chưa tạo                         |
-| `src/app.module.ts`                             | Hands-on — đăng ký `ConfigModule.forRoot(...)`, `isGlobal: true`             | L01/L04      | Sẽ sửa ở hands-on                |
-| `src/main.ts`                                   | Hands-on — đổi `process.env.PORT` trực tiếp sang `ConfigService.get('PORT')` | L01          | Sẽ sửa ở hands-on                |
+| File                                      | Vai trò (lý thuyết / ref / hands-on)                                                                                        | Tạo ở lesson | Trạng thái                               |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------- |
+| `docs/lessons/06-configuration/README.md` | Lý thuyết + hướng dẫn hands-on + quiz                                                                                       | L06          | Merged (PR #81, closeout ở bước này)     |
+| `docs/lessons/06-configuration/SPEC.md`   | Bản chiếu NES-7 cho coder agent                                                                                             | L06          | Merged (PR #81)                          |
+| `.env.example`                            | **Đã tồn tại từ L00** — không cần thêm biến mới, chỉ `NODE_ENV`/`PORT` được dùng và validate                                | L00          | Không đổi — đã đủ biến cần validate      |
+| `package.json` / `pnpm-lock.yaml`         | Thêm dependency `@nestjs/config@^4.0.4` (0 dependency validate mới — tái dùng `class-validator`/`class-transformer` từ L05) | —            | ✅ Merged (PR #82, execution substitute) |
+| `src/config/env.validation.ts`            | Hands-on — schema validate bằng `class-validator` (Lựa chọn B, Khái niệm 4)                                                 | L06          | ✅ Merged (PR #82, execution substitute) |
+| `src/config/env.validation.spec.ts`       | Test — config hợp lệ + 6 case invalid → throw                                                                               | L06          | ✅ Merged (PR #82, execution substitute) |
+| `src/app.module.ts`                       | Hands-on — đăng ký `ConfigModule.forRoot({ isGlobal: true, validate })`                                                     | L01/L04      | ✅ Merged (PR #82, execution substitute) |
+| `src/main.ts`                             | Hands-on — đổi `process.env.PORT ?? 3000` sang `app.get(ConfigService).get('PORT')`, throw nếu `undefined`                  | L01          | ✅ Merged (PR #82, execution substitute) |
+| `src/main.spec.ts`                        | Test — `bootstrap()` đọc `PORT` qua `ConfigService` trước khi `listen()`                                                    | L06          | ✅ Merged (PR #82, execution substitute) |
+| `test/setup-env.ts`                       | Test setup — cấp `NODE_ENV`/`PORT` không-bí-mật cho e2e (e2e không chạy `main.ts`)                                          | L06          | ✅ Merged (PR #82, execution substitute) |
+| `test/jest-e2e.json`                      | Sửa — thêm `setupFiles: ["<rootDir>/setup-env.ts"]`                                                                         | L02          | ✅ Merged (PR #82, execution substitute) |
 
 ---
 
 ## 🎯 Mục tiêu
 
-- [ ] Dùng `@nestjs/config` với `ConfigModule.forRoot`
-- [ ] Validate schema biến môi trường (Joi hoặc class-validator) — app từ chối start nếu thiếu env
-- [ ] Inject `ConfigService` thay vì đọc `process.env` trực tiếp trong business logic
+- [x] Dùng `@nestjs/config` với `ConfigModule.forRoot`
+- [x] Validate schema biến môi trường (Joi hoặc class-validator) — app từ chối start nếu thiếu env
+- [x] Inject `ConfigService` thay vì đọc `process.env` trực tiếp trong business logic
+
+> Đã tick dựa trên **bằng chứng thực thi thay** (code chạy thật + test pass thật ở PR #82) — **không phải** bằng chứng Hien Duong tự tay code hands-on. Xem disclaimer đầu file.
 
 ## 📚 Lý thuyết
 
@@ -196,7 +207,10 @@ export function validate(
 | Prisma: `DATABASE_URL` trong `.env`, `PrismaClient` tự đọc qua `dotenv`/biến môi trường process khi khởi tạo              | Từ L07, `DATABASE_URL` sẽ được đọc qua `ConfigService` rồi truyền vào `PrismaService`, không để Prisma tự đọc `process.env` ngầm                                                   | Cùng nguồn `.env`, nhưng NestJS tập trung việc đọc + validate vào 1 lớp, Prisma chỉ nhận giá trị đã được xác nhận hợp lệ                                          |
 | Hexagonal architecture: domain/business logic không phụ thuộc trực tiếp vào hạ tầng (DB, file system, env thật)           | `ConfigService` đóng vai trò **adapter** giữa "thế giới bên ngoài" (`process.env`, file `.env`) và domain code — domain chỉ biết `configService.get('X')`, không biết `.env` ở đâu | `process.env.X` gọi trực tiếp trong service = domain code rò rỉ biết về hạ tầng (đúng thứ hexagonal muốn tránh); `ConfigService` là 1 port/adapter tường minh hơn |
 
-**Điều tôi từng hiểu sai:** _(để trống — điền khi bạn tự làm hands-on và phát hiện chỗ hiểu nhầm thật của chính mình, không copy từ note này)_
+**Điều tôi từng hiểu sai:** Mục này thường ghi hiểu lầm **cá nhân** phát hiện lúc tự code — nhưng hands-on lesson này do Hermes/Codex thực thi thay (xem disclaimer đầu file), nên không có trải nghiệm cá nhân thật để ghi vào đây. Thay vào đó, đây là 2 điểm dễ hiểu lầm mà Claude Code phát hiện khi đọc lại diff PR #82 so với các ví dụ minh hoạ ở trên:
+
+1. Ví dụ 2 minh hoạ `configService.get<number>('PORT', 3000)` — có default value ngay tại lời gọi `get()`. Code thật trong `src/main.ts` **không** truyền default: `app.get(ConfigService).get<number>('PORT')`, kèm throw tường minh nếu `undefined`. Đây là chủ đích, không phải thiếu sót: `validate()` đã chạy trong `ConfigModule.forRoot()` **trước** dòng này, nên tới lúc `main.ts` chạy tới `app.listen()`, `PORT` chắc chắn đã là số hợp lệ — thêm default ở đây sẽ là dead code, hoặc tệ hơn, âm thầm che một vi phạm invariant nếu nó thực sự xảy ra (bug ở chỗ khác khiến `ConfigService` trả `undefined` dù `validate()` đã pass).
+2. `env.validation.ts` không dùng `enableImplicitConversion: true` như minh hoạ ở Khái niệm 4 — thay vào đó tự converts `PORT` sang `Number` bằng tay, và **chỉ** khi giá trị là string không rỗng sau `trim()`. Lý do: implicit conversion mặc định của `class-transformer` sẽ biến chuỗi rỗng `PORT=""` thành `0` (một số hợp lệ theo `@Min(0)`), khiến case "quên điền `PORT`" lọt qua validate thay vì bị chặn — một edge case tinh vi hơn ví dụ đơn giản trong phần Lý thuyết.
 
 ---
 
@@ -321,24 +335,46 @@ pnpm test:e2e  # xem lưu ý bên dưới trước khi chạy — main.ts không
 - Nếu app vẫn start được dù bạn xoá biến: kiểm tra lại `validate`/`validationSchema` có thực sự được truyền vào `ConfigModule.forRoot({...})` chưa — copy-paste thiếu field là lỗi phổ biến nhất.
 - Nếu lỗi báo "Cannot find module 'joi'": bạn chọn Lựa chọn A nhưng quên `pnpm add joi` ở bước 2.
 
+### ✅ Bằng chứng thực thi thay — PR #82 (kết quả thật, không phải hướng dẫn)
+
+> Xem disclaimer đầu file: phần dưới đây mô tả code **đã chạy thật** trong PR #82 (`codex/nes-7-l06-config-implementation` → `main`, merge `f496a77`), không phải việc Hien Duong tự làm. Không tìm thấy file sentinel `.hermes/runs/*.json` cho lần thực thi này (khác các lesson trước có dispatch qua pane) — bằng chứng ở đây là PR đã merge + GitHub Actions CI xanh + verify lại tại thời điểm closeout.
+
+**0. Dependency.** `@nestjs/config@^4.0.4` thêm vào `dependencies` của `package.json`, `pnpm-lock.yaml` cập nhật cùng commit. **Lựa chọn B** ở Khái niệm 4 (`class-validator`, không phải Joi) — 0 dependency validate mới, tái dùng `class-validator`/`class-transformer` đã có từ L05.
+
+**1. `src/config/env.validation.ts` (AC validate).** Enum `NodeEnvironment` (`development`/`production`/`test`). Class `EnvironmentVariables`: `NODE_ENV` (`@IsDefined @IsEnum(NodeEnvironment)`), `PORT` (`@IsDefined @IsNumber({allowInfinity:false,allowNaN:false}) @IsInt @Min(0) @Max(65535)`). Hàm `validate()` tự convert `PORT` sang `Number` chỉ khi là string không rỗng sau `trim()` (tránh bug chuỗi rỗng → `0`, xem mục "Điều tôi từng hiểu sai"), rồi `plainToInstance` + `validateSync({ skipMissingProperties: false })`; throw `Error` liệt kê đủ property/message nếu invalid.
+
+**2. `src/app.module.ts`.** `ConfigModule.forRoot({ isGlobal: true, validate })` là import đầu tiên trong mảng `imports`, kèm comment giải thích lý do chọn `class-validator` thay vì thêm Joi.
+
+**3. `src/main.ts`.** `bootstrap()` đổi thành `export async function` (để test được), đọc `const port = app.get(ConfigService).get<number>('PORT')` — không truyền default (xem "Điều tôi từng hiểu sai" #1) — throw `Error` tường minh nếu `undefined`, rồi `app.listen(port)`.
+
+**4. Test.** `src/config/env.validation.spec.ts`: 1 case config hợp lệ trả instance đúng type + `it.each` 5 case invalid (thiếu `NODE_ENV`, thiếu `PORT`, `NODE_ENV` sai giá trị, `PORT` không phải số, `PORT` chuỗi rỗng) đều throw đúng tên property, cộng 1 case `PORT` vượt range TCP (65536). `src/main.spec.ts`: mock `NestFactory.create`, xác nhận `bootstrap()` gọi đúng thứ tự `app.get(ConfigService)` → `configService.get('PORT')` → `app.listen(port)` với giá trị đã resolve.
+
+**5. E2E setup.** `test/tasks.e2e-spec.ts` v.v. dựng app qua `Test.createTestingModule({ imports: [AppModule] }).createNestApplication()` — **không chạy `main.ts`**, nhưng vẫn import `AppModule` nên `ConfigModule.forRoot({ validate })` vẫn chạy validate lúc `createTestingModule()`. `test/setup-env.ts` (mới, chạy qua `setupFiles` trong `test/jest-e2e.json`) cấp `process.env.NODE_ENV ??= 'test'` và `process.env.PORT ??= '3000'` — giá trị không bí mật — để việc import đó không throw trong môi trường e2e.
+
+**Contract giữ nguyên.** `main.ts` vẫn gọi `app.listen(port)` đúng 1 lần với port dạng số; hành vi khi `PORT` hợp lệ không đổi — chỉ đổi khi `PORT` thiếu/sai (từ chối start thay vì fallback im lặng), đúng mục tiêu của lesson, không phải phá contract.
+
+**Kết quả verify (chạy lại tại thời điểm closeout, 2026-08-26, khớp CI của PR #82):** `pnpm test` — 9 suites / 28 tests pass. `pnpm test:e2e` — 3 suites / 13 tests pass (không có case e2e mới, đúng lưu ý ở trên: `main.ts` không chạy qua e2e). `pnpm verify` (lint `--max-warnings=0` + prettier check + jest + build) — PASS. GitHub Actions CI trên PR #82 (`Lint · Test · Build`) — SUCCESS, merge commit `f496a77543c4f2d073284ee7400127b86f8aa139`.
+
 ---
 
 ## ✅ Ôn tập & Quiz
 
+> Trả lời dưới đây là **bằng chứng thực thi thay** của Claude Code (xem disclaimer đầu file), dựa trực tiếp trên code thật trong PR #82 và docs gốc — không phải câu trả lời tự nghĩ của Hien Duong.
+
 1. **Hỏi:** Nếu `ConfigModule` không đặt `isGlobal: true`, điều gì xảy ra khi một feature module (ví dụ `TasksModule`) cố inject `ConfigService` mà không tự `imports: [ConfigModule]`? Việc bắt buộc mỗi module tự khai báo `imports: [ConfigModule]` có lợi gì cho ranh giới hexagonal (ports & adapters) mà `isGlobal: true` làm mất đi?
-   **Trả lời:** ...
+   **Trả lời:** `ConfigModule` không đặt `isGlobal: true` thì chỉ tồn tại trong phạm vi module đã import nó (ở đây là `AppModule`) — DI của Nest xét theo phạm vi module. `TasksModule` cố inject `ConfigService` mà không `imports: [ConfigModule]` sẽ khiến Nest ném lỗi ngay lúc bootstrap (`NestFactory.create`), dạng `UnknownDependenciesException`: _"Nest can't resolve dependencies of the TasksService (?). Please make sure that the argument ConfigService at index [0] is available in the TasksModule context"_ — một kiểu lỗi "từ chối start" khác, do module graph không giải được, chứ không phải do `validate()` trong Khái niệm 4. Lợi ích của việc bắt mỗi module tự khai báo `imports: [ConfigModule]`: `imports` của một module trở thành danh sách tường minh mọi port/adapter hạ tầng mà nó phụ thuộc — đọc riêng file module là biết đủ, không cần biết wiring toàn app. `isGlobal: true` đánh đổi sự tường minh đó lấy tiện lợi (không phải lặp lại import ở mọi feature module) — đúng như tradeoff đã nêu ở Khái niệm 3.
 
 2. **Hỏi:** `validationSchema` (Joi) và `validate()` (custom, dùng `class-validator`) khác nhau ở phạm vi áp dụng như thế nào — cụ thể là với object trả về từ `load: [customFactory]`? Vì sao sự khác biệt này sẽ quan trọng khi bạn viết `database.config.ts` bằng `registerAs()` ở Lesson 07?
-   **Trả lời:** ...
+   **Trả lời:** Cả hai cơ chế chỉ chạy trên object phẳng `process.env`/`.env` mà `ConfigModule` gộp được **trước khi** các `load` factory chạy — không cơ chế nào tự động validate **giá trị trả về** của `load: [factory]`/`registerAs()`, vì factory đó tự tạo ra object lồng nhau tuỳ ý (không còn là raw string từ env nữa). Ở L07, nếu `database.config.ts` viết bằng `registerAs('database', () => ({ url: process.env.DATABASE_URL, ... }))`, một `DATABASE_URL` thiếu/sai sẽ **không** bị bắt bởi `validate()` hiện có trong `env.validation.ts` — hoặc phải thêm `DATABASE_URL` vào chính class `EnvironmentVariables` để nó được validate ở bước raw-env, hoặc factory phải tự throw nếu giá trị không hợp lệ; nếu bỏ qua cả hai, lỗi chỉ lộ ra muộn hơn — lúc `PrismaClient` thực sự cố connect — phá đúng mục tiêu "fail fast lúc bootstrap" mà lesson này đang xây.
 
 3. **Hỏi:** `ignoreEnvFile: true` và có `validationSchema`/`validate` cùng lúc có mâu thuẫn không? Giải thích chính xác nguồn dữ liệu nào bị validate trong trường hợp đó.
-   **Trả lời:** ...
+   **Trả lời:** Không mâu thuẫn — hai option trả lời hai câu hỏi khác nhau. `ignoreEnvFile: true` chỉ quyết định **nguồn** giá trị: có đọc file `.env` hay không (đúng cho production thật, nơi platform inject thẳng vào `process.env`, không kèm file `.env`). `validate`/`validationSchema` luôn chạy trên **kết quả cuối cùng** đang có trong `process.env` tại thời điểm `ConfigModule.forRoot()` resolve — bất kể giá trị đó tới từ đâu. Khi `ignoreEnvFile: true`, tập giá trị bị validate chỉ còn là biến do platform set thẳng vào `process.env` (không có phần merge từ `.env`); khi không bật, tập đó là `process.env` đã merge với `.env` (biến shell thật đè lên `.env`). Tức là `ignoreEnvFile` quyết định **input**, còn `validate`/`validationSchema` quyết định **input đó có được chấp nhận hay không** — hai lớp độc lập, kết hợp được, không loại trừ nhau.
 
 4. **Hỏi:** Vì sao `await app.listen(process.env.PORT ?? 3000)` (code hiện tại trong `main.ts`) được xem là một "silent fallback" nguy hiểm hơn cả việc không có fallback? Sau khi bạn sửa bằng `ConfigService` + schema validate, hành vi mong đợi khi `PORT` bị đặt thành một chuỗi không phải số (ví dụ `PORT=abc`) là gì — khác gì so với trước khi sửa?
-   **Trả lời:** ...
+   **Trả lời:** `??` chỉ kích hoạt khi giá trị là `null`/`undefined`. Một giá trị **có tồn tại nhưng sai định dạng** như `PORT=abc` không phải `undefined`, nên `??` không bắt được — chuỗi `"abc"` bị truyền thẳng vào `app.listen()`, khiến app bind cổng sai/không như ý mà **không hề có lỗi rõ ràng chỉ đúng vào `PORT`** — nguy hiểm hơn "không có fallback" vì nó che giấu lỗi cấu hình thật thay vì báo ngay. Sau khi sửa (PR #82): `PORT=abc` bị `validate()` trong `env.validation.ts` bắt được ngay trong `ConfigModule.forRoot()` — `@IsInt()`/`@IsNumber()` fail, `validate()` throw `Error` mô tả đúng field `PORT`, exception này trồi lên trước khi `NestFactory.create()` trả về, nên tiến trình dừng **trước khi chạm tới dòng `app.listen()`** — khác hẳn trước khi sửa, nơi request vẫn "chạy" (bind cổng sai trong im lặng) thay vì dừng hẳn với lỗi rõ ràng.
 
 5. **Hỏi:** `test/*.e2e-spec.ts` dựng app qua `Test.createTestingModule().createNestApplication()`, không chạy qua `main.ts`. Điều này nghĩa là gì cho việc viết test tự động kiểm tra "app từ chối start khi thiếu env bắt buộc"? Bạn sẽ đặt test đó ở đâu, kiểm tra cái gì trực tiếp?
-   **Trả lời:** ...
+   **Trả lời:** Vì `bootstrap()` trong `main.ts` (dòng `app.get(ConfigService).get('PORT')` + throw nếu `undefined`) không bao giờ được e2e chạy tới, e2e **không thể** chứng minh "tiến trình từ chối start" theo đúng nghĩa end-to-end. Bằng chứng thật phải nằm ở tầng unit, đúng hai chỗ thực sự enforce fail-fast: `src/config/env.validation.spec.ts` gọi trực tiếp `validate(config)` với các tổ hợp `NODE_ENV`/`PORT` thiếu/sai và assert nó throw (đây là nơi chứng minh thật "app từ chối start khi env sai", không cần dựng app nào cả); `src/main.spec.ts` mock `NestFactory.create` để assert `bootstrap()` gọi đúng `app.get(ConfigService)` → `.get('PORT')` → `app.listen()` theo đúng thứ tự. Hai test này (đã có sẵn trong PR #82) cùng nhau cover đúng hai điểm mà e2e về cấu trúc không chạm tới được.
 
 **Ôn lại lesson trước:** L05 dùng DTO + `ValidationPipe` để validate dữ liệu ở **biên HTTP request** (client gửi gì vào, chặn ngay nếu sai). L06 áp dụng đúng triết lý "fail fast ở biên" đó cho một biên khác: **biên process** (biến môi trường app nhận lúc khởi động) — cùng một nguyên tắc, hai vị trí khác nhau trong request/process lifecycle.
 
@@ -349,8 +385,8 @@ pnpm test:e2e  # xem lưu ý bên dưới trước khi chạy — main.ts không
 1. `ConfigService` tập trung việc đọc biến môi trường + validate ngay lúc bootstrap, thay cho `process.env.X` rải rác không ai đảm bảo tồn tại.
 2. `isGlobal: true` tránh phải `imports: [ConfigModule]` lặp lại ở mọi feature module — đổi lại là ranh giới dependency giữa các module bị mờ đi.
 3. `validationSchema` (Joi) chỉ soi các key trong `.env`/`process.env`; object từ `load: [customFactory]`/`registerAs()` **không** tự được validate — phải tự viết logic đó trong factory.
-4. Có 2 cách fail-fast tương đương: Joi (`validationSchema`, thêm 1 dependency mới) hoặc `validate()` với `class-validator` (0 dependency mới, đã có từ L05) — đây là lựa chọn của bạn, không có đáp án đúng duy nhất.
-5. `src/main.ts` hiện tại đọc `process.env.PORT ?? 3000` trực tiếp — đây chính là dòng lesson này yêu cầu sửa, và test e2e hiện tại sẽ không phát hiện được nếu bạn sửa sai (vì e2e không chạy qua `main.ts`).
+4. Có 2 cách fail-fast tương đương: Joi (`validationSchema`, thêm 1 dependency mới) hoặc `validate()` với `class-validator` (0 dependency mới, đã có từ L05) — đây là lựa chọn của bạn, không có đáp án đúng duy nhất. **PR #82 chọn Lựa chọn B** (`class-validator`) — 0 dependency validate mới.
+5. `src/main.ts` (trước PR #82) đọc `process.env.PORT ?? 3000` trực tiếp — đây chính là dòng lesson này yêu cầu sửa; test e2e hiện tại không phát hiện được lỗi ở dòng đó (vì e2e không chạy qua `main.ts`) — coverage thật nằm ở `env.validation.spec.ts` + `main.spec.ts` (unit), không phải e2e.
 
 ---
 
