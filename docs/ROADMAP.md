@@ -61,7 +61,7 @@ All `docs.nestjs.com/...` links below have been verified against the actual rout
 | L   | Lesson                                                            | Status | Docs                                                                                                                                |
 | --- | ----------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | L05 | DTO + Pipes + ValidationPipe (class-validator, class-transformer) | ✅     | [/techniques/validation](https://docs.nestjs.com/techniques/validation) · [/pipes](https://docs.nestjs.com/pipes)                   |
-| L06 | Configuration & environment variables                             | ⬜     | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)                                                       |
+| L06 | Configuration & environment variables                             | 🟦     | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)                                                       |
 | L07 | Prisma + PostgreSQL: `PrismaService`, lifecycle hooks             | ⬜     | [/recipes/prisma](https://docs.nestjs.com/recipes/prisma) · [prisma.io/docs](https://www.prisma.io/docs)                            |
 | L08 | Schema, relations, migrations, seed                               | ⬜     | [/techniques/database](https://docs.nestjs.com/techniques/database) · [Prisma schema](https://www.prisma.io/docs/orm/prisma-schema) |
 
