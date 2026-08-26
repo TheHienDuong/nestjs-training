@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import type { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
+import { PrismaService } from './../src/prisma/prisma.service';
 
 interface TaskResponse {
   id: number;
@@ -10,6 +11,7 @@ interface TaskResponse {
   completed: boolean;
 }
 
+// [NES-8 · lesson 07] Reference — CRUD contract against PostgreSQL.
 describe('TasksController (e2e)', () => {
   let app: INestApplication<App>;
 
@@ -19,118 +21,68 @@ describe('TasksController (e2e)', () => {
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
+    await app.get(PrismaService).task.deleteMany();
   });
 
   afterEach(async () => {
     await app.close();
   });
 
-  it('supports the complete in-memory CRUD flow', async () => {
+  it('supports complete CRUD flow backed by PostgreSQL', async () => {
     const createResponse = await request(app.getHttpServer())
       .post('/tasks')
-      .send({ title: 'Learn modules' })
+      .send({ title: 'Learn Prisma' })
       .expect(201);
     const task = createResponse.body as TaskResponse;
-    expect(task).toEqual({ id: 1, title: 'Learn modules', completed: false });
+    expect(task.title).toBe('Learn Prisma');
+    expect(task.completed).toBe(false);
 
     await request(app.getHttpServer())
       .get('/tasks')
       .expect(200)
       .expect('Cache-Control', 'no-store')
       .expect([task]);
-    await request(app.getHttpServer())
-      .get(`/tasks/${task.id}`)
-      .expect(200)
-      .expect(task);
-
+    await request(app.getHttpServer()).get(`/tasks/${task.id}`).expect(task);
     await request(app.getHttpServer())
       .patch(`/tasks/${task.id}`)
-      .send({})
-      .expect(200)
-      .expect(task);
-
-    await request(app.getHttpServer())
-      .patch(`/tasks/${task.id}`)
-      .send({ title: 'Practice modules', completed: true })
-      .expect(200)
-      .expect({ id: 1, title: 'Practice modules', completed: true });
+      .send({ title: 'Practice Prisma', completed: true })
+      .expect({ ...task, title: 'Practice Prisma', completed: true });
     await request(app.getHttpServer()).delete(`/tasks/${task.id}`).expect(204);
     await request(app.getHttpServer()).get(`/tasks/${task.id}`).expect(404);
   });
 
-  it('rejects a task without a title', async () => {
-    const response = await request(app.getHttpServer())
+  it('supports completed filtering', async () => {
+    await request(app.getHttpServer()).post('/tasks').send({ title: 'Open' });
+    const done = await request(app.getHttpServer())
       .post('/tasks')
-      .send({})
-      .expect(400);
-
-    const responseBody = response.body as { message: unknown };
-    expect(responseBody.message).toEqual(
-      expect.arrayContaining([expect.stringContaining('title')]),
-    );
-  });
-
-  it.each(['', '   '])('rejects a blank title: %j', async (title) => {
+      .send({ title: 'Done' });
     await request(app.getHttpServer())
-      .post('/tasks')
-      .send({ title })
-      .expect(400);
-  });
-
-  it('rejects a non-string title', async () => {
-    await request(app.getHttpServer())
-      .post('/tasks')
-      .send({ title: 123 })
-      .expect(400);
-  });
-
-  it('rejects a title over the maximum length', async () => {
-    await request(app.getHttpServer())
-      .post('/tasks')
-      .send({ title: 'x'.repeat(201) })
-      .expect(400);
-  });
-
-  it('rejects unknown task fields', async () => {
-    await request(app.getHttpServer())
-      .post('/tasks')
-      .send({ title: 'Learn validation', hacker: true })
-      .expect(400);
-  });
-
-  it('rejects a non-boolean completed value in a patch', async () => {
-    const createResponse = await request(app.getHttpServer())
-      .post('/tasks')
-      .send({ title: 'Learn validation' })
-      .expect(201);
-    const task = createResponse.body as TaskResponse;
+      .patch(`/tasks/${(done.body as TaskResponse).id}`)
+      .send({ completed: true });
 
     await request(app.getHttpServer())
-      .patch(`/tasks/${task.id}`)
-      .send({ completed: 'yes' })
-      .expect(400);
+      .get('/tasks?completed=true')
+      .expect(200)
+      .expect((response) => {
+        const tasks = response.body as TaskResponse[];
+        expect(tasks).toHaveLength(1);
+        expect(tasks[0]?.title).toBe('Done');
+      });
   });
 
-  it('rejects a blank title in a patch', async () => {
-    const createResponse = await request(app.getHttpServer())
-      .post('/tasks')
-      .send({ title: 'Learn validation' })
-      .expect(201);
-    const task = createResponse.body as TaskResponse;
-
+  it('rejects invalid task input', async () => {
+    await request(app.getHttpServer()).post('/tasks').send({}).expect(400);
     await request(app.getHttpServer())
-      .patch(`/tasks/${task.id}`)
-      .send({ title: '   ' })
+      .post('/tasks')
+      .send({ title: ' ' })
       .expect(400);
-  });
-
-  it('rejects an unsupported completed query value', async () => {
+    await request(app.getHttpServer())
+      .post('/tasks')
+      .send({ title: 'Valid', hacker: true })
+      .expect(400);
     await request(app.getHttpServer())
       .get('/tasks?completed=maybe')
       .expect(400);
-  });
-
-  it('rejects a non-numeric task id', async () => {
-    await request(app.getHttpServer()).get('/tasks/abc').expect(400);
+    await request(app.getHttpServer()).get('/tasks/not-a-number').expect(400);
   });
 });

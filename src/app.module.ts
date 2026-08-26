@@ -7,6 +7,7 @@ import { validate } from './config/env.validation';
 import { TasksModule } from './tasks/tasks.module';
 import { TasksConfigModule } from './tasks/tasks-config.module';
 import { UsersModule } from './users/users.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   // AppModule composes feature modules; it does not own their controllers/providers.
@@ -19,6 +20,7 @@ import { UsersModule } from './users/users.module';
       validate,
     }),
     UsersModule,
+    PrismaModule,
     TasksModule,
     TasksConfigModule.forRoot({ appName: 'nestjs-training' }),
   ],
