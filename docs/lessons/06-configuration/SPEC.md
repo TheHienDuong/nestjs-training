@@ -1,8 +1,10 @@
+> ✅ **Verified implementation — execution substitute (2026-08-26):** Executed via PR #82 (`Fixes NES-7`, merge `f496a77`) under the one-time user-approved exception. Option B (`class-validator`, 0 new validation dependency). Evidence details: see the disclaimer + the "✅ Execution-substitute evidence" section in `README.md`.
+
 ## 🎯 Learning objectives
 
-- [ ] Use `@nestjs/config` with `ConfigModule.forRoot`
-- [ ] Validate the environment variable schema (Joi or class-validator) — the app refuses to start if a variable is missing
-- [ ] Inject `ConfigService` instead of reading `process.env` directly in business logic
+- [x] Use `@nestjs/config` with `ConfigModule.forRoot`
+- [x] Validate the environment variable schema (Joi or class-validator) — the app refuses to start if a variable is missing
+- [x] Inject `ConfigService` instead of reading `process.env` directly in business logic
 
 ## 📚 Official documentation
 
@@ -19,5 +21,7 @@ Express + `dotenv`: reads `process.env.X` scattered everywhere, nothing guarante
 
 ## ✅ Definition of Done
 
-- [ ] Lesson note complete
-- [ ] Tests pass, quiz pass, PR merged
+- [x] Lesson note complete
+- [x] Tests pass, quiz pass, PR merged
+
+> Checked based on execution-substitute evidence (PR #82 merged, CI green, quiz answered as a substitute by Claude Code at closeout) — see the disclaimer at the top of this file and in `README.md`.

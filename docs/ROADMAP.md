@@ -61,13 +61,15 @@ All `docs.nestjs.com/...` links below have been verified against the actual rout
 | L   | Lesson                                                            | Status | Docs                                                                                                                                |
 | --- | ----------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | L05 | DTO + Pipes + ValidationPipe (class-validator, class-transformer) | ✅     | [/techniques/validation](https://docs.nestjs.com/techniques/validation) · [/pipes](https://docs.nestjs.com/pipes)                   |
-| L06 | Configuration & environment variables                             | 🟦     | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)                                                       |
+| L06 | Configuration & environment variables                             | ✅     | [/techniques/configuration](https://docs.nestjs.com/techniques/configuration)                                                       |
 | L07 | Prisma + PostgreSQL: `PrismaService`, lifecycle hooks             | ⬜     | [/recipes/prisma](https://docs.nestjs.com/recipes/prisma) · [prisma.io/docs](https://www.prisma.io/docs)                            |
 | L08 | Schema, relations, migrations, seed                               | ⬜     | [/techniques/database](https://docs.nestjs.com/techniques/database) · [Prisma schema](https://www.prisma.io/docs/orm/prisma-schema) |
 
 **Review prior knowledge:** You have used Prisma with Express — now compare how wrapping `PrismaClient` into a **provider** lets Nest manage its lifecycle, instead of importing a global singleton.
 
 > WARNING L05 flipped to ✅ on 2026-08-25 after the NES-6 reference implementation merged (PR #78, `b3086f4`, CI green: `pnpm test` 7 suites/20 tests, `pnpm test:e2e` 3 suites/13 tests, `pnpm verify` PASS). The Hands-on (NES-60) was **executed as a substitute by Hermes/Codex** and the quiz (NES-65) was **executed as a substitute by Claude Code**, both under a one-time user-approved exception (2026-08-25) because the user was busy — not evidence Hien Duong did it personally. See the disclaimer in `docs/lessons/05-dto-pipes-validation/README.md`.
+>
+> WARNING L06 flipped to ✅ on 2026-08-26 after the NES-7 reference implementation merged (PR #82, `f496a77`, CI green: `pnpm test` 9 suites/28 tests, `pnpm test:e2e` 3 suites/13 tests, `pnpm verify` PASS). The Hands-on (NES-72) was **executed as a substitute by Hermes/Codex** and the quiz (NES-77) was **executed as a substitute by Claude Code**, both under a one-time user-approved exception (execution-substitute authorization, 2026-08-26) because the user was busy — not evidence Hien Duong did it personally. See the disclaimer in `docs/lessons/06-configuration/README.md`.
 
 ---
 
