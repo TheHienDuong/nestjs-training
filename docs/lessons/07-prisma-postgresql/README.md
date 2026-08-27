@@ -1,12 +1,12 @@
 # L07 — Prisma + PostgreSQL: PrismaService
 
-|                |                                                              |
-| -------------- | ------------------------------------------------------------ |
-| **Phase**      | 2 — Working with Data                                        |
-| **Linear**     | NES-8 (sub-issue: NES-81 Theory & note)                      |
-| **Branch**     | `duongthehien2001/nes-8-l07-prisma-postgresql-prismaservice` |
-| **Docs chính** | [/recipes/prisma](https://docs.nestjs.com/recipes/prisma)    |
-| **Ngày học**   | 2026-08-26                                                   |
+|                |                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------- |
+| **Phase**      | 2 — Working with Data                                                                       |
+| **Linear**     | NES-8 (sub-issue: NES-81 Theory & note)                                                     |
+| **Branch**     | `codex/nes-8-l07-prisma-postgresql-prismaservice` (PR #87, reference implementation merged) |
+| **Docs chính** | [/recipes/prisma](https://docs.nestjs.com/recipes/prisma)                                   |
+| **Ngày học**   | 2026-08-26                                                                                  |
 
 > 📝 **Toàn bộ phần Hands-on + Quiz của lesson này được thực thi thay**, không phải "bạn tự làm" như
 > scaffold gốc. Xem disclaimer ngay dưới đây trước khi đọc tiếp — đây là tuyên bố có hiệu lực.
@@ -36,6 +36,11 @@
 > ở trên lấy theo quy ước sub-issue của NES-8 do user cung cấp trực tiếp, **chưa được tự xác minh
 > live status/checklist trên Linear**. Cập nhật trạng thái Linear (nếu cần) là việc riêng, không nằm
 > trong phạm vi closeout docs-only này.
+>
+> ⚠️ **Bản EN (`example/nestjs-training`): CHƯA có mirror cho L07.** Không có commit nào trên branch
+> đó nhắc tới lesson 07/NES-8/NES-81 dưới bất kỳ hình thức nào — đây là **pending**, không phải đã
+> làm và bỏ sót ghi chú. Đừng coi 2 bản vi/en đang song song cho L07; mirror EN là việc còn lại,
+> chưa có bằng chứng parity hay hoàn thành ở thời điểm closeout này.
 
 ---
 
@@ -588,6 +593,9 @@ test chạy với Postgres thật). `pnpm build` (`nest build`) — PASS. GitHub
       tự làm lại quiz.
 - [x] PR merged — PR #87 (`Fixes NES-8`) và PR #88 (`Fixes NES-81`) đã merge vào `main`, CI xanh cả
       hai (`5791085`, `8283a3f`).
+- [ ] Bản EN (`example/nestjs-training`) mirror L07 — **PENDING**, chưa có commit nào trên branch đó
+      cho lesson 07/NES-8/NES-81. Không coi 2 bản vi/en đang song song cho lesson này cho tới khi
+      mục này được tick.
 
 ---
 
