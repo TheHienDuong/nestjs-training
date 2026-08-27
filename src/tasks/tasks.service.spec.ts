@@ -1,6 +1,14 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { TasksService } from './tasks.service';
+
+function recordNotFoundError(): Prisma.PrismaClientKnownRequestError {
+  return new Prisma.PrismaClientKnownRequestError(
+    'An operation failed because it depends on one or more records that were required but not found.',
+    { code: 'P2025', clientVersion: '6.19.3' },
+  );
+}
 
 // [NES-8 · lesson 07] Reference — service behavior with Prisma mocked at the boundary.
 describe('TasksService', () => {
@@ -60,14 +68,49 @@ describe('TasksService', () => {
 
   it('updates and deletes an existing task', async () => {
     const task = { id: 1, title: 'Task', completed: false };
-    prisma.task.findUnique.mockResolvedValue(task);
     prisma.task.update.mockResolvedValue({ ...task, completed: true });
+    prisma.task.delete.mockResolvedValue(task);
 
     await expect(service.update(1, { completed: true })).resolves.toEqual({
       ...task,
       completed: true,
     });
+    expect(prisma.task.update).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: { completed: true },
+    });
+
     await expect(service.remove(1)).resolves.toBeUndefined();
     expect(prisma.task.delete).toHaveBeenCalledWith({ where: { id: 1 } });
+  });
+
+  it('maps a Prisma P2025 error to NotFoundException on update, without a prior existence check', async () => {
+    prisma.task.update.mockRejectedValue(recordNotFoundError());
+
+    await expect(service.update(999, { completed: true })).rejects.toThrow(
+      'Task 999 not found',
+    );
+    expect(prisma.task.findUnique).not.toHaveBeenCalled();
+  });
+
+  it('maps a Prisma P2025 error to NotFoundException on remove, without a prior existence check', async () => {
+    prisma.task.delete.mockRejectedValue(recordNotFoundError());
+
+    await expect(service.remove(999)).rejects.toThrow('Task 999 not found');
+    expect(prisma.task.findUnique).not.toHaveBeenCalled();
+  });
+
+  it('rethrows non-P2025 Prisma errors from update/remove unchanged', async () => {
+    const otherError = new Prisma.PrismaClientKnownRequestError(
+      'Unique constraint failed.',
+      { code: 'P2002', clientVersion: '6.19.3' },
+    );
+    prisma.task.update.mockRejectedValue(otherError);
+    prisma.task.delete.mockRejectedValue(otherError);
+
+    await expect(service.update(1, { completed: true })).rejects.toBe(
+      otherError,
+    );
+    await expect(service.remove(1)).rejects.toBe(otherError);
   });
 });
