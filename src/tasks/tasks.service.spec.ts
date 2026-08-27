@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,6 +8,13 @@ function recordNotFoundError(): Prisma.PrismaClientKnownRequestError {
   return new Prisma.PrismaClientKnownRequestError(
     'An operation failed because it depends on one or more records that were required but not found.',
     { code: 'P2025', clientVersion: '6.19.3' },
+  );
+}
+
+function foreignKeyConstraintError(): Prisma.PrismaClientKnownRequestError {
+  return new Prisma.PrismaClientKnownRequestError(
+    'Foreign key constraint failed on the field: `projectId`',
+    { code: 'P2003', clientVersion: '6.19.3' },
   );
 }
 
@@ -47,6 +55,29 @@ describe('TasksService', () => {
     expect(prisma.task.create).toHaveBeenCalledWith({
       data: { title: task.title },
     });
+  });
+
+  it('creates a task with an optional project/assignee through Prisma', async () => {
+    const task = {
+      id: 2,
+      title: 'Relational task',
+      completed: false,
+      projectId: 10,
+      assigneeId: 5,
+    };
+    prisma.task.create.mockResolvedValue(task);
+
+    const dto = { title: task.title, projectId: 10, assigneeId: 5 };
+    await expect(service.create(dto)).resolves.toEqual(task);
+    expect(prisma.task.create).toHaveBeenCalledWith({ data: dto });
+  });
+
+  it('maps a Prisma P2003 error to BadRequestException on create', async () => {
+    prisma.task.create.mockRejectedValue(foreignKeyConstraintError());
+
+    await expect(
+      service.create({ title: 'Orphan task', projectId: 999 }),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('filters tasks through Prisma', async () => {
@@ -91,6 +122,14 @@ describe('TasksService', () => {
       'Task 999 not found',
     );
     expect(prisma.task.findUnique).not.toHaveBeenCalled();
+  });
+
+  it('maps a Prisma P2003 error to BadRequestException on update', async () => {
+    prisma.task.update.mockRejectedValue(foreignKeyConstraintError());
+
+    await expect(service.update(1, { projectId: 999 })).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('maps a Prisma P2025 error to NotFoundException on remove, without a prior existence check', async () => {
