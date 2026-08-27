@@ -1,22 +1,14 @@
 import { Module } from '@nestjs/common';
+import { PrismaModule } from '../prisma/prisma.module';
 import { TasksConfigModule } from './tasks-config.module';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
 
-// [NES-5 · lesson 04] Reference — feature module boundary.
+// [NES-8 · lesson 07] Reference — feature module with database dependency.
 @Module({
-  // Imports make the dynamic feature configuration available in this module scope.
-  imports: [TasksConfigModule.forFeature('crud')],
+  imports: [PrismaModule, TasksConfigModule.forFeature('crud')],
   controllers: [TasksController],
-  providers: [
-    TasksService,
-    {
-      // Custom providers can use a token instead of a class as their lookup key.
-      provide: 'TASK_ID_START',
-      useFactory: (): number => 1,
-    },
-  ],
-  // Export only what another module intentionally needs; controllers stay private.
+  providers: [TasksService],
   exports: [TasksService],
 })
 export class TasksModule {}
