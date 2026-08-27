@@ -4,6 +4,8 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { TasksService } from './tasks.service';
 
+const TASK_SELECT = { id: true, title: true, completed: true };
+
 function recordNotFoundError(): Prisma.PrismaClientKnownRequestError {
   return new Prisma.PrismaClientKnownRequestError(
     'An operation failed because it depends on one or more records that were required but not found.',
@@ -54,6 +56,7 @@ describe('TasksService', () => {
     await expect(service.create({ title: task.title })).resolves.toEqual(task);
     expect(prisma.task.create).toHaveBeenCalledWith({
       data: { title: task.title },
+      select: TASK_SELECT,
     });
   });
 
@@ -69,7 +72,32 @@ describe('TasksService', () => {
 
     const dto = { title: task.title, projectId: 10, assigneeId: 5 };
     await expect(service.create(dto)).resolves.toEqual(task);
-    expect(prisma.task.create).toHaveBeenCalledWith({ data: dto });
+    expect(prisma.task.create).toHaveBeenCalledWith({
+      data: dto,
+      select: TASK_SELECT,
+    });
+  });
+
+  it('derives completed from status on create (status is the source of truth)', async () => {
+    const task = { id: 3, title: 'Ship it', completed: true };
+    prisma.task.create.mockResolvedValue(task);
+
+    await service.create({ title: task.title, status: 'DONE' });
+    expect(prisma.task.create).toHaveBeenCalledWith({
+      data: { title: task.title, status: 'DONE', completed: true },
+      select: TASK_SELECT,
+    });
+  });
+
+  it('derives completed=false on create for a non-DONE status', async () => {
+    const task = { id: 4, title: 'In flight', completed: false };
+    prisma.task.create.mockResolvedValue(task);
+
+    await service.create({ title: task.title, status: 'IN_PROGRESS' });
+    expect(prisma.task.create).toHaveBeenCalledWith({
+      data: { title: task.title, status: 'IN_PROGRESS', completed: false },
+      select: TASK_SELECT,
+    });
   });
 
   it('maps a Prisma P2003 error to BadRequestException on create', async () => {
@@ -88,6 +116,7 @@ describe('TasksService', () => {
     expect(prisma.task.findMany).toHaveBeenCalledWith({
       where: { completed: true },
       orderBy: { id: 'asc' },
+      select: TASK_SELECT,
     });
   });
 
@@ -95,9 +124,13 @@ describe('TasksService', () => {
     prisma.task.findUnique.mockResolvedValue(null);
 
     await expect(service.findOne(999)).rejects.toThrow('Task 999 not found');
+    expect(prisma.task.findUnique).toHaveBeenCalledWith({
+      where: { id: 999 },
+      select: TASK_SELECT,
+    });
   });
 
-  it('updates and deletes an existing task', async () => {
+  it('updates and deletes an existing task, preserving completed behavior when status is omitted', async () => {
     const task = { id: 1, title: 'Task', completed: false };
     prisma.task.update.mockResolvedValue({ ...task, completed: true });
     prisma.task.delete.mockResolvedValue(task);
@@ -109,10 +142,35 @@ describe('TasksService', () => {
     expect(prisma.task.update).toHaveBeenCalledWith({
       where: { id: 1 },
       data: { completed: true },
+      select: TASK_SELECT,
     });
 
     await expect(service.remove(1)).resolves.toBeUndefined();
     expect(prisma.task.delete).toHaveBeenCalledWith({ where: { id: 1 } });
+  });
+
+  it('derives completed from status on update, overriding an explicit conflicting completed', async () => {
+    const task = { id: 1, title: 'Task', completed: true };
+    prisma.task.update.mockResolvedValue(task);
+
+    await service.update(1, { status: 'DONE', completed: false });
+    expect(prisma.task.update).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: { status: 'DONE', completed: true },
+      select: TASK_SELECT,
+    });
+  });
+
+  it('derives completed=false from a non-DONE status on update, even without an explicit completed', async () => {
+    const task = { id: 1, title: 'Task', completed: false };
+    prisma.task.update.mockResolvedValue(task);
+
+    await service.update(1, { status: 'TODO' });
+    expect(prisma.task.update).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: { status: 'TODO', completed: false },
+      select: TASK_SELECT,
+    });
   });
 
   it('maps a Prisma P2025 error to NotFoundException on update, without a prior existence check', async () => {
