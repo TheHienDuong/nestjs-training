@@ -1,7 +1,9 @@
 // [NES-5 · lesson 04] Reference — create DTO at the HTTP boundary.
 // [NES-9 · lesson 08] project/assignee/description/status/priority/dueDate
 // added — all optional, so the L07 title-only contract keeps working.
-import { Type } from 'class-transformer';
+// [NES-121 · lesson 08 corrective] projectId/assigneeId reject boolean input
+// instead of silently coercing it to 0/1 — see reject-boolean-id.transform.ts.
+import { Transform, Type } from 'class-transformer';
 import {
   IsDate,
   IsEnum,
@@ -14,6 +16,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { TaskPriority, TaskStatus } from '@prisma/client';
+import { rejectBooleanId } from './reject-boolean-id.transform';
 
 export class CreateTaskDto {
   @IsString()
@@ -43,13 +46,13 @@ export class CreateTaskDto {
   dueDate?: Date;
 
   @IsOptional()
-  @Type(() => Number)
+  @Transform(rejectBooleanId)
   @IsInt()
   @IsPositive()
   projectId?: number;
 
   @IsOptional()
-  @Type(() => Number)
+  @Transform(rejectBooleanId)
   @IsInt()
   @IsPositive()
   assigneeId?: number;

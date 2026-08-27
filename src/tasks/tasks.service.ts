@@ -3,25 +3,45 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, TaskPriority, TaskStatus } from '@prisma/client';
+import { Prisma, TaskStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
 // [NES-8 · lesson 07] Reference — database-backed task provider.
-// [NES-9 · lesson 08] Expanded with the relational columns added to the
-// Task model (project/assignee stay optional — see prisma/schema.prisma).
+// [NES-9 · lesson 08] The relational/status/priority columns live on the
+// Task model (project/assignee stay optional — see prisma/schema.prisma),
+// but are written-only for now.
+// [NES-121 · lesson 08 corrective] Response shape stays { id, title,
+// completed } (docs/lessons/05-dto-pipes-validation/SPEC.md AC9) — the new
+// scalar columns are not exposed over HTTP at this lesson.
 export interface Task {
   id: number;
   title: string;
   completed: boolean;
-  description: string | null;
-  status: TaskStatus;
-  priority: TaskPriority;
-  dueDate: Date | null;
-  projectId: number | null;
-  assigneeId: number | null;
-  createdAt: Date;
+}
+
+const TASK_SELECT = {
+  id: true,
+  title: true,
+  completed: true,
+} satisfies Prisma.TaskSelect;
+
+// [NES-121 · lesson 08 corrective] `status` and `completed` were two
+// independent fields with no reconciliation, so PATCH { status: 'DONE' }
+// left `completed` stale (and GET /tasks?completed=false could still return
+// a DONE task). Rule: whenever a caller sends `status`, it is the single
+// source of truth and `completed` is derived from it (DONE -> true,
+// otherwise -> false), overriding any `completed` sent in the same request.
+// Callers that omit `status` keep the pre-NES-121 behavior — `completed` is
+// written exactly as given, untouched by `status`.
+function reconcileCompleted<
+  T extends { status?: TaskStatus; completed?: boolean },
+>(dto: T): T {
+  if (dto.status === undefined) {
+    return dto;
+  }
+  return { ...dto, completed: dto.status === TaskStatus.DONE };
 }
 
 // Prisma throws P2025 ("record to update/delete not found") when a where-unique
@@ -54,7 +74,10 @@ export class TasksService {
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
     try {
-      return await this.prisma.task.create({ data: createTaskDto });
+      return await this.prisma.task.create({
+        data: reconcileCompleted(createTaskDto),
+        select: TASK_SELECT,
+      });
     } catch (error) {
       if (isForeignKeyConstraintError(error)) {
         throw new BadRequestException(
@@ -73,11 +96,15 @@ export class TasksService {
           ? undefined
           : { completed: completed === 'true' },
       orderBy: { id: 'asc' },
+      select: TASK_SELECT,
     });
   }
 
   async findOne(id: number): Promise<Task> {
-    const task = await this.prisma.task.findUnique({ where: { id } });
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+      select: TASK_SELECT,
+    });
     if (!task) {
       throw new NotFoundException(`Task ${id} not found`);
     }
@@ -88,7 +115,8 @@ export class TasksService {
     try {
       return await this.prisma.task.update({
         where: { id },
-        data: updateTaskDto,
+        data: reconcileCompleted(updateTaskDto),
+        select: TASK_SELECT,
       });
     } catch (error) {
       if (isRecordNotFoundError(error)) {

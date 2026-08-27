@@ -85,4 +85,68 @@ describe('TasksController (e2e)', () => {
       .expect(400);
     await request(app.getHttpServer()).get('/tasks/not-a-number').expect(400);
   });
+
+  it('rejects boolean projectId/assigneeId instead of coercing them to 0/1', async () => {
+    await request(app.getHttpServer())
+      .post('/tasks')
+      .send({ title: 'Valid', projectId: true })
+      .expect(400);
+    await request(app.getHttpServer())
+      .post('/tasks')
+      .send({ title: 'Valid', assigneeId: false })
+      .expect(400);
+
+    const created = await request(app.getHttpServer())
+      .post('/tasks')
+      .send({ title: 'Valid' })
+      .expect(201);
+    const task = created.body as TaskResponse;
+    await request(app.getHttpServer())
+      .patch(`/tasks/${task.id}`)
+      .send({ projectId: true })
+      .expect(400);
+    await request(app.getHttpServer())
+      .patch(`/tasks/${task.id}`)
+      .send({ assigneeId: false })
+      .expect(400);
+  });
+
+  it('derives completed from status, and keeps completed as-is when status is omitted', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/tasks')
+      .send({ title: 'Ship the feature', status: 'DONE' })
+      .expect(201);
+    const doneTask = created.body as TaskResponse;
+    expect(doneTask.completed).toBe(true);
+
+    const reopened = await request(app.getHttpServer())
+      .patch(`/tasks/${doneTask.id}`)
+      .send({ status: 'TODO' })
+      .expect(200);
+    expect((reopened.body as TaskResponse).completed).toBe(false);
+
+    const untouched = await request(app.getHttpServer())
+      .patch(`/tasks/${doneTask.id}`)
+      .send({ completed: true })
+      .expect(200);
+    expect((untouched.body as TaskResponse).completed).toBe(true);
+  });
+
+  it('only exposes { id, title, completed } on the Task response', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/tasks')
+      .send({
+        title: 'Narrow response',
+        description: 'internal detail',
+        status: 'IN_PROGRESS',
+        priority: 'HIGH',
+      })
+      .expect(201);
+
+    expect(Object.keys(created.body as object).sort()).toEqual([
+      'completed',
+      'id',
+      'title',
+    ]);
+  });
 });

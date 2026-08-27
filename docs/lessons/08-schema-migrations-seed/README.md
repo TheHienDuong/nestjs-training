@@ -3,29 +3,29 @@
 |                |                                                                                                                                                                                                                         |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Phase**      | 2 — Working with Data                                                                                                                                                                                                   |
-| **Linear**     | NES-90 (theory, con của NES-9 — "L08 Schema, relations, migrations, seed") · sibling: NES-91 (hands-on, learner-owned) · NES-93 (review/quiz, pending)                                                                  |
+| **Linear**     | NES-90 (theory, con của NES-9) · sibling: NES-91 (hands-on, learner-owned, pending) · NES-93 (review/quiz, pending) · NES-121 (corrective cho PR #91, xem callout bên dưới)                                             |
 | **Branch**     | `duongthehien2001/nes-90-theory-note`                                                                                                                                                                                   |
 | **Docs chính** | [/recipes/prisma](https://docs.nestjs.com/recipes/prisma) · [Prisma — Relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations) · [Prisma — Migrate](https://www.prisma.io/docs/orm/prisma-migrate) |
 | **Ngày học**   | 2026-08-27                                                                                                                                                                                                              |
 
 ---
 
-> ⚠️ **Note này CHỈ là lý thuyết (NES-90).** Không có hands-on nào được thực thi thay, không có quiz nào được trả lời thay. Khác với L05/L06/L07 — nơi user đã duyệt một ngoại lệ execution-substitute một lần cho từng lesson đó — **live ticket của L08 (NES-9/NES-90/NES-91/NES-93) không có bất kỳ ngoại lệ nào**, nên agent này không đụng vào `prisma/schema.prisma`, không chạy `prisma migrate`, không viết seed script, không tự trả lời quiz. Mục `🛠 Hands-on` và `✅ Ôn tập & Quiz` bên dưới còn nguyên — **Hien Duong phải tự làm ở NES-91 rồi tự trả lời quiz ở NES-93**. Trạng thái L08 trên `docs/ROADMAP.md` giữ ở 🟦 (đang học), không phải ✅.
+> ⚠️ **Cập nhật 2026-08-27 (NES-121, corrective — đọc trước bản gốc bên dưới):** Note này viết ban đầu (PR #92) khi lý thuyết (NES-90) vừa xong và **chưa** có execution-substitute nào cho L08. Ngay sau đó, PR #91 (Fixes NES-9, merged `2d59255`) đã **áp dụng thật** `prisma/schema.prisma` (4 model quan hệ), migration `prisma/migrations/20260827100000_add_user_project_task_comment_relations`, `prisma/seed.ts`, và phần DTO/service liên quan trong `src/tasks/**` — dưới **execution substitute do user duyệt cho đợt này (2026-08-27)**. Đây **không phải bằng chứng Hien Duong tự tay làm NES-91** — Definition of Done của NES-91/NES-93 (hands-on thật + quiz tự trả lời) vẫn chưa đạt, nên `docs/ROADMAP.md` giữ L08 ở 🟦, không lên ✅. PR #91 tự công bố rõ: verify với PostgreSQL sống (`migrate dev`/seed/e2e quan hệ) là **SKIPPED/UNVERIFIED** — vẫn đúng tới thời điểm sửa note này (Docker chưa từng chạy cho phần quan hệ). Mục `🗂 File map`, `💻 Ví dụ có giải thích`, và `🛠 Hands-on` bên dưới đã được sửa lại cho khớp: không còn mô tả các file này là "chưa áp dụng" — chúng đã có trên đĩa, việc còn lại của NES-91 là learner tự chạy migrate/seed lên Postgres sống của mình và tự đọc/gõ lại schema để nhớ cú pháp (không phải tạo file từ đầu). Mục `✅ Ôn tập & Quiz` giữ nguyên **chưa có câu trả lời nào** — không agent nào trả lời thay.
 >
-> **Nguồn đã kiểm tra hôm nay (2026-08-27):** một số URL `prisma.io/docs` hiện trả về nội dung bản preview thế hệ sau (ví dụ trang `relations` tổng và trang `workflows/development-and-production` có nhắc `db migrate`, "contract spaces", `@@discriminator`/`@@base`, và tuyên bố sai là many-to-many ngầm định "chưa hỗ trợ"). Repo này pin `prisma@6.19.3` / `@prisma/client@6.19.3` — bản ổn định "classic". Note dưới đây bám theo hành vi ổn định của 6.x, đã đối chiếu qua [CLI reference](https://www.prisma.io/docs/orm/reference/prisma-cli-reference) và trang chuyên biệt [many-to-many-relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations) — không dùng nội dung preview.
+> **Nguồn đã kiểm tra hôm 2026-08-27 (không đổi):** một số URL `prisma.io/docs` hiện trả về nội dung bản preview thế hệ sau (ví dụ trang `relations` tổng và trang `workflows/development-and-production` có nhắc `db migrate`, "contract spaces", `@@discriminator`/`@@base`, và tuyên bố sai là many-to-many ngầm định "chưa hỗ trợ"). Repo này pin `prisma@6.19.3` / `@prisma/client@6.19.3` — bản ổn định "classic". Note dưới đây bám theo hành vi ổn định của 6.x, đã đối chiếu qua [CLI reference](https://www.prisma.io/docs/orm/reference/prisma-cli-reference) và trang chuyên biệt [many-to-many-relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations) — không dùng nội dung preview.
 
 ---
 
 ## 🗂 File map lesson này
 
-> Lesson này **không tạo/sửa code**. `prisma/schema.prisma` hiện tại vẫn chỉ có model `Task` phẳng (không quan hệ) — mọi schema/seed/service bên dưới là **minh hoạ, chưa áp dụng vào repo**. NES-91 (hands-on) sẽ là nơi các file này thật sự được tạo.
+> **Cập nhật NES-121:** `prisma/schema.prisma` **đã có** 5 model (`User`/`Project`/`ProjectMember`/`Task`/`Comment` + quan hệ), migration tương ứng, và `prisma/seed.ts` — áp dụng qua PR #91 dưới execution substitute do user duyệt cho đợt này, **không phải Hien Duong tự gõ ở NES-91**. Việc còn thiếu, thật sự là việc của NES-91: (1) tự đọc + gõ lại schema để nhớ cú pháp (so sánh với bản đã có), (2) chạy migration/seed đó lên một Postgres **sống** của chính bạn lần đầu tiên — điều này chưa từng xảy ra (Docker chưa từng chạy cho phần quan hệ), nên vẫn **SKIPPED/UNVERIFIED**.
 
-| File                              | Vai trò (lý thuyết / ref / hands-on)                                          | Tạo ở lesson           | Trạng thái      |
-| --------------------------------- | ----------------------------------------------------------------------------- | ---------------------- | --------------- |
-| `prisma/schema.prisma`            | Sẽ thêm model `User`/`Project`/`ProjectMember`/`Comment` + quan hệ vào `Task` | L08 (NES-91, chưa làm) | Chưa đổi        |
-| `prisma/migrations/<timestamp>_*` | Migration file cho schema quan hệ mới                                         | L08 (NES-91, chưa làm) | Chưa có         |
-| `prisma/seed.ts`                  | Seed script idempotent cho 4 model                                            | L08 (NES-91, chưa làm) | Chưa có         |
-| `src/tasks/tasks.service.ts`      | Sẽ cần `include`/`connect` khi Task có quan hệ `Project`/`User`               | L07 (đã có, flat)      | Sẽ sửa ở NES-91 |
+| File                                                                        | Vai trò                                                               | Tạo ở lesson                                | Trạng thái                                     |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------- | ---------------------------------------------- |
+| `prisma/schema.prisma`                                                      | Model `User`/`Project`/`ProjectMember`/`Task`/`Comment` + quan hệ     | L08 (PR #91)                                | **Đã áp dụng** — chưa migrate lên DB sống nào  |
+| `prisma/migrations/20260827100000_add_user_project_task_comment_relations/` | Migration file cho schema quan hệ                                     | L08 (PR #91)                                | **Đã có trên đĩa** — SKIPPED/UNVERIFIED lên DB |
+| `prisma/seed.ts`                                                            | Seed script idempotent (`upsert`/`findOrCreate`) cho 5 model          | L08 (PR #91)                                | **Đã có** — chưa từng chạy được (cần Postgres) |
+| `src/tasks/tasks.service.ts`, `src/tasks/dto/*`                             | `select` thu hẹp response Task, DTO validate `projectId`/`assigneeId` | L07 (flat) → L08 (PR #91, sửa thêm NES-121) | Đã áp dụng                                     |
 
 ---
 
@@ -118,6 +118,7 @@
 **Vấn đề nó giải quyết:** Sau `migrate dev`/`migrate reset`, DB rỗng — cần dữ liệu mẫu để test thủ công (Postman) mà không phải tạo tay từng record, và **chạy lại nhiều lần không được nhân đôi dữ liệu**.
 
 - **Cấu hình:** khai `"prisma": { "seed": "ts-node prisma/seed.ts" }` trong `package.json` (repo đã có `ts-node` trong devDependencies từ trước) hoặc trong `prisma.config.ts` ở bản mới hơn. Có cấu hình này thì `migrate dev` và `migrate reset` **tự động chạy seed** sau khi migrate xong; `prisma db seed` chạy seed thủ công bất kỳ lúc nào.
+- **Cảnh báo riêng cho Prisma 6 (repo pin `6.19.3`):** khoá `package.json#prisma` **đã deprecated** — mọi lệnh `prisma migrate`/`validate`/`generate` in ra `warn The configuration property package.json#prisma is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file`. Repo vẫn dùng cách này vì còn hoạt động đúng ở 6.19.3 (đã tự kiểm chứng khi chạy `prisma validate` ở NES-121); chỉ là cảnh báo, không phải lỗi — chưa cần đổi sang `prisma.config.ts` ở lesson này.
 - **Idempotent bằng `upsert`:** với model có field `@unique` tự nhiên (ví dụ `User.email`), dùng `prisma.user.upsert({ where: { email }, update: {}, create: {...} })` — chạy lại bao nhiêu lần cũng chỉ có đúng 1 record cho mỗi email.
 - **Model không có unique tự nhiên** (ví dụ `Task`, `Comment` — tiêu đề trùng nhau vẫn hợp lệ về nghiệp vụ): hai lựa chọn, đều phải cân nhắc đánh đổi:
   1. Gán `id` cố định trong seed rồi `upsert` theo `id` — idempotent thật, nhưng id "giả" trộn với id thật do app sinh ra dễ gây nhầm lẫn.
@@ -162,12 +163,14 @@
 
 ## 💻 Ví dụ có giải thích
 
-> ⚠️ Toàn bộ code trong mục này là **minh hoạ cho việc học, CHƯA áp dụng vào repo**. `prisma/schema.prisma` thật hiện chỉ có model `Task` phẳng. Việc tạo các file dưới đây là phần việc của NES-91 (hands-on, Hien Duong tự làm).
+> ⚠️ **Cập nhật NES-121:** code trong mục này **đã được áp dụng thật vào repo qua PR #91** (execution substitute, không phải Hien Duong tự gõ) — `prisma/schema.prisma`, migration, và `prisma/seed.ts` khớp gần như y hệt hai ví dụ dưới đây (một khác biệt có chủ đích được ghi chú ngay dưới Ví dụ 1: `Task.project`/`projectId` để **optional**, không bắt buộc như bản gốc). Việc thật của NES-91 không phải "tạo file từ đầu" mà là tự đọc/gõ lại để nhớ cú pháp, rồi tự chạy migrate/seed lên Postgres sống của mình — bước đó vẫn **SKIPPED/UNVERIFIED**.
 
 ### Ví dụ 1: Schema quan hệ đầy đủ cho Task Management API
 
 ```prisma
-// file minh hoạ: prisma/schema.prisma (CHƯA áp dụng)
+// prisma/schema.prisma — đã áp dụng qua PR #91, với 1 khác biệt: Task.project/
+// projectId là optional (Project?/Int?, onDelete: SetNull), không bắt buộc
+// (Project, onDelete: Cascade) như dưới đây — xem "Giải thích" bên dưới.
 
 enum ProjectRole {
   OWNER
@@ -253,7 +256,7 @@ model Comment {
 - `ProjectMember` là explicit m-n (Khái niệm 2) vì cần lưu `role`; `@@id([projectId, userId])` làm khoá chính kép, đảm bảo một user không join một project hai lần.
 - `ProjectMember.project`/`.user` dùng `Cascade`: xoá `Project` hay xoá `User` thì dòng thành viên tương ứng cũng biến mất — hợp lý vì `ProjectMember` không có ý nghĩa gì nếu thiếu 1 trong 2 phía.
 - `Task.assignee` là optional (`User?`) với `SetNull`: xoá người được giao không xoá `Task`, chỉ bỏ trống người giao (Khái niệm 3).
-- `Task.project` là bắt buộc (`Project`, không phải `Project?`) với `Cascade`: `Task` không có nghĩa nếu thiếu `Project`.
+- `Task.project` **về lý thuyết** nên bắt buộc (`Project`, không phải `Project?`) với `Cascade` — `Task` không có nghĩa nếu thiếu `Project`. Nhưng **schema đã áp dụng trong repo cố tình lệch khỏi lý thuyết này**: `projectId`/`assigneeId` giữ optional (`Project?`/`Int?`, `onDelete: SetNull`) để `CreateTaskDto` chỉ gửi `title` (hợp đồng CRUD từ L07) vẫn còn hợp lệ — xem comment ngay trên `model Task` trong `prisma/schema.prisma`. Đây là một relation scalar field (`projectId Int?`) được nới lỏng có chủ đích, không phải lỗi.
 - `Comment.author` dùng `Restrict` thay vì `Cascade` — quyết định có chủ đích: giữ lại lịch sử comment kể cả khi tài khoản tác giả bị vô hiệu hoá là hành vi phổ biến của app quản lý công việc thật; đây là điểm nên hỏi lại ở NES-93 (xem Quiz câu 4).
 - Hai relation trỏ cùng model `User` từ `Project` và `Task` (`owner` và `assignee`) cần **tên quan hệ tường minh** (`@relation("ProjectOwner", ...)`, `@relation("TaskAssignee", ...)`) vì Prisma không tự đoán được field nào ở `User` khớp với field nào — thiếu tên này Prisma sẽ báo lỗi ambiguous relation.
 
@@ -262,7 +265,9 @@ model Comment {
 ### Ví dụ 2: Seed script idempotent
 
 ```ts
-// file minh hoạ: prisma/seed.ts (CHƯA tồn tại trong repo)
+// Ví dụ rút gọn cho dễ đọc. `prisma/seed.ts` thật (đã áp dụng qua PR #91)
+// đủ cho cả 5 model và dùng findFirst-rồi-create cho Project/Task/Comment
+// thay vì upsert theo id cố định — xem "Giải thích" bên dưới.
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -307,6 +312,7 @@ main()
 - `user.upsert` theo `email` (unique thật) — idempotent đúng nghĩa.
 - `project.upsert` theo `id` cố định là đánh đổi đã nói ở Khái niệm 5 (Project chưa có field unique tự nhiên trong thiết kế minh hoạ này) — chạy lại nhiều lần không tạo project trùng, nhưng id "1" là giả định, cần cẩn thận nếu app thật cũng cho user tạo project với id tự tăng từ 1.
 - Nested `create` cho `members` chỉ chạy nhánh `create`, không chạy khi `project` đã tồn tại (nhánh `update: {}`) — nghĩa là seed lần 2 sẽ **không** thêm lại `ProjectMember`, đúng ý đồ idempotent.
+- **`prisma/seed.ts` thật (PR #91) chọn cách khác cho `Project`/`Task`/`Comment`:** `findFirst` theo cặp field gần-unique (`name` cho Project, `{title, projectId}` cho Task, `{content, taskId}` cho Comment) rồi chỉ `create` nếu chưa có, thay vì `upsert` theo `id` cố định như ví dụ trên — tránh phải giả định id, nhưng đánh đổi ngược lại: `Project.name` **không** có `@unique` trong schema, nên hai lần seed với tên project khác nhau chạy song song (race) có thể tạo trùng — đây chính là lỗi seed-collision đã biết, **cố tình chưa sửa ở NES-121** (xem callout ROADMAP), để dành làm follow-up riêng.
 
 > 📖 Dựa trên: [Prisma — Seeding](https://www.prisma.io/docs/orm/prisma-migrate/workflows/seeding)
 
@@ -314,18 +320,23 @@ main()
 
 ## 🛠 Hands-on
 
-<!-- BẠN tự code phần này (NES-91). Agent không làm hộ — theo đúng ngoại lệ: live ticket L08 không có execution-substitute authorization. -->
+<!-- BẠN tự làm phần này (NES-91). Agent không làm hộ — schema/migration/seed dưới đây đã có sẵn trên đĩa qua PR #91 (execution substitute, đọc callout đầu file); việc thật của NES-91 là tự đọc/gõ lại để hiểu + tự chạy lên Postgres sống của bạn, không phải tạo file từ đầu. -->
 
-**Yêu cầu (theo NES-9 / NES-91):**
+**Yêu cầu (theo NES-9 / NES-91) — cập nhật NES-121, vì file đã có sẵn trong repo:**
 
-1. Mở `prisma/schema.prisma`, thêm đủ 4 model `User`, `Project`, `ProjectMember`, `Task`, `Comment` (có thể dùng Ví dụ 1 ở trên làm điểm tham chiếu, nhưng nên tự gõ lại, không copy-paste, để nhớ cú pháp `@relation`).
-2. Chạy `pnpm exec prisma migrate dev --name add-user-project-task-comment-relations` — đọc kỹ output: Prisma có hỏi gì không, migration file sinh ra ở đâu, tên file là gì.
-3. Viết `prisma/seed.ts`, cấu hình `"prisma": { "seed": "ts-node prisma/seed.ts" }` trong `package.json`, chạy `pnpm exec prisma db seed` — rồi chạy lại **lần hai** để tự kiểm chứng không có dữ liệu trùng.
+1. Khởi động Postgres **trước**, và đợi nó sẵn sàng nhận kết nối — mọi lệnh Prisma bên dưới đều cần DB sống:
+   ```bash
+   docker compose up -d
+   docker compose exec db pg_isready -U postgres   # lặp lại tới khi thấy "accepting connections"
+   ```
+2. Đọc `prisma/schema.prisma` (đã có 5 model qua PR #91) — **tự gõ lại một bản trên file nháp**, không copy-paste, để nhớ cú pháp `@relation`, rồi so với bản thật. Chú ý riêng comment trên `model Task`: vì sao `projectId`/`assigneeId` optional thay vì bắt buộc như Ví dụ 1 (xem "Giải thích" phía trên).
+3. Chạy `pnpm exec prisma migrate status` để xác nhận: migration `20260827100000_add_user_project_task_comment_relations` đã có trên đĩa (từ PR #91) nhưng **chưa từng áp dụng lên DB local của bạn** (Docker chưa từng chạy cho phần này).
+4. Chạy `pnpm exec prisma migrate dev` — vì schema đã khớp migration có sẵn, Prisma sẽ **áp dụng migration hiện có lên DB của bạn** (không sinh file mới) rồi tự chạy seed. Đọc kỹ output: có hỏi gì không, seed có tự chạy không.
+5. Đọc `prisma/seed.ts` đã có sẵn — chú ý nó dùng `findFirst`-rồi-`create` cho `Project`/`Task`/`Comment` (không phải `upsert` theo id cố định như Ví dụ 2) — rồi chạy `pnpm exec prisma db seed` **lần hai** để tự kiểm chứng không tạo dữ liệu trùng.
 
 **Cách kiểm tra:**
 
 ```bash
-docker compose up -d               # cần Postgres sống — chưa từng verify được ở L07, xem callout ROADMAP L07
 pnpm exec prisma migrate status
 pnpm exec prisma studio            # xem dữ liệu vừa migrate/seed trực quan
 ```
@@ -333,8 +344,9 @@ pnpm exec prisma studio            # xem dữ liệu vừa migrate/seed trực q
 **Vướng ở đâu, gỡ thế nào:**
 
 - Nếu `prisma migrate dev` báo drift/hỏi reset DB: đọc kỹ message trước khi đồng ý — reset sẽ **xoá sạch dữ liệu dev hiện có**.
-- Nếu seed không tự chạy sau `migrate dev`: kiểm tra lại đã khai đúng key `"prisma": { "seed": ... }` trong `package.json` chưa (không phải trong `dependencies`/`devDependencies`).
+- Nếu seed không tự chạy sau `migrate dev`: kiểm tra lại `package.json` đã có khoá `"prisma": { "seed": "ts-node prisma/seed.ts" }` chưa (đã có sẵn, nhưng deprecated ở Prisma 6 — xem Khái niệm 5, chỉ là warning không phải lỗi).
 - Nếu gặp lỗi ambiguous relation (Prisma đòi tên `@relation("...")`) khi 2 field cùng trỏ 1 model: xem lại phần "Giải thích" ở Ví dụ 1 — đây là lỗi rất hay gặp khi có 2 quan hệ tới cùng `User`.
+- Nếu seed hai lần tạo ra 2 `Project` "Demo Project": đó là bug seed-collision đã biết (`Project.name` không `@unique`) — **không phải lỗi của bạn**, đã ghi nhận là follow-up chưa sửa (xem callout ROADMAP L08).
 
 ---
 
