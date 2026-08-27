@@ -1,69 +1,77 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
-// [NES-5 · lesson 04] Reference — singleton provider with constructor DI.
+// [NES-8 · lesson 07] Reference — database-backed task provider.
 export interface Task {
   id: number;
   title: string;
   completed: boolean;
 }
 
-// Providers are singleton-scoped by default. This makes the in-memory collection
-// shared by every request handled by this feature module during app lifetime.
+// Prisma throws P2025 ("record to update/delete not found") when a where-unique
+// target no longer exists. Catching it here keeps update()/remove() race-free —
+// no separate findOne() check before the mutation.
+function isRecordNotFoundError(
+  error: unknown,
+): error is Prisma.PrismaClientKnownRequestError {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2025'
+  );
+}
+
 @Injectable()
 export class TasksService {
-  private readonly tasks: Task[] = [];
-  private nextId: number;
+  constructor(private readonly prisma: PrismaService) {}
 
-  constructor(@Inject('TASK_ID_START') taskIdStart: number) {
-    // The token is resolved by TasksModule's custom provider and injected here.
-    this.nextId = taskIdStart;
+  async create(createTaskDto: CreateTaskDto): Promise<Task> {
+    return this.prisma.task.create({ data: { title: createTaskDto.title } });
   }
 
-  create(createTaskDto: CreateTaskDto): Task {
-    const task: Task = {
-      id: this.nextId++,
-      title: createTaskDto.title,
-      completed: false,
-    };
-    this.tasks.push(task);
-    return task;
+  // Filtering business logic belongs in the service, not the controller.
+  async findAll(completed?: string): Promise<Task[]> {
+    return this.prisma.task.findMany({
+      where:
+        completed === undefined
+          ? undefined
+          : { completed: completed === 'true' },
+      orderBy: { id: 'asc' },
+    });
   }
 
-  // Filtering is business logic, so it belongs in the provider, not the controller.
-  findAll(completed?: string): Task[] {
-    if (completed === undefined) {
-      return this.tasks;
-    }
-    const isCompleted = completed === 'true';
-    return this.tasks.filter((task) => task.completed === isCompleted);
-  }
-
-  findOne(id: number): Task {
-    const task = this.tasks.find((item) => item.id === id);
+  async findOne(id: number): Promise<Task> {
+    const task = await this.prisma.task.findUnique({ where: { id } });
     if (!task) {
       throw new NotFoundException(`Task ${id} not found`);
     }
     return task;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto): Task {
-    const task = this.findOne(id);
-    if (updateTaskDto.title !== undefined) {
-      task.title = updateTaskDto.title;
+  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    try {
+      return await this.prisma.task.update({
+        where: { id },
+        data: updateTaskDto,
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new NotFoundException(`Task ${id} not found`);
+      }
+      throw error;
     }
-    if (updateTaskDto.completed !== undefined) {
-      task.completed = updateTaskDto.completed;
-    }
-    return task;
   }
 
-  remove(id: number): void {
-    const taskIndex = this.tasks.findIndex((task) => task.id === id);
-    if (taskIndex === -1) {
-      throw new NotFoundException(`Task ${id} not found`);
+  async remove(id: number): Promise<void> {
+    try {
+      await this.prisma.task.delete({ where: { id } });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new NotFoundException(`Task ${id} not found`);
+      }
+      throw error;
     }
-    this.tasks.splice(taskIndex, 1);
   }
 }

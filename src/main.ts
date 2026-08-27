@@ -4,6 +4,8 @@ import { AppModule } from './app.module';
 
 export async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  // Let Nest invoke PrismaService.onModuleDestroy on process shutdown.
+  app.enableShutdownHooks();
   const port = app.get(ConfigService).get<number>('PORT');
 
   // Validation runs before this point, so a missing PORT is a configuration error.
