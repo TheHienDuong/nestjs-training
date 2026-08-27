@@ -5,6 +5,8 @@ import {
   IsEnum,
   IsInt,
   IsNumber,
+  IsString,
+  IsUrl,
   Max,
   Min,
   validateSync,
@@ -27,6 +29,11 @@ export class EnvironmentVariables {
   @Min(0)
   @Max(65535)
   PORT!: number;
+
+  @IsDefined()
+  @IsString()
+  @IsUrl({ protocols: ['postgresql', 'postgres'], require_tld: false })
+  DATABASE_URL!: string;
 }
 
 export function validate(
