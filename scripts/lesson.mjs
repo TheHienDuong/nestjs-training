@@ -75,9 +75,7 @@ function lessonSlugs() {
 function lessonTitle(nn, slugs) {
   const slug = slugs.get(nn);
   if (slug) return `${nn}-${slug}`;
-  const subject = git(['log', '-1', '--format=%s', `lesson/${nn}`], {
-    silent: true,
-  });
+  const subject = git(['log', '-1', '--format=%s', `lesson/${nn}`], { silent: true });
   return subject || `lesson ${nn}`;
 }
 

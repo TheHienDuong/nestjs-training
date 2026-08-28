@@ -8,12 +8,12 @@
   "packageManager": "pnpm@11.18.0",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"prisma/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test,scripts}/**/*.ts\" --fix",
+    "lint": "eslint \"{src,apps,libs,test,scripts,prisma}/**/*.ts\" --fix",
     "lesson": "node scripts/lesson.mjs",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -21,10 +21,13 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
-    "verify": "pnpm exec eslint \"{src,apps,libs,test,scripts}/**/*.ts\" --max-warnings=0 && pnpm exec prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"docs/**/*.md\" \"*.md\" \"*.json\" \"*.yml\" \"*.mjs\" && pnpm test && pnpm build",
+    "verify": "pnpm exec eslint \"{src,apps,libs,test,scripts,prisma}/**/*.ts\" --max-warnings=0 && pnpm exec prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"prisma/*.ts\" \"docs/**/*.md\" \"*.md\" \"*.json\" \"*.yml\" \"*.mjs\" && pnpm test && pnpm build",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "lint-staged": {
     "*.ts": [

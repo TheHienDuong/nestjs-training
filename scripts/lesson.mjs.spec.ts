@@ -89,7 +89,7 @@ describe('scripts/lesson.mjs', () => {
   });
 
   // This guards against using the SHA-1 empty-tree hash in a SHA-256 repository.
-  it('diffs the first lesson from the Git empty tree in a SHA-256 repository', () => {
+  it('diffs the first lesson from the Git empty tree in a SHA-256 repo', () => {
     const repo = createRepo({ objectFormat: 'sha256' });
     writeFileSync(path.join(repo, 'root.txt'), 'root\n');
     commit(repo, 'setup');
