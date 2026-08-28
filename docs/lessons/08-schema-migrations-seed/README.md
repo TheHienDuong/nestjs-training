@@ -13,6 +13,8 @@
 > ⚠️ **Cập nhật 2026-08-27 (NES-121, corrective — đọc trước bản gốc bên dưới):** Note này viết ban đầu (PR #92) khi lý thuyết (NES-90) vừa xong và **chưa** có execution-substitute nào cho L08. Ngay sau đó, PR #91 (Fixes NES-9, merged `2d59255`) đã **áp dụng thật** `prisma/schema.prisma` (4 model quan hệ), migration `prisma/migrations/20260827100000_add_user_project_task_comment_relations`, `prisma/seed.ts`, và phần DTO/service liên quan trong `src/tasks/**` — dưới **execution substitute do user duyệt cho đợt này (2026-08-27)**. Đây **không phải bằng chứng Hien Duong tự tay làm NES-91** — Definition of Done của NES-91/NES-93 (hands-on thật + quiz tự trả lời) vẫn chưa đạt, nên `docs/ROADMAP.md` giữ L08 ở 🟦, không lên ✅. PR #91 tự công bố rõ: verify với PostgreSQL sống (`migrate dev`/seed/e2e quan hệ) là **SKIPPED/UNVERIFIED** — vẫn đúng tới thời điểm sửa note này (Docker chưa từng chạy cho phần quan hệ). Mục `🗂 File map`, `💻 Ví dụ có giải thích`, và `🛠 Hands-on` bên dưới đã được sửa lại cho khớp: không còn mô tả các file này là "chưa áp dụng" — chúng đã có trên đĩa, việc còn lại của NES-91 là learner tự chạy migrate/seed lên Postgres sống của mình và tự đọc/gõ lại schema để nhớ cú pháp (không phải tạo file từ đầu). Mục `✅ Ôn tập & Quiz` giữ nguyên **chưa có câu trả lời nào** — không agent nào trả lời thay.
 >
 > **Nguồn đã kiểm tra hôm 2026-08-27 (không đổi):** một số URL `prisma.io/docs` hiện trả về nội dung bản preview thế hệ sau (ví dụ trang `relations` tổng và trang `workflows/development-and-production` có nhắc `db migrate`, "contract spaces", `@@discriminator`/`@@base`, và tuyên bố sai là many-to-many ngầm định "chưa hỗ trợ"). Repo này pin `prisma@6.19.3` / `@prisma/client@6.19.3` — bản ổn định "classic". Note dưới đây bám theo hành vi ổn định của 6.x, đã đối chiếu qua [CLI reference](https://www.prisma.io/docs/orm/reference/prisma-cli-reference) và trang chuyên biệt [many-to-many-relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations) — không dùng nội dung preview.
+>
+> ⚠️ **Cập nhật 2026-08-28 (NES-122, follow-up cho 6 phát hiện review PR #93):** sửa 6 gap post-merge của PR #93 — (1) `rejectBooleanId` (`src/tasks/dto/reject-boolean-id.transform.ts`) nay cũng giữ nguyên input dạng mảng (`Array.isArray`) thay vì để `Number(['5'])` coerce về scalar `5` lọt qua `@IsInt()`, kèm unit test + DTO test (`create-task.dto.spec.ts`) + e2e regression mới; (2) lệnh readiness Postgres ở mục Hands-on sửa `docker compose exec db` → `docker compose exec postgres` cho khớp `docker-compose.yml`; (3)/(4) mục Hands-on và Ví dụ 2 làm rõ: `migrate dev` trên Prisma 6 không tự seed khi DB đã tồn tại (chỉ tự seed lúc tạo/reset DB) nên bước seed đầu là **lần chạy tường minh thứ nhất**, và race-condition seed chỉ xảy ra khi **hai tiến trình chạy đồng thời cùng tên** `"Demo Project"` — không phải khi tự chạy tuần tự hai lần; (5) Ví dụ 1 (`model Task`) nay có thêm field `completed Boolean @default(false)` để khớp đúng schema đã áp dụng. **Bản thân việc sửa docs/code này không khởi động Docker/PostgreSQL** — mọi khẳng định về hành vi migrate/seed/readiness vẫn ở dạng đọc-hiểu + đối chiếu source code/docs Prisma, **chưa chạy thử lên DB sống** (SKIPPED/UNVERIFIED, giống các callout trước). (6) **Chưa mirror sang `example/nestjs-training` (EN) / GitLab trong PR này** — theo đúng chỉ định NES-122 cho đợt sửa này, việc mirror L08 (PR #91/#92/#93 + các sửa NES-122 này) sang bản tiếng Anh/GitLab được **cố tình để lại làm follow-up riêng**, cần một task/PR mirror kế tiếp trước khi coi L08 là song ngữ đầy đủ.
 
 ---
 
@@ -227,6 +229,7 @@ model ProjectMember {
 model Task {
   id          Int          @id @default(autoincrement())
   title       String
+  completed   Boolean      @default(false)
   description String?
   status      TaskStatus   @default(TODO)
   priority    TaskPriority @default(MEDIUM)
@@ -312,7 +315,7 @@ main()
 - `user.upsert` theo `email` (unique thật) — idempotent đúng nghĩa.
 - `project.upsert` theo `id` cố định là đánh đổi đã nói ở Khái niệm 5 (Project chưa có field unique tự nhiên trong thiết kế minh hoạ này) — chạy lại nhiều lần không tạo project trùng, nhưng id "1" là giả định, cần cẩn thận nếu app thật cũng cho user tạo project với id tự tăng từ 1.
 - Nested `create` cho `members` chỉ chạy nhánh `create`, không chạy khi `project` đã tồn tại (nhánh `update: {}`) — nghĩa là seed lần 2 sẽ **không** thêm lại `ProjectMember`, đúng ý đồ idempotent.
-- **`prisma/seed.ts` thật (PR #91) chọn cách khác cho `Project`/`Task`/`Comment`:** `findFirst` theo cặp field gần-unique (`name` cho Project, `{title, projectId}` cho Task, `{content, taskId}` cho Comment) rồi chỉ `create` nếu chưa có, thay vì `upsert` theo `id` cố định như ví dụ trên — tránh phải giả định id, nhưng đánh đổi ngược lại: `Project.name` **không** có `@unique` trong schema, nên hai lần seed với tên project khác nhau chạy song song (race) có thể tạo trùng — đây chính là lỗi seed-collision đã biết, **cố tình chưa sửa ở NES-121** (xem callout ROADMAP), để dành làm follow-up riêng.
+- **`prisma/seed.ts` thật (PR #91) chọn cách khác cho `Project`/`Task`/`Comment`:** `findFirst` theo cặp field gần-unique (`name` cho Project, `{title, projectId}` cho Task, `{content, taskId}` cho Comment) rồi chỉ `create` nếu chưa có, thay vì `upsert` theo `id` cố định như ví dụ trên — tránh phải giả định id, nhưng đánh đổi ngược lại: `Project.name` **không** có `@unique` trong schema, nên **hai tiến trình seed chạy đồng thời và cùng tìm/tạo project trùng tên** (ví dụ cả hai cùng seed `"Demo Project"` cùng lúc) có thể tạo trùng — chạy tuần tự (một lần rồi lần nữa, không đồng thời) hoặc dùng tên project khác nhau thì không gặp race này. Đây chính là lỗi seed-collision đã biết, **cố tình chưa sửa ở NES-121** (xem callout ROADMAP), để dành làm follow-up riêng.
 
 > 📖 Dựa trên: [Prisma — Seeding](https://www.prisma.io/docs/orm/prisma-migrate/workflows/seeding)
 
@@ -324,15 +327,17 @@ main()
 
 **Yêu cầu (theo NES-9 / NES-91) — cập nhật NES-121, vì file đã có sẵn trong repo:**
 
+> ⚠️ **NES-122 (follow-up review PR #93):** bước 1 dưới đây sửa lại đúng tên service Compose (`docker-compose.yml` khai `postgres`, không phải `db`) — lỗi cũ khiến `docker compose exec db ...` thoát ra `no such service: db`. Bản thân bước sửa doc này **không** khởi động Docker/PostgreSQL để chạy thử — readiness command và toàn bộ luồng migrate/seed bên dưới vẫn ở trạng thái **SKIPPED/UNVERIFIED** trong môi trường sửa doc này (worktree NES-122), giống hệt tình trạng đã công bố ở callout đầu file. Chỉ có cú pháp lệnh được sửa cho khớp `docker-compose.yml`; hành vi runtime thật vẫn chờ learner tự chạy ở bước hands-on của họ.
+
 1. Khởi động Postgres **trước**, và đợi nó sẵn sàng nhận kết nối — mọi lệnh Prisma bên dưới đều cần DB sống:
    ```bash
    docker compose up -d
-   docker compose exec db pg_isready -U postgres   # lặp lại tới khi thấy "accepting connections"
+   docker compose exec postgres pg_isready -U postgres   # lặp lại tới khi thấy "accepting connections"
    ```
 2. Đọc `prisma/schema.prisma` (đã có 5 model qua PR #91) — **tự gõ lại một bản trên file nháp**, không copy-paste, để nhớ cú pháp `@relation`, rồi so với bản thật. Chú ý riêng comment trên `model Task`: vì sao `projectId`/`assigneeId` optional thay vì bắt buộc như Ví dụ 1 (xem "Giải thích" phía trên).
 3. Chạy `pnpm exec prisma migrate status` để xác nhận: migration `20260827100000_add_user_project_task_comment_relations` đã có trên đĩa (từ PR #91) nhưng **chưa từng áp dụng lên DB local của bạn** (Docker chưa từng chạy cho phần này).
-4. Chạy `pnpm exec prisma migrate dev` — vì schema đã khớp migration có sẵn, Prisma sẽ **áp dụng migration hiện có lên DB của bạn** (không sinh file mới) rồi tự chạy seed. Đọc kỹ output: có hỏi gì không, seed có tự chạy không.
-5. Đọc `prisma/seed.ts` đã có sẵn — chú ý nó dùng `findFirst`-rồi-`create` cho `Project`/`Task`/`Comment` (không phải `upsert` theo id cố định như Ví dụ 2) — rồi chạy `pnpm exec prisma db seed` **lần hai** để tự kiểm chứng không tạo dữ liệu trùng.
+4. Chạy `pnpm exec prisma migrate dev` — vì schema đã khớp migration có sẵn, Prisma chỉ **áp dụng migration hiện có lên DB của bạn** (không sinh file mới). **Lưu ý (Prisma 6):** `migrate dev` chỉ tự động chạy seed khi chính lệnh này vừa tạo mới hoặc reset database — DB của bạn đã tồn tại từ L07 nên bước này áp dụng migration xong **không nhất thiết** tự chạy seed; đọc kỹ output để biết có seed hay không, đừng mặc định là có.
+5. Vì bước 4 không đảm bảo tự seed, chạy tường minh `pnpm exec prisma db seed` — đây là **lần chạy thứ nhất**, bất kể bước 4 có tự seed hay chưa. Đọc `prisma/seed.ts` đã có sẵn — chú ý nó dùng `findFirst`-rồi-`create` cho `Project`/`Task`/`Comment` (không phải `upsert` theo id cố định như Ví dụ 2). Sau đó chạy `pnpm exec prisma db seed` **lần thứ hai** (`prisma studio` hoặc `psql` để đếm số dòng `Project`/`Task`/`Comment` trước/sau) để tự kiểm chứng tính idempotent: chạy tuần tự (không đồng thời) thì lần hai phải **không** tạo thêm dòng nào, vì `findFirst` ở lần hai đã thấy dữ liệu lần một tạo ra.
 
 **Cách kiểm tra:**
 
@@ -346,7 +351,7 @@ pnpm exec prisma studio            # xem dữ liệu vừa migrate/seed trực q
 - Nếu `prisma migrate dev` báo drift/hỏi reset DB: đọc kỹ message trước khi đồng ý — reset sẽ **xoá sạch dữ liệu dev hiện có**.
 - Nếu seed không tự chạy sau `migrate dev`: kiểm tra lại `package.json` đã có khoá `"prisma": { "seed": "ts-node prisma/seed.ts" }` chưa (đã có sẵn, nhưng deprecated ở Prisma 6 — xem Khái niệm 5, chỉ là warning không phải lỗi).
 - Nếu gặp lỗi ambiguous relation (Prisma đòi tên `@relation("...")`) khi 2 field cùng trỏ 1 model: xem lại phần "Giải thích" ở Ví dụ 1 — đây là lỗi rất hay gặp khi có 2 quan hệ tới cùng `User`.
-- Nếu seed hai lần tạo ra 2 `Project` "Demo Project": đó là bug seed-collision đã biết (`Project.name` không `@unique`) — **không phải lỗi của bạn**, đã ghi nhận là follow-up chưa sửa (xem callout ROADMAP L08).
+- Chạy **tuần tự** như bước 5 ở trên (chạy xong lần một mới chạy lần hai) sẽ **không** tạo ra 2 `Project` "Demo Project" — lần hai luôn thấy project lần một đã tạo qua `findFirst`. Bug seed-collision đã biết chỉ xảy ra khi **hai tiến trình `prisma db seed` chạy đồng thời (race)**, cả hai cùng `findFirst` tên `"Demo Project"` trước khi bên nào kịp `create` xong — cả hai đều thấy "chưa có" rồi cùng tạo, sinh 2 dòng trùng tên vì `Project.name` không có `@unique` để chặn. Nếu bạn tự tay chạy tuần tự mà vẫn thấy trùng, đó **là lỗi thật cần báo**, không phải bug đã biết này; bug đã biết **cố tình chưa sửa** ở NES-121 (xem callout ROADMAP L08), để dành làm follow-up riêng.
 
 ---
 
