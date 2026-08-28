@@ -101,7 +101,7 @@
   2. Sinh file migration SQL mới trong `prisma/migrations/<timestamp>_<name>/migration.sql`.
   3. Áp dụng migration đó lên DB dev.
   4. Chạy lại `prisma generate` (Prisma Client mới khớp schema).
-  5. **Tự động chạy seed script** nếu đã cấu hình (xem Khái niệm 5).
+  5. **Tự động chạy seed script** nếu đã cấu hình (xem Khái niệm 5) — **nhưng chỉ khi chính lần chạy này vừa tạo mới hoặc reset database**; nếu DB đã tồn tại từ trước và bước này chỉ áp dụng migration đang chờ, `migrate dev` **không** tự seed.
   6. Nếu phát hiện thay đổi có thể mất dữ liệu (ví dụ đổi kiểu cột) hoặc drift, **sẽ hỏi xác nhận** trước khi reset DB — không chạy được trong CI vì cần tương tác.
 - **`prisma migrate deploy`** (dùng cho CI/production): chỉ **áp dụng các file migration đã có sẵn trên đĩa**, theo đúng thứ tự, **không** tính shadow database, **không** sinh file mới, **không** hỏi gì — vì vậy an toàn để chạy non-interactive trong pipeline.
 - **`prisma migrate reset`** (chỉ dev): xoá sạch DB, tạo lại từ đầu, áp toàn bộ migration history + seed. Dùng khi muốn "làm lại từ đầu" ở máy dev — **không bao giờ** chạy ở production.
@@ -119,7 +119,7 @@
 
 **Vấn đề nó giải quyết:** Sau `migrate dev`/`migrate reset`, DB rỗng — cần dữ liệu mẫu để test thủ công (Postman) mà không phải tạo tay từng record, và **chạy lại nhiều lần không được nhân đôi dữ liệu**.
 
-- **Cấu hình:** khai `"prisma": { "seed": "ts-node prisma/seed.ts" }` trong `package.json` (repo đã có `ts-node` trong devDependencies từ trước) hoặc trong `prisma.config.ts` ở bản mới hơn. Có cấu hình này thì `migrate dev` và `migrate reset` **tự động chạy seed** sau khi migrate xong; `prisma db seed` chạy seed thủ công bất kỳ lúc nào.
+- **Cấu hình:** khai `"prisma": { "seed": "ts-node prisma/seed.ts" }` trong `package.json` (repo đã có `ts-node` trong devDependencies từ trước) hoặc trong `prisma.config.ts` ở bản mới hơn. Có cấu hình này thì `prisma db seed` chạy seed thủ công bất kỳ lúc nào; **quy tắc auto-seed khác nhau giữa hai lệnh migrate:** `migrate reset` **luôn luôn** tự chạy seed sau khi migrate xong (đúng bản chất "làm lại từ đầu"), còn `migrate dev` **chỉ** tự chạy seed khi chính lần chạy đó vừa **tạo mới hoặc reset** database — nếu DB đã tồn tại sẵn và lệnh chỉ áp dụng migration đang chờ, nó **không** tự seed (xem Khái niệm 4, bước 5, và Hands-on bước 4/5).
 - **Cảnh báo riêng cho Prisma 6 (repo pin `6.19.3`):** khoá `package.json#prisma` **đã deprecated** — mọi lệnh `prisma migrate`/`validate`/`generate` in ra `warn The configuration property package.json#prisma is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file`. Repo vẫn dùng cách này vì còn hoạt động đúng ở 6.19.3 (đã tự kiểm chứng khi chạy `prisma validate` ở NES-121); chỉ là cảnh báo, không phải lỗi — chưa cần đổi sang `prisma.config.ts` ở lesson này.
 - **Idempotent bằng `upsert`:** với model có field `@unique` tự nhiên (ví dụ `User.email`), dùng `prisma.user.upsert({ where: { email }, update: {}, create: {...} })` — chạy lại bao nhiêu lần cũng chỉ có đúng 1 record cho mỗi email.
 - **Model không có unique tự nhiên** (ví dụ `Task`, `Comment` — tiêu đề trùng nhau vẫn hợp lệ về nghiệp vụ): hai lựa chọn, đều phải cân nhắc đánh đổi:
@@ -349,7 +349,7 @@ pnpm exec prisma studio            # xem dữ liệu vừa migrate/seed trực q
 **Vướng ở đâu, gỡ thế nào:**
 
 - Nếu `prisma migrate dev` báo drift/hỏi reset DB: đọc kỹ message trước khi đồng ý — reset sẽ **xoá sạch dữ liệu dev hiện có**.
-- Nếu seed không tự chạy sau `migrate dev`: kiểm tra lại `package.json` đã có khoá `"prisma": { "seed": "ts-node prisma/seed.ts" }` chưa (đã có sẵn, nhưng deprecated ở Prisma 6 — xem Khái niệm 5, chỉ là warning không phải lỗi).
+- Nếu seed không tự chạy sau `migrate dev`: **trước tiên xác định `migrate dev` lần đó có vừa tạo mới/reset DB hay không** — nếu DB đã tồn tại từ trước và lệnh chỉ áp dụng migration đang chờ, **không tự seed là hành vi đúng** (xem Khái niệm 4/5), không phải lỗi cấu hình. Chỉ khi lần chạy đó **thực sự** vừa tạo mới/reset DB mà vẫn không seed thì mới đi kiểm tra `package.json` đã có khoá `"prisma": { "seed": "ts-node prisma/seed.ts" }` chưa (đã có sẵn, nhưng deprecated ở Prisma 6 — xem Khái niệm 5, chỉ là warning không phải lỗi).
 - Nếu gặp lỗi ambiguous relation (Prisma đòi tên `@relation("...")`) khi 2 field cùng trỏ 1 model: xem lại phần "Giải thích" ở Ví dụ 1 — đây là lỗi rất hay gặp khi có 2 quan hệ tới cùng `User`.
 - Chạy **tuần tự** như bước 5 ở trên (chạy xong lần một mới chạy lần hai) sẽ **không** tạo ra 2 `Project` "Demo Project" — lần hai luôn thấy project lần một đã tạo qua `findFirst`. Bug seed-collision đã biết chỉ xảy ra khi **hai tiến trình `prisma db seed` chạy đồng thời (race)**, cả hai cùng `findFirst` tên `"Demo Project"` trước khi bên nào kịp `create` xong — cả hai đều thấy "chưa có" rồi cùng tạo, sinh 2 dòng trùng tên vì `Project.name` không có `@unique` để chặn. Nếu bạn tự tay chạy tuần tự mà vẫn thấy trùng, đó **là lỗi thật cần báo**, không phải bug đã biết này; bug đã biết **cố tình chưa sửa** ở NES-121 (xem callout ROADMAP L08), để dành làm follow-up riêng.
 
