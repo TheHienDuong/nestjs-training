@@ -146,6 +146,36 @@ Lesson note viết tiếng Việt trên `main`, tạo bản EN tương ứng tr�
 
 ---
 
+## Dọn dẹp workspace sau khi task xong (Herdr) — bắt buộc
+
+> Áp dụng cho task dispatch qua Herdr — Coder (codex) hoặc agy chạy trong worktree/pane riêng (xem [AGENT-MODEL.md](AGENT-MODEL.md)). Chi tiết đầy đủ + guardrail nằm ở `.hermes.md` (mục "Dọn dẹp bắt buộc" + "Herdr bridge") — đây là bản tóm tắt cho người đọc quy trình.
+
+**Luồng 9 bước (Herdr bridge)** — dọn dẹp là **bước cuối bắt buộc**, không phải việc làm khi rảnh:
+
+1. `hermes kanban create/claim` — task state (nguồn sự thật duy nhất)
+2. `herdr worktree create --cwd <repo> --branch codex/nes-XX-... --label NES-XX --json` — tự tạo workspace + tab + pane riêng cho task
+3. `herdr agent start <name> --kind codex --pane <pane_id>` — agent ephemeral per task
+4. `herdr agent prompt <pane_id> "<task> + ghi kết quả vào <worktree>/.hermes/runs/NES-XX.json"`
+5. Poll file JSON kết quả — phán quyết duy nhất, không tin `pane wait-output`/`agent wait`
+6. Verify độc lập: `git diff` raw + `pnpm verify` — không tin lời tự báo cáo
+7. Mở PR riêng (`Fixes NES-XX`) → Claude Code review local → Codex GitHub App connector review → user lead review + merge
+8. `hermes kanban complete`
+9. **Dọn dẹp bắt buộc** — ngay sau khi PR đã squash merge (hoặc user báo hủy task): resolve target động bằng `herdr agent list` (không dùng lại id/label cũ), kiểm tra `git status` + trạng thái PR/issue, rồi mới `herdr worktree remove --workspace <id> --force` + `git branch -D <branch>`. Không để lại worktree/pane vô dụng.
+
+**Ngoại lệ an toàn — không bao giờ xóa nếu:**
+
+- Là worktree `main` hoặc worktree hiện tại của user (đang mở/đang dùng).
+- Là worktree lesson/coder/reviewer đang **active** (task chưa đóng, đang chờ review/CI).
+- Worktree còn **uncommitted changes**.
+- Branch còn **PR đang mở**.
+- Pane đang **chạy** hoặc còn cần cho việc khác.
+
+**Remote branch:** mặc định **không** xóa — chỉ xóa branch local. Chỉ xóa remote khi user yêu cầu rõ ràng.
+
+**Nếu bị chặn:** báo đúng lý do (uncommitted changes / PR mở / pane đang chạy) trong chat, không ép xóa, thử lại dọn dẹp sau khi điều kiện chặn được giải quyết.
+
+---
+
 ## Hàng rào chất lượng tự động
 
 | Hàng rào                          | Chạy ở đâu  | Chặn cái gì                            |
