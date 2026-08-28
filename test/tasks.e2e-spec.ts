@@ -21,7 +21,11 @@ describe('TasksController (e2e)', () => {
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
+    // Task -> Project -> User in FK order so repeated e2e runs against a
+    // persistent DB stay idempotent (Project.ownerId is onDelete: Restrict).
     await app.get(PrismaService).task.deleteMany();
+    await app.get(PrismaService).project.deleteMany();
+    await app.get(PrismaService).user.deleteMany();
   });
 
   afterEach(async () => {
@@ -112,14 +116,38 @@ describe('TasksController (e2e)', () => {
   });
 
   it('rejects array projectId/assigneeId instead of coercing them to a scalar id', async () => {
+    // Real, existing ids (not a made-up '5') so a regression that lets
+    // `rejectBooleanId` coerce `['5']` -> `Number(['5'])` -> `5` would hit a
+    // row that actually exists and succeed with 201 — not a false-positive
+    // 400 from the unrelated P2003-foreign-key-not-found fallback path.
+    const prisma = app.get(PrismaService);
+    const owner = await prisma.user.create({
+      data: {
+        email: 'nes-123-owner@example.com',
+        name: 'NES-123 Owner',
+        password: 'irrelevant',
+      },
+    });
+    const project = await prisma.project.create({
+      data: { name: 'NES-123 Project', ownerId: owner.id },
+    });
+
+    const assertRejectedAsValidation = (response: {
+      body: { message: unknown };
+    }) => {
+      expect(Array.isArray(response.body.message)).toBe(true);
+    };
+
     await request(app.getHttpServer())
       .post('/tasks')
-      .send({ title: 'Valid', projectId: ['5'] })
-      .expect(400);
+      .send({ title: 'Valid', projectId: [String(project.id)] })
+      .expect(400)
+      .expect(assertRejectedAsValidation);
     await request(app.getHttpServer())
       .post('/tasks')
-      .send({ title: 'Valid', assigneeId: ['5'] })
-      .expect(400);
+      .send({ title: 'Valid', assigneeId: [String(owner.id)] })
+      .expect(400)
+      .expect(assertRejectedAsValidation);
 
     const created = await request(app.getHttpServer())
       .post('/tasks')
@@ -128,12 +156,14 @@ describe('TasksController (e2e)', () => {
     const task = created.body as TaskResponse;
     await request(app.getHttpServer())
       .patch(`/tasks/${task.id}`)
-      .send({ projectId: ['5'] })
-      .expect(400);
+      .send({ projectId: [String(project.id)] })
+      .expect(400)
+      .expect(assertRejectedAsValidation);
     await request(app.getHttpServer())
       .patch(`/tasks/${task.id}`)
-      .send({ assigneeId: ['5'] })
-      .expect(400);
+      .send({ assigneeId: [String(owner.id)] })
+      .expect(400)
+      .expect(assertRejectedAsValidation);
   });
 
   it('derives completed from status, and keeps completed as-is when status is omitted', async () => {
