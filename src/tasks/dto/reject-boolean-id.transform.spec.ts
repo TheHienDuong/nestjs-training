@@ -19,4 +19,12 @@ describe('rejectBooleanId', () => {
   it('still coerces a number to a number', () => {
     expect(rejectBooleanId({ value: 5 })).toBe(5);
   });
+
+  it('leaves an array unchanged, so @IsInt() rejects it', () => {
+    expect(rejectBooleanId({ value: ['5'] })).toEqual(['5']);
+  });
+
+  it('leaves an empty array unchanged, so @IsInt() rejects it', () => {
+    expect(rejectBooleanId({ value: [] })).toEqual([]);
+  });
 });
