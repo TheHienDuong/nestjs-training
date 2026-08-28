@@ -146,6 +146,36 @@ Lesson notes are written in Vietnamese on `main`, then an English version is cre
 
 ---
 
+## Mandatory workspace cleanup after a task (Herdr)
+
+> Applies to tasks dispatched via Herdr — the Coder (codex) or agy runs in its own worktree/pane (see [AGENT-MODEL.md](AGENT-MODEL.md)). Full details + guardrails live in `.hermes.md` (sections "Mandatory cleanup" and "Herdr bridge") — this is the summary for readers of the workflow.
+
+**9-step flow (Herdr bridge)** — cleanup is the **mandatory last step**, not optional housekeeping:
+
+1. `hermes kanban create/claim` — task state (the single source of truth)
+2. `herdr worktree create --cwd <repo> --branch codex/nes-XX-... --label NES-XX --json` — automatically creates a workspace + tab + dedicated pane for the task
+3. `herdr agent start <name> --kind codex --pane <pane_id>` — ephemeral agent, one per task
+4. `herdr agent prompt <pane_id> "<task> + write results to <worktree>/.hermes/runs/NES-XX.json"`
+5. Poll the result JSON file — the sole verdict, don't trust `pane wait-output`/`agent wait`
+6. Independent verification: `git diff` raw + `pnpm verify` — don't trust the agent's self-report
+7. Open a dedicated PR (`Fixes NES-XX`) → Claude Code local review → Codex GitHub App connector review → user lead review + merge
+8. `hermes kanban complete`
+9. **Mandatory cleanup** — immediately after the PR is squash-merged (or the user signals the task is cancelled): resolve the target dynamically with `herdr agent list` (don't reuse old ids/labels), check `git status` + PR/issue state, then `herdr worktree remove --workspace <id> --force` + `git branch -D <branch>`. Don't leave dead worktrees/panes behind.
+
+**Safety exceptions — never delete if:**
+
+- It is the `main` worktree or the user's currently open/active worktree.
+- It is a lesson/coder/reviewer worktree that is **active** (task not closed, waiting for review/CI).
+- The worktree still has **uncommitted changes**.
+- The branch still has an **open PR**.
+- The pane is still **running** or is needed for something else.
+
+**Remote branch:** do **not** delete by default — only delete the local branch. Only delete the remote if the user explicitly requests it.
+
+**If blocked:** report the exact reason (uncommitted changes / open PR / running pane) in the chat, don't force the deletion, retry cleanup once the blocking condition is resolved.
+
+---
+
 ## Automated Quality Gates
 
 | Quality Gate                      | Runs where   | Blocks what                                         |
