@@ -36,6 +36,8 @@ For you, ADRs also have unique value: **writing an ADR forces you to articulate 
 | [0007](0007-claude-reviewer-local-multi-reviewer.md) | Claude Code takes back the Reviewer local role in the multi-reviewer model (revises the 2026-08-13/PR#24 decision)   | Proposed                      |
 | [0008](0008-review-collector-mr.md)                  | The `mr/*` collector branch is a post-merge audit layer, not a replacement for ADR-0005                              | Proposed                      |
 
+| [0009](0009-food-ordering-module-boundary.md) | Isolate the Food Ordering practice from the legacy Task Management scaffold | Proposed |
+
 ## Template
 
 Copy this block when writing a new ADR:

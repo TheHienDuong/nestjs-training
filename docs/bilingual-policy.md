@@ -15,6 +15,8 @@ The repo is mirrored into English to sync with the company GitLab (`gitlab` remo
 
 Code in `src/` and `test/` is **identical** in both versions — there is no per-language logic. Only docs (`docs/`, `AGENTS.md`, `CLAUDE.md`, `.hermes.md`, README...) and config with natural-language comments/descriptions differ between the two versions.
 
+For the Food Ordering REST API practice, this policy still applies to documentation and configuration: `main` is the Vietnamese learner-work branch and `example/nestjs-training` is its English mirror. The practice's daily learner work is recorded on GitLab through `origin`; GitHub is the integration, review, Actions, and automation surface. This does not make either remote a substitute for the other.
+
 ## Workflow when changing docs
 
 1. Edit the Vietnamese version on `main` as usual.

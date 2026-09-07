@@ -100,6 +100,10 @@ After the PR has been merged into `main`, run `pnpm lesson --tag <NN>` to create
 
 ## Conventions
 
+### Remote roles for the Food Ordering practice
+
+Verify the roles with `git remote -v` before each day starts. In the current repository, `origin` points to GitLab and is used for daily learner work and human Merge Requests. `github` points to GitHub and is used for integration, agent review, GitHub Actions, and automation. A GitLab MR is linked to its Linear issue manually; a GitHub PR uses the repository's native integration. The bilingual policy remains in force for documentation/configuration: `main` is Vietnamese and `example/nestjs-training` is English.
+
 ### Branch
 
 Linear automatically generates a branch name for each issue (via the _Copy git branch name_ button), in the format:
