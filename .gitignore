@@ -47,5 +47,3 @@ lerna-debug.log*
 *.seed
 *.pid.lock
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-# Local task state
-/.hermes/
