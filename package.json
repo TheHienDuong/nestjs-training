@@ -1,27 +1,25 @@
 {
-  "name": "nestjs-training",
+  "name": "nestjs-task-management-api",
   "version": "0.0.1",
-  "description": "NestJS 11 learning project following the official docs, operated like a real project (Linear + GitHub + Slack + Notion)",
+  "description": "Task management API built with NestJS 11, Prisma, and PostgreSQL",
   "author": "Hien Duong",
-  "private": true,
   "license": "UNLICENSED",
   "packageManager": "pnpm@11.18.0",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"prisma/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"prisma/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test,scripts,prisma}/**/*.ts\" --fix",
-    "lesson": "node scripts/lesson.mjs",
+    "lint": "eslint \"{src,apps,libs,test,prisma}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
-    "verify": "pnpm exec eslint \"{src,apps,libs,test,scripts,prisma}/**/*.ts\" --max-warnings=0 && pnpm exec prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"prisma/*.ts\" \"docs/**/*.md\" \"*.md\" \"*.json\" \"*.yml\" \"*.mjs\" && pnpm test && pnpm build",
+    "verify": "pnpm exec eslint \"{src,apps,libs,test,prisma}/**/*.ts\" --max-warnings=0 && pnpm exec prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"prisma/*.ts\" \"*.md\" \"*.json\" \"*.yml\" && pnpm test && pnpm build",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f"
@@ -87,8 +85,7 @@
     ],
     "rootDir": ".",
     "roots": [
-      "<rootDir>/src",
-      "<rootDir>/scripts"
+      "<rootDir>/src"
     ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {

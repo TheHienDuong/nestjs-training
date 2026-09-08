@@ -1,6 +1,6 @@
 import { rejectBooleanId } from './reject-boolean-id.transform';
 
-// [NES-121 · lesson 08 corrective] Unit coverage for the boolean-id guard —
+// Unit coverage for the boolean-id guard —
 // see reject-boolean-id.transform.ts for why @Type(() => Number) alone lets
 // true/false through as 1/0.
 describe('rejectBooleanId', () => {

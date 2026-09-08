@@ -1,7 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
-// [NES-8 · lesson 07] Reference — Prisma client lifecycle provider.
+// Reference — Prisma client lifecycle provider.
 @Injectable()
 export class PrismaService
   extends PrismaClient

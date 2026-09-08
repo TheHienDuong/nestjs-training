@@ -1,4 +1,4 @@
-// [NES-6 · lesson 05] Reference — custom query pipe for completed filters.
+// Reference — custom query pipe for completed filters.
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 
 @Injectable()

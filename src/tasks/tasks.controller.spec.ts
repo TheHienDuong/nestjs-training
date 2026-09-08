@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
 
-// [NES-8 · lesson 07] Reference — controller delegates HTTP concerns to service.
+// Reference — controller delegates HTTP concerns to service.
 describe('TasksController', () => {
   let controller: TasksController;
   const serviceMock = {

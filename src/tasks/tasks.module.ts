@@ -4,7 +4,7 @@ import { TasksConfigModule } from './tasks-config.module';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
 
-// [NES-8 · lesson 07] Reference — feature module with database dependency.
+// Reference — feature module with database dependency.
 @Module({
   imports: [PrismaModule, TasksConfigModule.forFeature('crud')],
   controllers: [TasksController],

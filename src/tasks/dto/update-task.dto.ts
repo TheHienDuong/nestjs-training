@@ -1,7 +1,7 @@
-// [NES-5 · lesson 04] Reference — partial update DTO.
-// [NES-9 · lesson 08] project/assignee/description/status/priority/dueDate
+// Reference — partial update DTO.
+// project/assignee/description/status/priority/dueDate
 // added — all optional, matching the existing partial-update contract.
-// [NES-121 · lesson 08 corrective] projectId/assigneeId reject boolean input
+// projectId/assigneeId reject boolean input
 // instead of silently coercing it to 0/1 — see reject-boolean-id.transform.ts.
 import { Transform, Type } from 'class-transformer';
 import {

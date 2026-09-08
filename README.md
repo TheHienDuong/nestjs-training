@@ -1,111 +1,143 @@
-# NestJS Training
+# NestJS Task Management API
 
-> This project **learns NestJS 11** following the official [docs.nestjs.com](https://docs.nestjs.com) documentation, but is operated **like a real backend project**: Linear for task management, GitLab merge requests + CI for daily quality control, GitHub for integration and automated review, Slack for progress updates, and Notion as the knowledge base.
+A production-oriented task management API built with NestJS 11. The application provides a foundation for users, projects, tasks, and comments, with validation, PostgreSQL persistence, and a maintainable module structure.
 
-Final course product: a **Task Management API** (User · Project · Task · Comment) with validation, centralized error handling, JWT auth + RBAC, Swagger docs, API versioning, Redis cache, health check, unit + e2e tests, automated CI.
+## Stack
 
-## Where to start
+- NestJS 11 with `@nestjs/platform-express`
+- TypeScript and constructor-based dependency injection
+- Prisma 6 with PostgreSQL
+- `class-validator` and `class-transformer` for request validation
+- `@nestjs/config` for environment configuration
+- Jest and Supertest for unit and end-to-end tests
+- Docker Compose for local PostgreSQL and Redis services
+- GitLab CI for linting, formatting, tests, and builds
 
-| What you want                                   | Read                                                                 |
-| ----------------------------------------------- | -------------------------------------------------------------------- |
-| View the full learning roadmap                  | [`docs/ROADMAP.md`](docs/ROADMAP.md)                                 |
-| Understand the workflow for each lesson         | [`docs/workflow/WORKFLOW.md`](docs/workflow/WORKFLOW.md)             |
-| Understand why the repo is structured this way  | [`docs/lessons/00-setup/README.md`](docs/lessons/00-setup/README.md) |
-| View architecture decisions and their rationale | [`docs/adr/`](docs/adr/README.md)                                    |
-| Understand how multiple AI agents collaborate   | [`docs/workflow/AGENT-MODEL.md`](docs/workflow/AGENT-MODEL.md)       |
+## Prerequisites
 
-## Environment setup
+- Node.js 22 or newer
+- pnpm 11
+- Docker and Docker Compose
 
-Requirements: **Node.js >= 20** (as required by NestJS documentation), **pnpm**, **Docker**.
-
-```bash
-pnpm install          # Husky automatically installs git hooks via the "prepare" script
-cp .env.example .env  # then fill in the actual values
-docker compose up -d  # PostgreSQL 16 + Redis 7
-docker compose ps     # both must be in the (healthy) state
-pnpm start:dev        # http://localhost:3000
-```
-
-## Common commands
+Install the exact dependencies declared by the lockfile:
 
 ```bash
-pnpm start:dev        # dev, watch mode — main loop
-pnpm lint             # eslint --fix
-pnpm format           # prettier --write
-pnpm test             # unit test
-pnpm test:e2e         # e2e test
-pnpm test:cov         # coverage
-pnpm verify               # matches what CI runs — use BEFORE opening a PR
-pnpm db:up / db:down  # toggle postgres + redis
+pnpm install --frozen-lockfile
 ```
 
-## Structure
+## Environment
 
-```
-src/                       # application code (main.ts, app.module.ts, feature modules)
-test/                      # e2e tests (*.e2e-spec.ts)
-docs/
-  ROADMAP.md               # 8 phases, ~26 lessons, links to official docs
-  workflow/                # WORKFLOW.md · AGENT-MODEL.md
-  adr/                     # architecture decision records
-  lessons/XX-*/README.md   # Vietnamese notes for each lesson
-  templates/               # lesson note · retro templates
-.claude/skills/            # lesson-start · teach · lesson-review · sync-progress
-.github/workflows/ci.yml   # lint → format → test → build
-.husky/                    # pre-commit (lint-staged) · commit-msg (commitlint)
-docker-compose.yml         # postgres:16 · redis:7 · adminer (profile "tools")
-postman/                   # collection for manual API testing
+Copy the example environment file and review every value before starting the application:
+
+```bash
+cp .env.example .env
 ```
 
-## Important rules
+`.env.example` contains safe local placeholders. Never commit `.env`, credentials, tokens, or production connection strings.
 
-- **Package manager is `pnpm`** — do not use npm/yarn (it will create a second lockfile and break CI).
-- **Conventional Commits are mandatory** — `commitlint` blocks commits at the git hook; incorrectly formatted commits will be rejected.
-- **Do not push directly to `main`** — branch protection is enabled; all changes must go through PRs with passing CI.
-- **Merge requests must include `Fixes NES-XX`**. After a GitLab merge, the user or Hermes records the merge evidence and updates Linear because no GitLab-to-Linear automation is assumed here.
-- **AI must not write hands-on code in place of the learner** — see [AGENTS.md](AGENTS.md).
+## Local services
 
-## Quality
+Start PostgreSQL and Redis with Docker Compose:
 
-| Gate            | Location                       | Blocks                            |
-| --------------- | ------------------------------ | --------------------------------- |
-| `lint-staged`   | `pre-commit` hook              | Unformatted code / lint errors    |
-| `commitlint`    | `commit-msg` hook              | Non-standard commit messages      |
-| GitLab CI       | every branch and merge request | Lint · format · test · build      |
-| GitLab approval | merge requests                 | Required review and approval      |
-| Dependabot      | weekly                         | Outdated/ vulnerable dependencies |
+```bash
+pnpm db:up
+docker compose ps
+```
 
-## Notes
+Stop the services while keeping their data:
 
-The repo has two remotes: `origin` (GitLab — the daily canonical repository) and `github` (GitHub — integration and automated review only). Daily branches and merge requests use `origin`; GitHub is not the merge-of-record repository.
+```bash
+pnpm db:down
+```
 
-## NES-2 L01 — Reference Implementation
+## Database
 
-The NES-2 L01 reference implementation demonstrates four objectives:
+Apply committed migrations to the configured database:
 
-1. The role of the five core files generated by `nest new`.
-2. The NestJS bootstrap flow and constructor injection for DI.
-3. A standard feature-module structure with a module, controller, service, DTO, and unit test.
-4. The common Nest CLI commands: `new`, `generate`, `build`, and `start`.
+```bash
+pnpm exec prisma migrate deploy
+```
 
-Bootstrap starts in [`src/main.ts`](src/main.ts): `NestFactory.create(AppModule)` reads `@Module()` metadata, creates the DI container, registers controllers/providers, and `app.listen()` opens the HTTP listener. [`AppController`](src/app.controller.ts) receives `AppService` through constructor injection; [`UsersController`](src/users/users.controller.ts) receives `UsersService` in the same way.
+Generate the Prisma Client after schema changes:
 
-| File                                                       | Role                                                                                     |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| [`src/main.ts`](src/main.ts)                               | Entry point: bootstraps the app with `NestFactory.create(AppModule)` and `app.listen()`. |
-| [`src/app.module.ts`](src/app.module.ts)                   | Root module: declares `imports`, `controllers`, and `providers`.                         |
-| [`src/app.controller.ts`](src/app.controller.ts)           | Root controller: handles HTTP requests and delegates business logic to the service.      |
-| [`src/app.service.ts`](src/app.service.ts)                 | Root provider/service: contains business logic and uses `@Injectable()`.                 |
-| [`src/app.controller.spec.ts`](src/app.controller.spec.ts) | Controller unit test using `Test.createTestingModule()`.                                 |
+```bash
+pnpm exec prisma generate
+```
 
-The `users` feature is in [`src/users/`](src/users/), and its e2e test is in [`test/users.e2e-spec.ts`](test/users.e2e-spec.ts).
+Seed local development data:
 
-| Command                                               | Purpose                                                   | Equivalent repository script |
-| ----------------------------------------------------- | --------------------------------------------------------- | ---------------------------- |
-| `npx @nestjs/cli new my-app --package-manager pnpm`   | Creates a new project with core files, config, and tests. | —                            |
-| `nest generate module users` or `nest g module users` | Scaffolds a new module.                                   | —                            |
-| `nest generate controller users`                      | Scaffolds a new controller.                               | —                            |
-| `nest generate service users`                         | Scaffolds a new service.                                  | —                            |
-| `nest build`                                          | Builds production output in `dist/`.                      | `pnpm build`                 |
-| `nest start --watch`                                  | Runs development mode and restarts when files change.     | `pnpm start:dev`             |
-| `nest start`                                          | Compiles and runs the app once.                           | `pnpm start`                 |
+```bash
+pnpm exec prisma db seed
+```
+
+Do not edit migration files after they have been applied. Create a new migration for each schema change.
+
+## Development
+
+```bash
+pnpm start:dev
+```
+
+The default HTTP server listens on `http://localhost:3000`. Other useful commands:
+
+```bash
+pnpm build
+pnpm start:prod
+pnpm db:logs
+```
+
+## Architecture
+
+The code is organized by feature under `src/`:
+
+- Controllers handle HTTP routing, request boundaries, and response shapes.
+- Services contain business rules and coordinate persistence.
+- Modules define feature boundaries and dependency injection wiring.
+- DTOs and pipes validate and transform external input.
+- `src/prisma/` owns the Prisma client lifecycle and database provider.
+
+The `prisma/` directory contains the schema, migrations, and seed entry point. The `test/` directory contains end-to-end tests and test environment setup.
+
+## Testing and quality
+
+Run the complete local quality suite:
+
+```bash
+pnpm verify
+```
+
+This runs ESLint with zero warnings allowed, the Prettier check, Jest, and the production build. Individual commands are available when troubleshooting:
+
+```bash
+pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "prisma/*.ts" "*.md" "*.json" "*.yml"
+pnpm exec eslint "{src,apps,libs,test,prisma}/**/*.ts" --max-warnings=0
+pnpm exec jest --watchman=false
+pnpm build
+```
+
+Unit tests live beside the files they cover. End-to-end tests use `test/jest-e2e.json` and require the configured database.
+
+## GitLab workflow
+
+GitLab is the canonical repository and release workflow. Create a short-lived branch from the protected default branch, push it to `origin`, and open a merge request in GitLab. Each merge request should include:
+
+- A focused description of the change and its scope
+- Evidence for behavior or configuration changes
+- The verification commands and their results
+- Confirmation that no secrets are included
+
+All required CI jobs and approvals must pass before the project owner squash-merges the merge request. Do not push directly to the protected default branch.
+
+## Security and production notes
+
+- Validate all external input at the HTTP boundary.
+- Keep secrets in the deployment environment, never in source control or logs.
+- Use separate credentials and databases for development, testing, and production.
+- Review migration plans before production deployment and take backups first.
+- Run behind TLS termination and configure trusted proxy behavior for the deployment environment.
+- Set restrictive database permissions and rotate credentials regularly.
+- Review dependency and container updates before release.
+
+## License
+
+This repository is not currently distributed under an open-source license. Add an explicit license before redistributing it.

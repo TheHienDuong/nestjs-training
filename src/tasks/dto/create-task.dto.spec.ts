@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { CreateTaskDto } from './create-task.dto';
 
-// [NES-122 · lesson 08 follow-up] DTO-level regression for the
+// DTO-level regression for the
 // reject-boolean-id transform: exercises the same plainToInstance-then-validate
 // pipeline `ValidationPipe({ transform: true })` runs, so array-valued
 // projectId/assigneeId (e.g. from `?projectId[]=5`-style bodies) are proven to

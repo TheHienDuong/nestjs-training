@@ -13,7 +13,7 @@ import { PrismaModule } from './prisma/prisma.module';
   // AppModule composes feature modules; it does not own their controllers/providers.
   // forRoot demonstrates one-time dynamic configuration at the application boundary.
   imports: [
-    // class-validator/class-transformer already exist from L05, so this keeps
+    // class-validator/class-transformer are already dependencies, so this keeps
     // fail-fast validation maintainable without adding a second schema library.
     ConfigModule.forRoot({
       isGlobal: true,
@@ -22,7 +22,7 @@ import { PrismaModule } from './prisma/prisma.module';
     UsersModule,
     PrismaModule,
     TasksModule,
-    TasksConfigModule.forRoot({ appName: 'nestjs-training' }),
+    TasksConfigModule.forRoot({ appName: 'nestjs-task-management' }),
   ],
   controllers: [AppController],
   providers: [

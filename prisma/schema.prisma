@@ -24,8 +24,8 @@ enum TaskPriority {
   HIGH
 }
 
-// [NES-9 · lesson 08] Reference — User is not yet wired to a Prisma-backed
-// service (UsersService stays in-memory until the L12 auth lessons); this
+// Reference — User is not yet wired to a Prisma-backed
+// service (UsersService stays in-memory until authentication is implemented); this
 // model only establishes the relations Project/Task/Comment need today.
 model User {
   id            Int             @id @default(autoincrement())
@@ -63,8 +63,8 @@ model ProjectMember {
   @@id([projectId, userId])
 }
 
-// [NES-9 · lesson 08] project/assignee stay optional (Int?) — not required
-// as in the L08 theory illustration — so the existing L07 CRUD contract
+// project/assignee stay optional (Int?) — not required
+// as in the  theory illustration — so the existing  CRUD contract
 // (CreateTaskDto only sends `title`) keeps compiling and behaving unchanged.
 model Task {
   id          Int          @id @default(autoincrement())

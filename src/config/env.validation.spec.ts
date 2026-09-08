@@ -5,9 +5,9 @@ import {
 } from './env.validation';
 
 const databaseUrl =
-  'postgresql://postgres:postgres@localhost:5433/nestjs_training?schema=public';
+  'postgresql://postgres:postgres@localhost:5433/nestjs_task_management?schema=public';
 
-// [NES-7 · lesson 06] Test — valid and invalid environment configuration.
+// Test — valid and invalid environment configuration.
 describe('environment validation', () => {
   it('returns typed configuration for valid required variables', () => {
     const config = validate({

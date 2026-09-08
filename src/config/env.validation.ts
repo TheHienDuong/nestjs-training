@@ -1,4 +1,4 @@
-// [NES-7 · lesson 06] Reference — environment variable validation.
+// Reference — environment variable validation.
 import { plainToInstance } from 'class-transformer';
 import {
   IsDefined,

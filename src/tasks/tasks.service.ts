@@ -8,13 +8,13 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
-// [NES-8 · lesson 07] Reference — database-backed task provider.
-// [NES-9 · lesson 08] The relational/status/priority columns live on the
+// Reference — database-backed task provider.
+// The relational/status/priority columns live on the
 // Task model (project/assignee stay optional — see prisma/schema.prisma),
 // but are written-only for now.
-// [NES-121 · lesson 08 corrective] Response shape stays { id, title,
-// completed } (docs/lessons/05-dto-pipes-validation/SPEC.md AC9) — the new
-// scalar columns are not exposed over HTTP at this lesson.
+// Response shape stays { id, title,
+// completed } ( ) — the new
+// scalar columns are not exposed over HTTP at this stage.
 export interface Task {
   id: number;
   title: string;
@@ -27,13 +27,13 @@ const TASK_SELECT = {
   completed: true,
 } satisfies Prisma.TaskSelect;
 
-// [NES-121 · lesson 08 corrective] `status` and `completed` were two
+// `status` and `completed` were two
 // independent fields with no reconciliation, so PATCH { status: 'DONE' }
 // left `completed` stale (and GET /tasks?completed=false could still return
 // a DONE task). Rule: whenever a caller sends `status`, it is the single
 // source of truth and `completed` is derived from it (DONE -> true,
 // otherwise -> false), overriding any `completed` sent in the same request.
-// Callers that omit `status` keep the pre-NES-121 behavior — `completed` is
+// Callers that omit `status` retain the existing behavior — `completed` is
 // written exactly as given, untouched by `status`.
 function reconcileCompleted<
   T extends { status?: TaskStatus; completed?: boolean },

@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
-// [NES-5 · lesson 04] Reference — deliberately small dynamic-module demonstration.
+// Reference — deliberately small dynamic-module demonstration.
 export const TASKS_CONFIG = 'TASKS_CONFIG';
 export const TASKS_FEATURE = 'TASKS_FEATURE';
 

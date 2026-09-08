@@ -17,7 +17,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { ParseCompletedQueryPipe } from './pipes/parse-completed-query.pipe';
 import { Task, TasksService } from './tasks.service';
 
-// [NES-8 · lesson 07] Reference — thin HTTP controller.
+// Reference — thin HTTP controller.
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}

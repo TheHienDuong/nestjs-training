@@ -20,7 +20,7 @@ function foreignKeyConstraintError(): Prisma.PrismaClientKnownRequestError {
   );
 }
 
-// [NES-8 · lesson 07] Reference — service behavior with Prisma mocked at the boundary.
+// Reference — service behavior with Prisma mocked at the boundary.
 describe('TasksService', () => {
   let service: TasksService;
   let prisma: {

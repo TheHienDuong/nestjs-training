@@ -1,4 +1,4 @@
-// [NES-9 · lesson 08] Reference — idempotent sample data for the relational
+// Reference — idempotent sample data for the relational
 // schema (User/Project/ProjectMember/Task/Comment). Safe to run repeatedly:
 // every write is either an `upsert` keyed on a real unique field (User.email)
 // or a `findFirst` existence check before `create`, so a second run never

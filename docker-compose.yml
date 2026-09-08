@@ -1,7 +1,7 @@
-# Local infrastructure for the learning project.
+# Local infrastructure services.
 #
 # Why use Docker instead of installing PostgreSQL directly on your machine:
-#   1. Fully removable. After studying, `docker compose down -v` restores your machine to its original state.
+#   1. Fully removable. `docker compose down -v` removes the local volumes.
 #   2. Fixed version. You and CI use exactly Postgres 16, not "whatever version my machine has".
 #   3. Multiple parallel projects don't fight over ports or overwrite each other's databases.
 #   4. This is exactly how real teams set up their dev environments.
@@ -16,12 +16,12 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: nestjs-training-postgres
+    container_name: nestjs-task-management-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-nestjs_training}
+      POSTGRES_DB: ${POSTGRES_DB:-nestjs_task_management}
     ports:
       # Mapped to 5433, not 5432, so it doesn't clash with any PostgreSQL already running on your machine.
       # DATABASE_URL in .env must therefore point to port 5433.
@@ -38,17 +38,17 @@ services:
       timeout: 5s
       retries: 5
 
-  # Redis is used for Phase 6 (caching). Enabled from the start so this file doesn't need editing mid-course.
+  # Redis is enabled from the start for local caching.
   redis:
     image: redis:7-alpine
-    container_name: nestjs-training-redis
+    container_name: nestjs-task-management-redis
     restart: unless-stopped
     ports:
       - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis-data:/data
     # --appendonly yes: Redis writes data to disk. Not required for a cache,
-    # but enabled so the cache isn't empty every time the container restarts while you're studying.
+    # so the cache is available after container restarts.
     command: redis-server --appendonly yes
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
@@ -59,10 +59,10 @@ services:
   # Web UI for managing PostgreSQL, so you can see the data visually.
   # NOT enabled by default (lives in the "tools" profile) since it isn't always needed:
   #   docker compose --profile tools up -d
-  # Go to http://localhost:8080  →  System: PostgreSQL, Server: postgres, DB: nestjs_training
+  # Go to http://localhost:8080  →  System: PostgreSQL, Server: postgres, DB: nestjs_task_management
   adminer:
     image: adminer:latest
-    container_name: nestjs-training-adminer
+    container_name: nestjs-task-management-adminer
     restart: unless-stopped
     profiles: [tools]
     ports:

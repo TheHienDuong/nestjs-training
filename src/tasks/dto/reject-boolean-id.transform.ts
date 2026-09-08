@@ -1,4 +1,4 @@
-// [NES-121 · lesson 08 corrective, NES-122 hardening] Shared `class-transformer`
+// Shared `class-transformer`
 // transform for `projectId`/`assigneeId`. `@Type(() => Number)` coerces
 // `true`/`false` to `1`/`0` *before* `@IsInt()`/`@IsPositive()` run, so
 // `{ projectId: true }` silently passed validation as `1`. Booleans are left

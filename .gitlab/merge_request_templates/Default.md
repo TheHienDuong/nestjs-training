@@ -1,33 +1,28 @@
-## Fixes NES-126
+## Summary
 
-### Scope
+Describe the change and its scope.
 
-- [ ] This merge request stays within the assigned issue scope.
-- [ ] Source and test behavior are unchanged unless explicitly required.
-- [ ] No Prisma schema, migration, seed, dependency, or repository setting changes are included without justification.
+## Evidence
 
-### Evidence
+Describe the behavior, configuration, or documentation outcome.
 
-Describe the files changed and the behavior or governance outcome they establish.
-
-### Verification
+## Verification
 
 Record the commands run and their results. Include any command that could not be run and why.
 
 - [ ] `pnpm install --frozen-lockfile`
-- [ ] `pnpm exec eslint "{src,apps,libs,test,scripts,prisma}/**/*.ts" --max-warnings=0`
-- [ ] `pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "scripts/**/*.ts" "docs/**/*.md" "*.md" "*.json" "*.yml" "*.mjs"`
-- [ ] `pnpm test`
+- [ ] `pnpm exec prettier --check "src/**/*.ts" "test/**/*.ts" "prisma/*.ts" "*.md" "*.json" "*.yml"`
+- [ ] `pnpm exec eslint "{src,apps,libs,test,prisma}/**/*.ts" --max-warnings=0`
+- [ ] `pnpm exec jest --watchman=false`
 - [ ] `pnpm build`
 
-### Review and approval
+## Review and approval
 
 - Reviewer:
-- [ ] Reviewer feedback has been addressed or explicitly accepted.
 - [ ] Required code-owner approval is present.
-- [ ] The user has completed the final review and is the only person who merges.
+- [ ] The project owner has completed the final review and is the only person who merges.
 
-### No-secret checklist
+## Security checklist
 
 - [ ] No passwords, tokens, private keys, credentials, or real environment values are committed.
 - [ ] New configuration uses safe placeholders in `.env.example` when applicable.

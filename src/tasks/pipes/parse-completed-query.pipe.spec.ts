@@ -1,4 +1,4 @@
-// [NES-6 · lesson 05] Reference — custom query pipe behavior tests.
+// Reference — custom query pipe behavior tests.
 import { BadRequestException } from '@nestjs/common';
 import { ParseCompletedQueryPipe } from './parse-completed-query.pipe';
 

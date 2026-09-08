@@ -11,7 +11,7 @@ interface TaskResponse {
   completed: boolean;
 }
 
-// [NES-8 · lesson 07] Reference — CRUD contract against PostgreSQL.
+// Reference — CRUD contract against PostgreSQL.
 describe('TasksController (e2e)', () => {
   let app: INestApplication<App>;
 
@@ -49,8 +49,8 @@ describe('TasksController (e2e)', () => {
     await request(app.getHttpServer()).get(`/tasks/${task.id}`).expect(task);
     await request(app.getHttpServer())
       .patch(`/tasks/${task.id}`)
-      .send({ title: 'Practice Prisma', completed: true })
-      .expect({ ...task, title: 'Practice Prisma', completed: true });
+      .send({ title: 'Update task', completed: true })
+      .expect({ ...task, title: 'Update task', completed: true });
     await request(app.getHttpServer()).delete(`/tasks/${task.id}`).expect(204);
     await request(app.getHttpServer()).get(`/tasks/${task.id}`).expect(404);
   });
@@ -123,13 +123,13 @@ describe('TasksController (e2e)', () => {
     const prisma = app.get(PrismaService);
     const owner = await prisma.user.create({
       data: {
-        email: 'nes-123-owner@example.com',
-        name: 'NES-123 Owner',
+        email: 'owner@example.com',
+        name: 'Owner',
         password: 'irrelevant',
       },
     });
     const project = await prisma.project.create({
-      data: { name: 'NES-123 Project', ownerId: owner.id },
+      data: { name: 'Project', ownerId: owner.id },
     });
 
     const assertRejectedAsValidation = (response: {
