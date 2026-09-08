@@ -1,0 +1,10 @@
+# Git hook commit-msg — validates the commit message content.
+#
+# commitlint checks the message against the Conventional Commits standard.
+# Wrong format -> the commit is REJECTED right on your machine, before it ever
+# reaches git history.
+#
+# Why block it hard: git history is documentation. Fixing a message after it
+# has been pushed requires rewriting history — far more expensive than writing
+# it correctly the first time.
+pnpm exec commitlint --edit "$1"
