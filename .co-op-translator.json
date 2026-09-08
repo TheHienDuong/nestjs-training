@@ -59,34 +59,34 @@
     "source_file": "docs/ROADMAP.md",
     "language_code": "en"
   },
-  "docs/adr/0001-chon-prisma-lam-orm.md": {
+  "docs/adr/0001-choose-prisma-as-orm.md": {
     "original_hash": "964a44c82daba28c432d9845d1fe1069",
     "translation_date": "2026-08-12T03:27:25+00:00",
-    "source_file": "docs/adr/0001-chon-prisma-lam-orm.md",
+    "source_file": "docs/adr/0001-choose-prisma-as-orm.md",
     "language_code": "en"
   },
-  "docs/adr/0002-linear-lam-nguon-su-that.md": {
+  "docs/adr/0002-linear-as-source-of-truth.md": {
     "original_hash": "355fa53530fa0e83339e2ae1a8c7b4c6",
     "translation_date": "2026-08-12T03:31:08+00:00",
-    "source_file": "docs/adr/0002-linear-lam-nguon-su-that.md",
+    "source_file": "docs/adr/0002-linear-as-source-of-truth.md",
     "language_code": "en"
   },
-  "docs/adr/0003-trunk-based-mot-lesson-mot-pr.md": {
+  "docs/adr/0003-trunk-based-one-lesson-one-pr.md": {
     "original_hash": "2eb853d471469b80c8f356efb6fb001b",
     "translation_date": "2026-08-12T03:25:11+00:00",
-    "source_file": "docs/adr/0003-trunk-based-mot-lesson-mot-pr.md",
+    "source_file": "docs/adr/0003-trunk-based-one-lesson-one-pr.md",
     "language_code": "en"
   },
-  "docs/adr/0004-mcp-single-writer-cho-coder-agent.md": {
+  "docs/adr/0004-mcp-single-writer-for-coder-agent.md": {
     "original_hash": "5b6c07eff2d370dda7a43cb52a604905",
     "translation_date": "2026-08-12T03:29:33+00:00",
-    "source_file": "docs/adr/0004-mcp-single-writer-cho-coder-agent.md",
+    "source_file": "docs/adr/0004-mcp-single-writer-for-coder-agent.md",
     "language_code": "en"
   },
-  "docs/adr/0005-coder-agent-mo-pr-rieng-vao-main.md": {
+  "docs/adr/0005-coder-agent-opens-pr-to-main.md": {
     "original_hash": "40714b65953833c996108815879ccf72",
     "translation_date": "2026-08-12T03:24:15+00:00",
-    "source_file": "docs/adr/0005-coder-agent-mo-pr-rieng-vao-main.md",
+    "source_file": "docs/adr/0005-coder-agent-opens-pr-to-main.md",
     "language_code": "en"
   },
   "docs/adr/README.md": {
