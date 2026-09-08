@@ -21,8 +21,10 @@ The repo has **2 versions**: branch `main` is Vietnamese, branch `example/nestjs
 - Every document in the repo has 2 versions: `main` = Vietnamese, `example/nestjs-training` = English.
 - When changing any docs/config: **update both versions**, with equivalent content, no drift.
 - Code (`src/`, `test/`) is identical across both versions — only docs/config differ by language.
-- GitLab (`gitlab` remote) **only accepts the English version** from `example/nestjs-training`.
-- Commits on GitLab: author = `hienduong-agility`, **no** `Co-authored-by` trailer, message in English.
+- GitLab (`origin`) is the clean daily-work repository: keep application code and required configuration only. `README.md` is the only Markdown exception; do not push ADR, workflow, or governance documentation there.
+- GitHub (`github`) is the review/integration repository and the backup location for governance, ADR, workflow, and bilingual documentation.
+- D02 implementation may remain on a `backup/*` branch until D01 is completed and accepted; do not treat that backup as active work.
+- Commits synced to GitLab: author = `hienduong-agility`, **no** `Co-authored-by` trailer, message in English.
 - Check before calling it done: the 2 versions do not drift (diff empty), the EN version has no Vietnamese characters left.
 
 ## Role Assignment

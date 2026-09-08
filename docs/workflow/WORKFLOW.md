@@ -106,13 +106,11 @@ Verify the roles with `git remote -v` before each day starts. In the current rep
 
 ### Branch
 
-Linear automatically generates a branch name for each issue (via the _Copy git branch name_ button), in the format:
+Use a short descriptive branch name with the appropriate prefix (`feat/`, `fix/`, `chore/`, or `docs/`). Do not put Linear issue numbers or usernames in the branch name unless a specific integration requires it.
 
-```
-hien/nes-12-controllers-va-routing
-```
+Linear's generated branch name may still be recorded or linked manually when native branch automation is required. If a custom branch name is used, link the issue and record the evidence explicitly; do not assume Linear will transition the issue automatically.
 
-Use **exactly** that name. The `nes-12` string is what allows Linear to automatically recognize the branch and update the issue status. Using a different name will break automation.
+The active GitLab branch must contain clean application code/config only. Keep governance and other documentation backups on GitHub. `README.md` is the only Markdown exception allowed on GitLab. D02 branches remain under `backup/*` until D01 is completed and accepted.
 
 ### Commit — Conventional Commits
 

@@ -24,11 +24,19 @@ For the Food Ordering REST API practice, this policy still applies to documentat
 3. Do not translate code comments or identifiers in `src/`/`test/` — both versions share the same code.
 4. Run the checklist below before considering the task done.
 
+## GitLab and GitHub repository policy
+
+- GitLab (`origin`) is the clean daily-work repository. Keep application code and required configuration only.
+- `README.md` is the only Markdown exception allowed on GitLab. Do not push ADR, workflow, governance, or other documentation files there.
+- GitHub (`github`) is the review/integration repository and the backup location for ADR, workflow, governance, and bilingual documentation.
+- The D02 implementation is retained as `backup/d02-prisma-database-foundation` until D01 is completed and accepted. Restore it as an active implementation branch only after the D01 gate passes.
+- Never use `git push --all` or `git push --mirror`; push only the explicitly approved branch.
+
 ## GitLab sync workflow
 
-- GitLab **only accepts the English version** from `example/nestjs-training`. Never push the Vietnamese version (`main`) to the `gitlab` remote.
-- Commits on GitLab: author = `hienduong-agility`, **no** `Co-authored-by` trailer, commit message in English following Conventional Commits.
-- Sync happens after each milestone (not after every single commit) — see `docs/workflow/WORKFLOW.md` Bilingual section.
+- Sync only the approved clean code/config branch to GitLab.
+- Documentation backups belong on GitHub, not on the GitLab daily-work branch.
+- Verify the exact remote ref after every push or deletion.
 
 ## Checklist before calling it done
 
