@@ -1,9 +1,11 @@
 # 🔄 WORKFLOW — Project Workflow
 
-> This is the repo's "rulebook". Every lesson goes through exactly the 7 steps below.
+> This is the repo's "rulebook". Every lesson goes through exactly the 7 steps below. GitLab is the daily canonical repository for branches, merge requests, and CI. GitHub is the integration and automated-review repository only.
 > Dual purpose: **learn NestJS** and **learn how a real backend team operates**.
 
 ## Tool Map
+
+GitLab is the daily canonical repository: push branches to `origin`, open the daily merge request there, and use GitLab CI and approvals as the merge gate. GitHub is the integration and automated-review mirror only; it is not the merge-of-record repository.
 
 ```
                     ┌─────────────────────────────┐
@@ -25,7 +27,7 @@
               └──────────────────────────┘
 ```
 
-**Foundational principle:** prioritize native integration over manual sync. Linear communicates with GitHub and Slack natively; the the agent the agent handles only tasks that the integration cannot perform (write notes, consolidate Notion, compile learning digests).
+**Foundational principle:** prioritize native integration over manual sync. GitLab is the daily merge-of-record repository. GitHub provides integration and automated review. Because no GitLab-to-Linear automation is assumed, the user or Hermes records GitLab merge evidence and updates Linear after the merge.
 
 ---
 
@@ -72,21 +74,22 @@ To get a "reference solution" to compare after you finish coding on your own: ta
 
 Separate from the learning review above — this is the approval gate before code enters `main`:
 
-1. **Claude Code** reviews the Coder agent's code locally (before the PR is opened).
+1. **Claude Code** reviews the Coder agent's code locally (before the GitLab MR is opened).
 2. **Codex GitHub App connector** (`chatgpt-codex-connector[bot]`) reviews automatically, right after the PR opens/syncs — runs on **every PR**, including small ones, with no dedicated workflow. **Copilot CLI is NOT automatic** — it is only dispatched for large MRs (`mr/*`, max 2/day, see [REVIEW-MODEL.md](REVIEW-MODEL.md)).
-3. **User (lead reviewer)** reviews the code again and decides whether to merge — the PR also needs the mandatory approval of code owner `@hienduong-agilityio` (`.github/CODEOWNERS`).
+3. **User (lead reviewer)** reviews the GitLab MR and decides whether to merge — the MR also needs mandatory approval from code owner `@hienduong-agilityio` (`.gitlab/CODEOWNERS`).
 4. **Only the user merges** — no agent merges, not even Claude Code.
 
-### Step 5 — Pull Request
+### Step 5 — GitLab Merge Request
 
 ```bash
 git push -u origin <branch>
-gh pr create --fill
+# Open a GitLab merge request from the pushed branch.
 ```
 
-- The PR description **must include** the line `Fixes NES-XX` → after merging, Linear will automatically move the issue to **Done**
-- CI must be passing before merging (the `main` branch has protection enabled)
-- Merge using **Squash and merge** to keep the `main` history clean: one lesson = one commit — **only the user merges** (no agent merges)
+- The MR description **must include** the line `Fixes NES-XX`.
+- GitLab CI must be passing before merging.
+- Merge using **Squash and merge** to keep the canonical branch history clean: one lesson = one commit — **only the user merges** (no agent merges).
+- After the GitLab MR is merged, the user or Hermes records the merge evidence and updates Linear; this is a manual handoff because GitLab-to-Linear automation is not assumed.
 
 ### Step 6 — Sync · `/sync-progress`
 
@@ -177,6 +180,8 @@ Lesson notes are written in Vietnamese on `main`, then an English version is cre
 ---
 
 ## Automated Quality Gates
+
+For daily work, GitLab CI and GitLab approval rules are the canonical quality gates. GitHub Actions and branch protection apply only to the integration/review mirror.
 
 | Quality Gate                      | Runs where   | Blocks what                                         |
 | --------------------------------- | ------------ | --------------------------------------------------- |

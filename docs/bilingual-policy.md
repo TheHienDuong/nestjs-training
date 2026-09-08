@@ -4,14 +4,14 @@
 
 ## Purpose
 
-The repo is mirrored into English to sync with the company GitLab (`gitlab` remote) — a place that only accepts English content under a dedicated identity. The Vietnamese version (`main`) remains the primary place for learning and daily work. The two versions must **always be equivalent in content**, differing only by language.
+The repo is mirrored into English for the company GitLab (`origin` remote) — the daily canonical repository, which only accepts English content under a dedicated identity. The Vietnamese version (`main`) remains the primary place for learning content. The two versions must **always be equivalent in content**, differing only by language.
 
 ## Two-version structure
 
 | Branch                    | Language   | Role                                             |
 | ------------------------- | ---------- | ------------------------------------------------ |
-| `main`                    | Vietnamese | Primary version, daily learning and work         |
-| `example/nestjs-training` | English    | Mirror version, the only source synced to GitLab |
+| `main`                    | Vietnamese | Learning source and Vietnamese version           |
+| `example/nestjs-training` | English    | Daily canonical version and only GitLab source   |
 
 Code in `src/` and `test/` is **identical** in both versions — there is no per-language logic. Only docs (`docs/`, `AGENTS.md`, `CLAUDE.md`, `.hermes.md`, README...) and config with natural-language comments/descriptions differ between the two versions.
 
@@ -24,9 +24,9 @@ Code in `src/` and `test/` is **identical** in both versions — there is no per
 
 ## GitLab sync workflow
 
-- GitLab **only accepts the English version** from `example/nestjs-training`. Never push the Vietnamese version (`main`) to the `gitlab` remote.
+- GitLab **only accepts the English version** from `example/nestjs-training`. Never push the Vietnamese version (`main`) to the `origin` remote.
 - Commits on GitLab: author = `hienduong-agility`, **no** `Co-authored-by` trailer, commit message in English following Conventional Commits.
-- Sync happens after each milestone (not after every single commit) — see `docs/workflow/WORKFLOW.md` Bilingual section.
+- Update the English canonical branch for each daily milestone before opening or updating its GitLab merge request.
 
 ## Checklist before calling it done
 
@@ -42,7 +42,7 @@ Code in `src/` and `test/` is **identical** in both versions — there is no per
 | Write/edit Vietnamese docs on `main`                             | User (hands-on) or Claude Code (docs/ADR/workflow)              |
 | Translate and update the EN version on `example/nestjs-training` | Claude Code or the agent assigned the docs task (per AGENTS.md) |
 | Check the diff between the 2 versions + scan EN for Vietnamese   | Hermes (independent verification) or the agent doing the task   |
-| Sync the EN version to GitLab                                    | Hermes or user — **do not touch gitlab** unless assigned        |
+| Sync the EN version to GitLab                                    | Hermes or user — use `origin` for the canonical GitLab remote   |
 | Decide when to sync GitLab (per milestone)                       | User                                                            |
 
 ## See also

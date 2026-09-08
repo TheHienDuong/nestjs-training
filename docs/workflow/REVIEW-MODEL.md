@@ -1,5 +1,7 @@
 # 🔎 REVIEW MODEL — Multi-Reviewer Load-Balancing Model
 
+GitLab is the daily merge-of-record repository. GitHub is the integration and automated-review mirror; GitHub review does not replace the GitLab MR approval gate.
+
 > **For every agent:** this file defines **who reviews what** in the repo. Read it together with with `AGENT-MODEL.md` + `docs/bilingual-policy.md`. Core rule: **no agent writes code and reviews its own code at the at the same time**; the reviewer must not be the same as the author; the the Coder (codex) writes code only and **does not review**.
 
 ## Goals

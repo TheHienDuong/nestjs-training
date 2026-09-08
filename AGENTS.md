@@ -21,7 +21,7 @@ The repo has **2 versions**: branch `main` is Vietnamese, branch `example/nestjs
 - Every document in the repo has 2 versions: `main` = Vietnamese, `example/nestjs-training` = English.
 - When changing any docs/config: **update both versions**, with equivalent content, no drift.
 - Code (`src/`, `test/`) is identical across both versions — only docs/config differ by language.
-- GitLab (`gitlab` remote) **only accepts the English version** from `example/nestjs-training`.
+- GitLab (`origin` remote) is the daily canonical MR/CI repository and **only accepts the English version** from `example/nestjs-training`.
 - Commits on GitLab: author = `hienduong-agility`, **no** `Co-authored-by` trailer, message in English.
 - Check before calling it done: the 2 versions do not drift (diff empty), the EN version has no Vietnamese characters left.
 

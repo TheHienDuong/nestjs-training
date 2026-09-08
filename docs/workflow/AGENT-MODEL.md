@@ -1,5 +1,7 @@
 # 🤖 AGENT MODEL — Multi-agent coordination model
 
+GitLab is the daily canonical repository for branches, merge requests, CI, approvals, and the merge-of-record. GitHub is used for integration and automated review only.
+
 > This repo deliberately uses **multiple AI agents with separate roles**, instead of one agent doing everything.
 > This isn't "for fun": splitting roles is the only way to preserve both the learning value and the review value.
 

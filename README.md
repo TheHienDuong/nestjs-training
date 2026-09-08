@@ -1,6 +1,6 @@
 # NestJS Training
 
-> A This project **learns NestJS 11** following the official [docs.nestjs.com](https://docs.nestjs.com) documentation, but operated **like a real backend project**: Linear for task management, GitHub PR + CI for quality control, Slack for progress updates, Notion as the knowledge base.
+> This project **learns NestJS 11** following the official [docs.nestjs.com](https://docs.nestjs.com) documentation, but is operated **like a real backend project**: Linear for task management, GitLab merge requests + CI for daily quality control, GitHub for integration and automated review, Slack for progress updates, and Notion as the knowledge base.
 
 Final course product: a **Task Management API** (User · Project · Task · Comment) with validation, centralized error handling, JWT auth + RBAC, Swagger docs, API versioning, Redis cache, health check, unit + e2e tests, automated CI.
 
@@ -62,7 +62,7 @@ postman/                   # collection for manual API testing
 - **Package manager is `pnpm`** — do not use npm/yarn (it will create a second lockfile and break CI).
 - **Conventional Commits are mandatory** — `commitlint` blocks commits at the git hook; incorrectly formatted commits will be rejected.
 - **Do not push directly to `main`** — branch protection is enabled; all changes must go through PRs with passing CI.
-- **PRs must include `Fixes NES-XX`** — this is what triggers Linear to automatically move the issue to Done.
+- **Merge requests must include `Fixes NES-XX`**. After a GitLab merge, the user or Hermes records the merge evidence and updates Linear because no GitLab-to-Linear automation is assumed here.
 - **AI must not write hands-on code in place of the learner** — see [AGENTS.md](AGENTS.md).
 
 ## Quality
@@ -71,13 +71,13 @@ postman/                   # collection for manual API testing
 | ----------------- | ----------------- | ----------------------------------------- |
 | `lint-staged`     | `pre-commit` hook | Unformatted code / lint errors            |
 | `commitlint`      | `commit-msg` hook | Non-standard commit messages              |
-| GitHub Actions    | every push & PR   | Lint · format · test · build              |
-| Branch protection | `main`            | Direct pushes, merging when CI is failing |
+| GitLab CI         | every branch and merge request | Lint · format · test · build |
+| GitLab approval   | merge requests   | Required review and approval |
 | Dependabot        | weekly            | Outdated/ vulnerable dependencies         |
 
 ## Notes
 
-The repo has two remotes: `origin` (GitHub — the main working remote) and `gitlab` (the company's training repo). All workflows in this document use `origin`.
+The repo has two remotes: `origin` (GitLab — the daily canonical repository) and `github` (GitHub — integration and automated review only). Daily branches and merge requests use `origin`; GitHub is not the merge-of-record repository.
 
 ## NES-2 L01 — Reference Implementation
 
