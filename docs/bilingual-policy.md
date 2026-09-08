@@ -8,10 +8,10 @@ The repo is mirrored into English for the company GitLab (`origin` remote) — t
 
 ## Two-version structure
 
-| Branch                    | Language   | Role                                             |
-| ------------------------- | ---------- | ------------------------------------------------ |
-| `main`                    | Vietnamese | Learning source and Vietnamese version           |
-| `example/nestjs-training` | English    | Daily canonical version and only GitLab source   |
+| Branch                    | Language   | Role                                           |
+| ------------------------- | ---------- | ---------------------------------------------- |
+| `main`                    | Vietnamese | Learning source and Vietnamese version         |
+| `example/nestjs-training` | English    | Daily canonical version and only GitLab source |
 
 Code in `src/` and `test/` is **identical** in both versions — there is no per-language logic. Only docs (`docs/`, `AGENTS.md`, `CLAUDE.md`, `.hermes.md`, README...) and config with natural-language comments/descriptions differ between the two versions.
 

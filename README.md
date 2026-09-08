@@ -67,13 +67,13 @@ postman/                   # collection for manual API testing
 
 ## Quality
 
-| Gate              | Location          | Blocks                                    |
-| ----------------- | ----------------- | ----------------------------------------- |
-| `lint-staged`     | `pre-commit` hook | Unformatted code / lint errors            |
-| `commitlint`      | `commit-msg` hook | Non-standard commit messages              |
-| GitLab CI         | every branch and merge request | Lint · format · test · build |
-| GitLab approval   | merge requests   | Required review and approval |
-| Dependabot        | weekly            | Outdated/ vulnerable dependencies         |
+| Gate            | Location                       | Blocks                            |
+| --------------- | ------------------------------ | --------------------------------- |
+| `lint-staged`   | `pre-commit` hook              | Unformatted code / lint errors    |
+| `commitlint`    | `commit-msg` hook              | Non-standard commit messages      |
+| GitLab CI       | every branch and merge request | Lint · format · test · build      |
+| GitLab approval | merge requests                 | Required review and approval      |
+| Dependabot      | weekly                         | Outdated/ vulnerable dependencies |
 
 ## Notes
 
