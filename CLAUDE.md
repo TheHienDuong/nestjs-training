@@ -53,7 +53,7 @@ All explanations and lesson notes are written in **English**. Keep English techn
 
 ## Bilingual Policy
 
-The repo has 2 versions: `main` = Vietnamese, `example/nestjs-training` = English (mirror). When changing any docs/config, update both versions with equivalent content. Code (`src/`, `test/`) is identical across the 2 versions — only docs/config differ by language. GitLab only accepts the English version from `example/nestjs-training`, author = `hienduong-agility`, no trailer. Details: [docs/bilingual-policy.md](docs/bilingual-policy.md).
+The repo has 2 versions: `main` = Vietnamese, `example/nestjs-training` = English (mirror). When changing any docs/config, update both versions with equivalent content. Code (`src/`, `test/`) is identical across the 2 versions — only docs/config differ by language. **GitLab (`origin`) does not receive docs/governance at all** — it only receives clean code/config (both language versions of `docs/`, ADRs, and governance files stay on GitHub). Commits pushed to GitLab: author = `hienduong-agility`, no trailer. Details: [docs/bilingual-policy.md](docs/bilingual-policy.md).
 
 ## Common commands
 
@@ -67,7 +67,8 @@ The repo has 2 versions: `main` = Vietnamese, `example/nestjs-training` = Englis
 - Prettier is the single source of truth for formatting `.ts`, `.json`, `.md`, `.yml`. See `.prettierignore` for exceptions.
 - New reference code files must have a header comment in the form `// [NES-X · lesson NN] <file role>`, e.g. `// [NES-3 · lesson 02] Reference — controller, teaching comments inline`.
 - One feature = one `src/<feature>/` folder, created exactly once. **Look-before-create**: check whether `src/<feature>/` already exists with `test -d`/`find` (see [FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md)) before creating a new file/feature; if it already exists, extend it instead of creating a parallel copy.
-- Agents running in parallel: each the the the agent touches only its own module; shared files (`app.module.ts`, `package.json`, `docs/ROADMAP.md`, `docs/lessons/_agent-log.md`, `docs/templates/*`) are merged by Hermes — do not touch them concurrently. Details: [docs/workflow/FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md).
+- Agents running in parallel: each agent touches only its own module; shared files (`app.module.ts`, `package.json`, `docs/ROADMAP.md`, `docs/lessons/_agent-log.md`, `docs/templates/*`) are merged by Hermes — do not touch them concurrently. Details: [docs/workflow/FILE-STRUCTURE.md](docs/workflow/FILE-STRUCTURE.md).
+- **Dependency gate:** before dispatching any Linear issue with a `blockedBy`/parent relation, confirm the blocking issue is `Done` (not `In Progress`) — see `AGENTS.md` "Dependency Gate" and `.hermes.md` §3.
 
 ## Quality gates
 
@@ -79,4 +80,4 @@ Commits with the wrong format are **blocked locally**. Never suggest `--no-verif
 - PR description **must** include `Fixes NES-XX`.
 - Merge with **Squash and merge**: 1 lesson = 1 commit on `main`.
 - **Code owner mandatory approval before merge (2026-08-20):** `@hienduong-agilityio` (`.github/CODEOWNERS`) — an additional gate on GitHub, does not change merge rights (still only the user). `.github/CODEOWNERS` belongs to `.github/**` → only Claude Code creates/edits it, committed with the `Co-authored-by: Claude <noreply@anthropic.com>` trailer.
-- Remotes: `origin` = GitHub (the main working remote), `gitlab` = the company repo. **Never touch `gitlab`.**
+- Remotes (verified via `git remote -v`, 2026-09-08): `origin` = **GitLab** (`gitlab.asoft-python.com:hien.duong/nestjs-training.git`) — primary development repository and **merge-of-record** (GitLab MR; the user is sole merger). `github` = **GitHub** (`github.com/TheHienDuong/nestjs-training.git`) — explicit backup/PR mirror for GitHub Actions, the Codex GitHub App connector, and Copilot; not the implementation source of truth. There is no remote literally named `gitlab`. **GitLab MR auth/permissions are currently unresolved — treat "GitLab is merge-of-record" as target state, not operational, until verified.** GitLab receives only clean code/config (README.md is the sole Markdown exception); push after each verified commit/change-set, not only at milestones.

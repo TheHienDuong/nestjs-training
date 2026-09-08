@@ -12,7 +12,15 @@ This changes how agents should behave: **the goal is for the learner to make pro
 ## Two Absolute Rules
 
 1. **Do not perform hands-on coding for the learner** unless explicitly assigned (issues labeled `agent:codex` or the corresponding label for other tools acting as the Coder, or direct user request). Default: give suggestions, point out errors, ask counter questions — do not provide complete code.
-2. **No agent reviews its own generated code.** Code an agent produces must go through a PR for the **Codex GitHub App connector to review automatically** (layer 1, every PR — `chatgpt-codex-connector[bot]`) and for the **user (lead reviewer) to sign off** before merge; a large MR (`mr/*`) adds a **Copilot gatekeeper** (max 2/day). **Only the user merges.** Rationale in `docs/workflow/REVIEW-MODEL.md` + `docs/workflow/AGENT-MODEL.md`.
+2. **No agent reviews its own generated code.** Code an agent produces must go through review for the **Codex GitHub App connector to review automatically** (layer 1, every GitHub PR — `chatgpt-codex-connector[bot]`) and for the **user (lead reviewer) to sign off** before merge; a large MR (`mr/*`) adds a **Copilot gatekeeper** (max 2/day). **Only the user merges — and only on GitLab (the merge-of-record).** Rationale in `docs/workflow/REVIEW-MODEL.md` + `docs/workflow/AGENT-MODEL.md`.
+
+## Remotes & Repository Roles (2026-09-08)
+
+- `origin` → **GitLab** (`gitlab.asoft-python.com:hien.duong/nestjs-training.git`) — **primary development repository, merge-of-record.** GitLab MRs are where the user does the final review and merge. GitLab receives **only clean application code/required config** — `README.md` is the sole Markdown exception; docs/lesson notes/ADR/governance files do **not** go to GitLab.
+- `github` → **GitHub** (`github.com/TheHienDuong/nestjs-training.git`) — **explicit backup/PR mirror.** Hosts the docs/governance backup (both language versions), GitHub Actions CI, the Codex GitHub App connector review, and the Copilot gatekeeper (large MRs only). GitHub is **not** the implementation source of truth.
+- There is **no remote literally named `gitlab`** — do not invent one; verify with `git remote -v` before writing any remote-specific command.
+- **Status: GitLab MR auth/permissions are currently unresolved (pending verification).** Treat "GitLab is merge-of-record" as **target state** until an agent or Hermes has verified a real GitLab MR can be created/reviewed/merged with a read-back — never claim a GitLab MR was opened or merged without that verification.
+- Push clean code/config to GitLab **after each verified commit or verified change-set**, not only at milestones.
 
 ## Bilingual Policy (two-version rule)
 
@@ -21,9 +29,13 @@ The repo has **2 versions**: branch `main` is Vietnamese, branch `example/nestjs
 - Every document in the repo has 2 versions: `main` = Vietnamese, `example/nestjs-training` = English.
 - When changing any docs/config: **update both versions**, with equivalent content, no drift.
 - Code (`src/`, `test/`) is identical across both versions — only docs/config differ by language.
-- GitLab (`gitlab` remote) **only accepts the English version** from `example/nestjs-training`.
-- Commits on GitLab: author = `hienduong-agility`, **no** `Co-authored-by` trailer, message in English.
+- GitLab (`origin`) is **out of scope for docs/governance** — both language versions of `docs/`, lesson notes, ADRs, and governance files (`AGENTS.md`, `CLAUDE.md`, `.hermes.md`) live on **GitHub only**. GitLab receives only clean code/config, with `README.md` as the sole Markdown exception.
+- Commits pushed to GitLab (code/config only): author = `hienduong-agility`, **no** `Co-authored-by` trailer, message in English.
 - Check before calling it done: the 2 versions do not drift (diff empty), the EN version has no Vietnamese characters left.
+
+## Dependency Gate (mandatory pre-dispatch check)
+
+Before proposing or approving dispatch for any Linear issue that has a `blockedBy`/parent relation, confirm the blocking issue's status is **`Done`** — not `In Progress`, and not merely "has evidence prepared". If it is not `Done`, do not dispatch; report the blocker instead. This applies to every day-gated or dependency-chained track (e.g. the Food Ordering D01–D10 practice — see `docs/workflow/AGENT-MODEL.md`), not only to lesson issues. Full gate details: `.hermes.md` §3.
 
 ## Role Assignment
 

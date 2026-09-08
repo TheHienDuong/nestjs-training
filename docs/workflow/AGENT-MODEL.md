@@ -139,14 +139,14 @@ Multiple agents can only collaborate when they all read from the same context so
 
 ## File boundaries (avoiding agents stepping on each other)
 
-| Path                                            | Who may edit it                                                                                 |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `src/**`, `test/**`                             | You (hands-on) · Coder agent (when explicitly assigned, dedicated branch)                       |
-| `docs/lessons/**/SPEC.md`                       | Only Claude (a snapshot from Linear) — the Coder the the agent only reads it and never edits it |
-| `docs/lessons/**`                               | Claude (writes) + you (adds personal notes)                                                     |
-| `docs/adr/**`, `docs/workflow/**`               | Claude, with your approval via PR                                                               |
-| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                                                          |
-| `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                                               |
+| Path                                            | Who may edit it                                                                         |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `src/**`, `test/**`                             | You (hands-on) · Coder agent (when explicitly assigned, dedicated branch)               |
+| `docs/lessons/**/SPEC.md`                       | Only Claude (a snapshot from Linear) — the Coder agent only reads it and never edits it |
+| `docs/lessons/**`                               | Claude (writes) + you (adds personal notes)                                             |
+| `docs/adr/**`, `docs/workflow/**`               | Claude, with your approval via PR                                                       |
+| `.github/**`, `.husky/**`, `docker-compose.yml` | Claude                                                                                  |
+| `AGENTS.md`, `CLAUDE.md`                        | Claude, with your approval via PR                                                       |
 
 > `.github/CODEOWNERS` also falls under `.github/**` → only **Claude Code** creates/edits it, committed with the `Co-authored-by: Claude <noreply@anthropic.com>` trailer. If the Coder agent (codex) generates a change under `.github/**`, it must be recreated through Claude Code before merge — it is not accepted as-is.
 
@@ -154,4 +154,22 @@ Multiple agents can only collaborate when they all read from the same context so
 
 Every time you assign work to an agent, log one line in `docs/lessons/_agent-log.md`: what task, which agent, what went well/badly. After the course you'll have real data to answer a very practical question in the field: **which work should be handed to AI, and which shouldn't.**
 
-Every agent that changes docs must update both vi/en versions (`main` Vietnamese, `example/nestjs-training` English) — see [bilingual-policy.md](../bilingual-policy.md). GitLab only accepts the EN version from `example/nestjs-training`, never the Vietnamese one.
+Every agent that changes docs must update both vi/en versions (`main` Vietnamese, `example/nestjs-training` English) — see [bilingual-policy.md](../bilingual-policy.md). **Docs (both versions) stay on GitHub only — GitLab does not receive docs/governance at all**, only clean application code/config (`README.md` is the sole Markdown exception).
+
+---
+
+## Practice Tracks: Task Management vs Food Ordering
+
+This repo runs **two separate practice tracks in parallel**. Before touching `src/`, an agent must check which track/issue-numbering scheme the assigned Linear issue belongs to:
+
+- **Task Management (legacy curriculum, L00–L25):** the main course — see `docs/ROADMAP.md`. Lesson issues use the `NES-X` numbering tied to `docs/lessons/XX-*`.
+- **Food Ordering REST API (10-Day Practice, D01–D10):** a separate, day-gated Linear track (`NES-126` = D01 parent with children `NES-127`/`NES-136`–`NES-143`; `NES-144` = the D02.01 decision gate). This track is **not yet documented elsewhere in `docs/ROADMAP.md`** — this section is the canonical pointer until it is.
+
+**Module boundary (per [ADR-0009](../adr/0009-food-ordering-module-boundary.md), status: **Proposed**, currently exists only on branch `docs/nes-126-d01-governance-repository-environment` — not merged to `main`, not yet listed in `docs/adr/README.md`):**
+
+- Starting **D03**, Food Ordering code lives in its own feature folders under `src/`: the initial expected boundary is `src/menu/`, `src/orders/`, `src/customers/`, `src/restaurants/` (subject to the learner's D02 domain decision).
+- The **legacy Task Management source and Prisma schema remain untouched during D01** — D01 makes no database change.
+- **D02.01 is a hard gate:** any schema/migration/seed change (retain, replace, or archive the legacy schema) requires the learner's explicit decision at D02.01 _before_ it happens. An agent must not implement Prisma/database changes for this track until D02.01 (`NES-144`) is confirmed `Done` — see the dependency gate in `AGENTS.md` and `.hermes.md` §3.8.
+- Shared files (`app.module.ts`, root config, docs) still require serialized edits when both tracks' agents are active — see "File boundaries" above.
+
+This section only summarizes ADR-0009 for operational use; it does not change ADR-0009's own lifecycle status. If ADR-0009 is later accepted/merged, update this section and `docs/adr/README.md` together.

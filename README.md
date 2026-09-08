@@ -77,7 +77,7 @@ postman/                   # collection for manual API testing
 
 ## Notes
 
-The repo has two remotes: `origin` (GitHub — the main working remote) and `gitlab` (the company's training repo). All workflows in this document use `origin`.
+The repo has two remotes: `origin` = **GitLab** (primary development repository and merge-of-record — target state, GitLab MR auth/permissions pending verification) and `github` = **GitHub** (explicit backup/PR/review mirror for GitHub Actions, the Codex GitHub App connector, and Copilot). GitLab's clean scope excludes docs/governance — this `README.md` is the sole Markdown exception kept on GitLab alongside application code/config; the rest of `docs/` and the governance files stay on GitHub only.
 
 ## NES-2 L01 — Reference Implementation
 

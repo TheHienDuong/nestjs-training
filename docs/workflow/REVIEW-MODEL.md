@@ -1,6 +1,6 @@
 # 🔎 REVIEW MODEL — Multi-Reviewer Load-Balancing Model
 
-> **For every agent:** this file defines **who reviews what** in the repo. Read it together with with `AGENT-MODEL.md` + `docs/bilingual-policy.md`. Core rule: **no agent writes code and reviews its own code at the at the same time**; the reviewer must not be the same as the author; the the Coder (codex) writes code only and **does not review**.
+> **For every agent:** this file defines **who reviews what** in the repo. Read it together with `AGENT-MODEL.md` + `docs/bilingual-policy.md`. Core rule: **no agent writes code and reviews its own code at the same time**; the reviewer must not be the same as the author; the Coder (codex) writes code only and **does not review**.
 
 ## Goals
 
@@ -34,7 +34,7 @@ Large task → Claude SPLITS it into small PRs (each PR ≤ 20 FILES, 1 branch/P
        + Codex GitHub App connector(code quality, automated via the GitHub App — NOT via a pane, runs in parallel)
        + tests + action check (pnpm verify, CI scope ≤20)
   → end of day / whenever the user feels ready → bundle into 2 "large MRs" (collector branch mr/<date>-<seq>)
-  → Gatekeeper does a thorough review (Copilot, max 2/day) → MR into main — only the user merges
+  → Gatekeeper does a thorough review (Copilot, max 2/day) → GitLab MR into main (merge-of-record, target state — see `docs/workflow/WORKFLOW.md` "Code review & merge"; GitHub PR + squash-merge remains operational until GitLab MR auth is verified) — only the user merges
   → weekend: codex security sweep across the whole project (user runs it)
 ```
 
@@ -89,6 +89,6 @@ Hermes' dispatch prompt for review = `[rulebook] + [diff] + [request for a verdi
 
 ## 7. Final decision maker
 
-- **User (Hien Duong)** = lead reviewer + **only the user merges**. No agent merges.
+- **User (Hien Duong)** = lead reviewer + **only the user merges — specifically, merges the GitLab MR** once GitLab MR auth/permissions are verified (target state until then; the GitHub PR squash-merge remains the operational path in the interim). No agent merges.
 - **Mandatory code-owner approval before merge (2026-08-20):** `@hienduong-agilityio` (`.github/CODEOWNERS`) — an additional gate on GitHub, does **not** change merge rights (still only the user merges).
-- Related ADRs: [ADR-0007](../adr/0007-claude-reviewer-local-multi-reviewer.md) (Claude takes on the Reviewer local role), [ADR-0008](../adr/0008-review-collector-mr.md) (the `mr/*` collector does not replace ADR-0005).
+- Related ADRs: [ADR-0007](../adr/0007-claude-reviewer-local-multi-reviewer.md) (Claude takes on the Reviewer local role), [ADR-0008](../adr/0008-review-collector-mr.md) (the `mr/*` collector does not replace ADR-0005). _Both remain formally **Proposed** in `docs/adr/README.md` — being operationally followed here does not imply the user has promoted them to Accepted._

@@ -12,20 +12,42 @@
                     │  Issue → Sub-issue          │
                     └──────┬───────────────┬──────┘
         GitHub integration │               │ Slack integration
-              (automatic)  │               │  (automatic)
+     (automatic — GitHub   │               │  (automatic)
+      PR merge only, see   │               │
+      note below)          │               │
                     ┌──────▼──────┐  ┌─────▼────────────┐
                     │   GITHUB    │  │ #nestjs-training │
-                    │ code · PR   │  │  issue notices   │
-                    │ CI Actions  │  │  learning digest │
-                    └──────┬──────┘  └──────────────────┘
-                           │
-              ┌────────────▼─────────────┐
+                    │ (`github`)  │  │  issue notices   │
+                    │ backup/PR   │  │  learning digest │
+                    │ mirror · CI │  └──────────────────┘
+                    │ Actions ·   │
+                    │ Codex App · │
+                    │ Copilot     │
+                    └──────┬──────┘
+                           │ explicit backup/PR mirror push
+                           ▼
+                    ┌─────────────┐
+                    │   GITLAB    │  ← `origin` — primary dev repo,
+                    │ (`origin`)  │    merge-of-record (target state,
+                    │ clean code/ │    auth/permissions pending verification)
+                    │ config only │
+                    └──────┬──────┘
+                           │ manual Linear fallback after GitLab MR merge
+                           ▼
+                    ┌─────────────┐
+                    │   LINEAR    │  ← Hermes manually transitions status +
+                    │  (update)   │    adds evidence comment (see note below)
+                    └─────────────┘
+
+              ┌──────────────────────────┐
               │  docs/lessons/*.md       │  ← Vietnamese notes, reviewed via PR
-              │  NOTION hub              │  ← consolidated knowledge, quick lookup
-              └──────────────────────────┘
+              │  NOTION hub              │    on GitHub (governance/docs stay
+              └──────────────────────────┘    on GitHub only, never pushed to GitLab)
 ```
 
-**Foundational principle:** prioritize native integration over manual sync. Linear communicates with GitHub and Slack natively; the the agent the agent handles only tasks that the integration cannot perform (write notes, consolidate Notion, compile learning digests).
+> **Linear automation note:** the "GitHub integration (automatic)" arrow above only fires on a **GitHub PR merge** (`Fixes NES-XX`). It does **not** fire on a GitLab MR merge — there is no confirmed Linear↔GitLab integration. When GitLab MR is the merge-of-record, Hermes must manually verify the GitLab MR merged, then update the Linear issue status + add an evidence comment itself. See `.hermes.md` §5.5.e.
+
+**Foundational principle:** prioritize native integration over manual sync. Linear communicates with GitHub and Slack natively; the agent handles only tasks that the integration cannot perform (write notes, consolidate Notion, compile learning digests, and — until GitLab↔Linear integration exists — the manual Linear fallback above).
 
 ---
 
@@ -70,23 +92,27 @@ To get a "reference solution" to compare after you finish coding on your own: ta
 
 ### Code review & merge
 
-Separate from the learning review above — this is the approval gate before code enters `main`:
+Separate from the learning review above — this is the approval gate before code enters `main`. **GitLab MR is the merge-of-record** (target state — GitLab MR auth/permissions are currently unresolved; until verified, the GitHub PR + squash-merge flow below remains the actually-operational path):
 
-1. **Claude Code** reviews the Coder agent's code locally (before the PR is opened).
-2. **Codex GitHub App connector** (`chatgpt-codex-connector[bot]`) reviews automatically, right after the PR opens/syncs — runs on **every PR**, including small ones, with no dedicated workflow. **Copilot CLI is NOT automatic** — it is only dispatched for large MRs (`mr/*`, max 2/day, see [REVIEW-MODEL.md](REVIEW-MODEL.md)).
-3. **User (lead reviewer)** reviews the code again and decides whether to merge — the PR also needs the mandatory approval of code owner `@hienduong-agilityio` (`.github/CODEOWNERS`).
-4. **Only the user merges** — no agent merges, not even Claude Code.
+1. **Claude Code** reviews the Coder agent's code locally (before any PR/MR is opened).
+2. Push the branch to **GitHub** (`github` remote) and open the mirror PR so **GitHub Actions**, the **Codex GitHub App connector** (`chatgpt-codex-connector[bot]`, automatic on every PR, no dedicated workflow), and — for large MRs (`mr/*`) — the **Copilot gatekeeper** (max 2/day, see [REVIEW-MODEL.md](REVIEW-MODEL.md)) can review.
+3. Push clean code/config to **GitLab** (`origin` remote) and open/update the GitLab MR (`Fixes NES-XX` in the description) — after each verified commit or verified change-set, not only at milestones.
+4. **User (lead reviewer)** reviews the code again and decides whether to merge — the PR/MR also needs the mandatory approval of code owner `@hienduong-agilityio` (`.github/CODEOWNERS`, enforced on the GitHub mirror).
+5. **Only the user merges — on GitLab, once GitLab MR auth is verified.** No agent merges, not even Claude Code. After the GitLab MR merges, Hermes manually verifies the merge and updates Linear (`Fixes NES-XX` auto-close only fires on a GitHub PR merge, not a GitLab MR — see the Tool Map note above).
 
-### Step 5 — Pull Request
+### Step 5 — Pull Request / Merge Request
 
 ```bash
-git push -u origin <branch>
+git push -u github <branch>       # GitHub — backup/PR mirror (review layer)
 gh pr create --fill
+
+git push -u origin <branch>       # GitLab — primary repo, merge-of-record (target state)
+# GitLab MR creation: pending — MR auth/permissions not yet verified
 ```
 
-- The PR description **must include** the line `Fixes NES-XX` → after merging, Linear will automatically move the issue to **Done**
-- CI must be passing before merging (the `main` branch has protection enabled)
-- Merge using **Squash and merge** to keep the `main` history clean: one lesson = one commit — **only the user merges** (no agent merges)
+- The PR/MR description **must include** the line `Fixes NES-XX`. On GitHub, merging auto-moves the Linear issue to **Done**; on GitLab, this does not happen automatically — Hermes updates Linear manually after verifying the merge (see Tool Map note above).
+- CI must be passing before merging (the `main` branch has GitHub Rulesets protection enabled and verified active; an equivalent GitLab-side protection is not yet confirmed)
+- Merge using **Squash and merge** to keep history clean: one lesson = one commit — **only the user merges** (no agent merges)
 
 ### Step 6 — Sync · `/sync-progress`
 
@@ -102,13 +128,9 @@ After the PR has been merged into `main`, run `pnpm lesson --tag <NN>` to create
 
 ### Branch
 
-Linear automatically generates a branch name for each issue (via the _Copy git branch name_ button), in the format:
+Use a **descriptive branch name** in the format `<type>/nes-XX-<short-description>` (e.g. `hien/nes-12-controllers-and-routing` for hands-on lesson work, `codex/nes-12-reference-solution` or `agy/nes-12-alt-solution` for agent work, `docs/nes-126-...`, `chore/...`, `feat/...` for non-lesson governance/practice-track branches) — the `nes-XX` segment ties the branch back to its Linear issue for humans reading the history, but naming it this way does **not** by itself trigger any Linear automation.
 
-```
-hien/nes-12-controllers-va-routing
-```
-
-Use **exactly** that name. The `nes-12` string is what allows Linear to automatically recognize the branch and update the issue status. Using a different name will break automation.
+The `Fixes NES-XX` line remains **required** in the GitLab MR description and/or the GitHub PR description (whichever is applicable per the merge-of-record state in "Code review & merge" above) — that line, not the branch name, is what Linear's automation reads on a **GitHub PR merge**. A GitLab MR merge does not trigger this automation at all (see the Tool Map note above); Hermes must update Linear manually in that case.
 
 ### Commit — Conventional Commits
 
@@ -132,7 +154,7 @@ Scope should be the lesson or module name: `docs(lesson-02): ...`, `feat(tasks):
 
 ### Bilingual (2 versions)
 
-Lesson notes are written in Vietnamese on `main`, then an English version is created on branch `example/nestjs-training`. After each milestone, sync the EN version to GitLab (author `hienduong-agility`).
+Lesson notes are written in Vietnamese on `main`, then an English version is created on branch `example/nestjs-training`. **Both versions stay on GitHub** — GitLab (`origin`) does not receive docs/governance at all, only clean application code/config (`README.md` is the sole Markdown exception). Details: [bilingual-policy.md](../bilingual-policy.md).
 
 ### Definition of Done — a lesson is only considered complete when all 7 criteria are met
 
@@ -178,14 +200,14 @@ Lesson notes are written in Vietnamese on `main`, then an English version is cre
 
 ## Automated Quality Gates
 
-| Quality Gate                      | Runs where   | Blocks what                                         |
-| --------------------------------- | ------------ | --------------------------------------------------- |
-| `lint-staged` (pre-commit)        | Your machine | Unformatted / lint-error code                       |
-| `commitlint` (commit-msg)         | Your machine | Commit messages that don't follow the convention    |
-| GitHub Actions CI                 | On GitHub    | Lint / test / build failures                        |
-| Branch protection                 | On GitHub    | Direct pushes to `main`, merging when CI is failing |
-| Coverage threshold (from Phase 5) | CI           | Coverage dropping below the threshold               |
-| Dependabot                        | On GitHub    | Outdated dependencies (opens weekly PRs)            |
+| Quality Gate                      | Runs where                                                                         | Blocks what                                         |
+| --------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `lint-staged` (pre-commit)        | Your machine                                                                       | Unformatted / lint-error code                       |
+| `commitlint` (commit-msg)         | Your machine                                                                       | Commit messages that don't follow the convention    |
+| GitHub Actions CI                 | On GitHub                                                                          | Lint / test / build failures                        |
+| Branch protection                 | On GitHub (verified active via Rulesets); GitLab-side equivalent not yet confirmed | Direct pushes to `main`, merging when CI is failing |
+| Coverage threshold (from Phase 5) | CI                                                                                 | Coverage dropping below the threshold               |
+| Dependabot                        | On GitHub                                                                          | Outdated dependencies (opens weekly PRs)            |
 
 This order is intentional: **detect errors as early and as cheaply as possible**. A formatting error caught on your machine takes 2 seconds; caught in CI takes 3 minutes; caught in review takes half a day of another person's time.
 

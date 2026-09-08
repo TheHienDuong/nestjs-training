@@ -25,6 +25,8 @@ Including: input validation, centralized error handling, logging, Swagger docs, 
 
 All `docs.nestjs.com/...` links below have been verified against the actual routing of the `nestjs/docs.nestjs.com` repo.
 
+> **Scope note:** this roadmap covers only the **Task Management** curriculum (L00–L25) above. A separate, day-gated **Food Ordering REST API practice track (D01–D10)** runs in parallel on its own Linear issues and is not part of this roadmap — see the "Practice Tracks" section in `docs/workflow/AGENT-MODEL.md` for its module boundary and gating rules.
+
 ---
 
 ## Phase 0 — Setup & Professional Workflow
