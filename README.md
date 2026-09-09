@@ -124,7 +124,7 @@ Every merge request should include:
 - The verification commands and their results
 - Confirmation that no secrets are included
 
-All required GitHub Actions checks and approval rules must pass before the project owner squash-merges the merge request. Do not push directly to the protected default branch.
+The repository is mirrored to GitHub, and each branch or pull request there triggers GitHub Actions. Before squash-merging the GitLab merge request, the project owner reviews the corresponding GitHub Actions run for the mirrored branch or PR to verify it is green. Do not push directly to the protected default branch.
 
 ## Security notes
 
