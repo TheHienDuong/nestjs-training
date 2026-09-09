@@ -11,7 +11,7 @@ A production-oriented task management API built with NestJS 11. The application 
 - `@nestjs/config` for environment configuration
 - Jest and Supertest for unit and end-to-end tests
 - Docker Compose for local PostgreSQL and Redis services
-- GitLab CI for linting, formatting, testing, and builds
+- GitHub Actions for linting, formatting, testing, and builds
 
 ## Prerequisites
 
@@ -100,7 +100,7 @@ The `prisma/` directory contains the schema, migrations, and seed entry point. T
 
 ## Testing and quality
 
-Run the same quality commands used by GitLab CI:
+Run the same quality commands used by GitHub Actions:
 
 ```bash
 pnpm lint
@@ -115,7 +115,7 @@ End-to-end tests use `test/jest-e2e.json` and require a configured database.
 
 ## GitLab workflow
 
-GitLab is the canonical platform for repository collaboration and releases. Create a short-lived branch from the protected default branch, push the branch to the GitLab `origin` remote, and open a merge request in GitLab.
+GitLab is the canonical platform for repository collaboration and releases. Treat `feat/practice-one` as the protected default branch for this project. Create each short-lived task branch from `feat/practice-one`, push it to the GitLab `origin` remote, and open a merge request targeting `feat/practice-one`.
 
 Every merge request should include:
 
@@ -124,7 +124,7 @@ Every merge request should include:
 - The verification commands and their results
 - Confirmation that no secrets are included
 
-All required CI jobs and approval rules must pass before the project owner squash-merges the merge request. Do not push directly to the protected default branch.
+The repository is mirrored to GitHub, and each branch or pull request there triggers GitHub Actions. Before squash-merging the GitLab merge request, the project owner reviews the corresponding GitHub Actions run for the mirrored branch or PR to verify it is green. Do not push directly to the protected default branch.
 
 ## Security notes
 
