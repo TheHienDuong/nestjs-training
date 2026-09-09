@@ -16,8 +16,10 @@ Record the commands run and their results. Explain any command that could not be
 - [ ] `pnpm test`
 - [ ] `pnpm build`
 
-## Review approval
+## Branch and review approval
 
+- Source branch was created from `feat/practice-one`.
+- Target branch is `feat/practice-one`.
 - Reviewer:
 - [ ] Required Code Owner approval is present.
 - [ ] The project owner completed the final review and is the only person who merges the merge request.

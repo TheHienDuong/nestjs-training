@@ -115,7 +115,7 @@ End-to-end tests use `test/jest-e2e.json` and require a configured database.
 
 ## GitLab workflow
 
-GitLab is the canonical platform for repository collaboration and releases. Create a short-lived branch from the protected default branch, push the branch to the GitLab `origin` remote, and open a merge request in GitLab.
+GitLab is the canonical platform for repository collaboration and releases. Treat `feat/practice-one` as the protected default branch for this project. Create each short-lived task branch from `feat/practice-one`, push it to the GitLab `origin` remote, and open a merge request targeting `feat/practice-one`.
 
 Every merge request should include:
 
