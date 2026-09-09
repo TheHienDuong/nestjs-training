@@ -11,7 +11,7 @@ A production-oriented task management API built with NestJS 11. The application 
 - `@nestjs/config` for environment configuration
 - Jest and Supertest for unit and end-to-end tests
 - Docker Compose for local PostgreSQL and Redis services
-- GitLab CI for linting, formatting, testing, and builds
+- GitHub Actions for linting, formatting, testing, and builds
 
 ## Prerequisites
 
@@ -100,7 +100,7 @@ The `prisma/` directory contains the schema, migrations, and seed entry point. T
 
 ## Testing and quality
 
-Run the same quality commands used by GitLab CI:
+Run the same quality commands used by GitHub Actions:
 
 ```bash
 pnpm lint
@@ -124,7 +124,7 @@ Every merge request should include:
 - The verification commands and their results
 - Confirmation that no secrets are included
 
-All required CI jobs and approval rules must pass before the project owner squash-merges the merge request. Do not push directly to the protected default branch.
+All required GitHub Actions checks and approval rules must pass before the project owner squash-merges the merge request. Do not push directly to the protected default branch.
 
 ## Security notes
 
