@@ -115,7 +115,6 @@ model Restaurant {
   createdAt  DateTime   @default(now())
 
   @@unique([ownerId, name])
-  @@index([ownerId])
   @@index([isArchived])
 }
 
@@ -128,7 +127,7 @@ model Category {
   menuItems    MenuItem[]
 
   @@unique([restaurantId, name])
-  @@index([restaurantId])
+  @@unique([id, restaurantId])
   @@index([isArchived])
 }
 
@@ -136,7 +135,7 @@ model MenuItem {
   id           Int        @id @default(autoincrement())
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Restrict)
   restaurantId Int
-  category     Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  category     Category   @relation(fields: [categoryId, restaurantId], references: [id, restaurantId], onDelete: Restrict)
   categoryId   Int
   name         String
   priceMinor   Int
@@ -145,7 +144,6 @@ model MenuItem {
   isArchived   Boolean    @default(false)
   createdAt    DateTime   @default(now())
 
-  @@index([restaurantId])
   @@index([categoryId])
   @@index([restaurantId, isAvailable, isArchived])
 }
