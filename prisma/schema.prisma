@@ -30,6 +30,11 @@ enum UserRole {
   ADMIN
 }
 
+enum CartStatus {
+  ACTIVE
+  CHECKED_OUT
+}
+
 // Reference — User is not yet wired to a Prisma-backed
 // service (UsersService stays in-memory until authentication is implemented); this
 // model only establishes the relations Project/Task/Comment need today.
@@ -47,6 +52,7 @@ model User {
   memberships   ProjectMember[]
   assignedTasks Task[]          @relation("TaskAssignee")
   comments      Comment[]
+  carts         Cart[]
   createdAt     DateTime        @default(now())
 }
 
@@ -112,6 +118,7 @@ model Restaurant {
   address    Address?
   categories Category[]
   menuItems  MenuItem[]
+  carts      Cart[]
   createdAt  DateTime   @default(now())
 
   @@unique([ownerId, name])
@@ -137,6 +144,7 @@ model MenuItem {
   restaurantId Int
   category     Category   @relation(fields: [categoryId, restaurantId], references: [id, restaurantId], onDelete: Restrict)
   categoryId   Int
+  cartItems    CartItem[]
   name         String
   priceMinor   Int
   currency     String     @db.Char(3)
@@ -146,6 +154,43 @@ model MenuItem {
 
   @@index([categoryId])
   @@index([restaurantId, isAvailable, isArchived])
+}
+
+// Prisma 6.19.3 cannot express a PostgreSQL partial unique index in the
+// schema. D02.06 must add:
+// CREATE UNIQUE INDEX "Cart_one_active_per_user"
+//   ON "Cart" ("userId") WHERE "status" = 'ACTIVE';
+model Cart {
+  id           Int         @id @default(autoincrement())
+  user         User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  userId       Int
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
+  restaurantId Int?
+  status       CartStatus  @default(ACTIVE)
+  items        CartItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([userId, status])
+  @@index([restaurantId])
+}
+
+// Prisma 6.19.3 cannot express PostgreSQL CHECK constraints in the schema.
+// D02.06 must add: ALTER TABLE "CartItem" ADD CONSTRAINT
+// "CartItem_quantity_positive" CHECK ("quantity" > 0);
+model CartItem {
+  id         Int      @id @default(autoincrement())
+  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId     Int
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Restrict)
+  menuItemId Int
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([cartId, menuItemId])
+  @@index([cartId])
+  @@index([menuItemId])
 }
 
 model Address {
