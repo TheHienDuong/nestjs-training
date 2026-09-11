@@ -24,6 +24,12 @@ enum TaskPriority {
   HIGH
 }
 
+enum UserRole {
+  CUSTOMER
+  RESTAURANT_OWNER
+  ADMIN
+}
+
 // Reference — User is not yet wired to a Prisma-backed
 // service (UsersService stays in-memory until authentication is implemented); this
 // model only establishes the relations Project/Task/Comment need today.
@@ -31,6 +37,11 @@ model User {
   id            Int             @id @default(autoincrement())
   email         String          @unique
   name          String
+  // Nullable for compatibility with existing legacy users until authentication
+  // starts writing password hashes.
+  passwordHash  String?
+  role          UserRole        @default(CUSTOMER)
+  restaurants   Restaurant[]
   password      String
   ownedProjects Project[]       @relation("ProjectOwner")
   memberships   ProjectMember[]
@@ -90,4 +101,61 @@ model Comment {
   author    User     @relation(fields: [authorId], references: [id], onDelete: Restrict)
   authorId  Int
   createdAt DateTime @default(now())
+}
+
+model Restaurant {
+  id         Int        @id @default(autoincrement())
+  owner      User       @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  ownerId    Int
+  name       String
+  isArchived Boolean    @default(false)
+  address    Address?
+  categories Category[]
+  menuItems  MenuItem[]
+  createdAt  DateTime   @default(now())
+
+  @@unique([ownerId, name])
+  @@index([isArchived])
+}
+
+model Category {
+  id           Int        @id @default(autoincrement())
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Restrict)
+  restaurantId Int
+  name         String
+  isArchived   Boolean    @default(false)
+  menuItems    MenuItem[]
+
+  @@unique([restaurantId, name])
+  @@unique([id, restaurantId])
+  @@index([isArchived])
+}
+
+model MenuItem {
+  id           Int        @id @default(autoincrement())
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Restrict)
+  restaurantId Int
+  category     Category   @relation(fields: [categoryId, restaurantId], references: [id, restaurantId], onDelete: Restrict)
+  categoryId   Int
+  name         String
+  priceMinor   Int
+  currency     String     @db.Char(3)
+  isAvailable  Boolean    @default(true)
+  isArchived   Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+
+  @@index([categoryId])
+  @@index([restaurantId, isAvailable, isArchived])
+}
+
+model Address {
+  id           Int        @id @default(autoincrement())
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Restrict)
+  restaurantId Int        @unique
+  line1        String
+  line2        String?
+  city         String
+  state        String?
+  postalCode   String?
+  countryCode  String     @db.Char(2)
 }
